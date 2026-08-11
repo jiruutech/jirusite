@@ -1,0 +1,304 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Amharic (`am`).
+class AppLocalizationsAm extends AppLocalizations {
+  AppLocalizationsAm([String locale = 'am']) : super(locale);
+
+  @override
+  String get appName => 'ጂሩሳይት';
+
+  @override
+  String get login => 'ግባ';
+
+  @override
+  String get register => 'ምዝገባ';
+
+  @override
+  String get phoneNumber => 'ስልክ ቁጥር';
+
+  @override
+  String get password => 'የምስጢር ቁጥር';
+
+  @override
+  String get confirmPassword => 'የምስጢር ቁጥሩን አረጋግጥ';
+
+  @override
+  String get fullName => 'ሙሉ ስም';
+
+  @override
+  String get email => 'ኢሜይል (አማራጭ)';
+
+  @override
+  String get loginButton => 'ግባ';
+
+  @override
+  String get registerButton => 'አካውንት ፍጠር';
+
+  @override
+  String get otpTitle => 'የማረጋገጫ ኮድ አስገባ';
+
+  @override
+  String otpSubtitle(String phone) {
+    return 'ወደ $phone 6-አሃዝ ኮድ ልከናል';
+  }
+
+  @override
+  String get verify => 'አረጋግጥ';
+
+  @override
+  String get resendCode => 'ኮድ እንደገና ላክ';
+
+  @override
+  String get orgSetupTitle => 'ድርጅትዎን ያዋቅሩ';
+
+  @override
+  String get orgName => 'የድርጅት ስም';
+
+  @override
+  String get tinNumber => 'የቲን ቁጥር (አማራጭ)';
+
+  @override
+  String get continueButton => 'ቀጥል';
+
+  @override
+  String get dashboard => 'ዳሽቦርድ';
+
+  @override
+  String get projects => 'ፕሮጀክቶች';
+
+  @override
+  String get expenses => 'ወጪዎች';
+
+  @override
+  String get laborEntries => 'የሰው ኃይል';
+
+  @override
+  String get materials => 'ቁሳቁሶችና ዋጋዎች';
+
+  @override
+  String get suppliers => 'አቅራቢዎች';
+
+  @override
+  String get purchaseOrders => 'የግዢ ትዕዛዞች';
+
+  @override
+  String get schedule => 'የጊዜ ሰሌዳ';
+
+  @override
+  String get notifications => 'ማሳወቂያዎች';
+
+  @override
+  String get billing => 'ክፍያ';
+
+  @override
+  String get settings => 'ቅንብሮች';
+
+  @override
+  String get newExpense => 'አዲስ ወጪ';
+
+  @override
+  String get newLaborEntry => 'አዲስ የሰው ኃይል ግቤት';
+
+  @override
+  String get amount => 'መጠን (ብር)';
+
+  @override
+  String get description => 'መግለጫ';
+
+  @override
+  String get date => 'ቀን';
+
+  @override
+  String get costCode => 'የወጪ ኮድ';
+
+  @override
+  String get expenseType => 'የወጪ ዓይነት';
+
+  @override
+  String get material => 'ቁሳቁስ';
+
+  @override
+  String get labor => 'የሰው ኃይል';
+
+  @override
+  String get equipment => 'መሳሪያ';
+
+  @override
+  String get other => 'ሌላ';
+
+  @override
+  String get quantity => 'ብዛት';
+
+  @override
+  String get unit => 'ክፍል';
+
+  @override
+  String get supplier => 'አቅራቢ';
+
+  @override
+  String get addReceipt => 'የደረሰኝ ፎቶ ጨምር';
+
+  @override
+  String get save => 'አስቀምጥ';
+
+  @override
+  String get cancel => 'ሰርዝ';
+
+  @override
+  String get delete => 'አጥፋ';
+
+  @override
+  String get approve => 'ፍቀድ';
+
+  @override
+  String get reject => 'አሳፍር';
+
+  @override
+  String get pending => 'በመጠባበቅ ላይ';
+
+  @override
+  String get approved => 'ፀድቋል';
+
+  @override
+  String get synced => 'ተመሳሰለ';
+
+  @override
+  String syncPending(int count) {
+    return '$count በመጠባበቅ';
+  }
+
+  @override
+  String get syncing => 'በመመሳሰል ላይ...';
+
+  @override
+  String get totalBudget => 'ጠቅላላ በጀት';
+
+  @override
+  String get totalSpent => 'ጠቅላላ ወጪ';
+
+  @override
+  String get remaining => 'ቀሪ';
+
+  @override
+  String get budgetHealth => 'የበጀት ሁኔታ';
+
+  @override
+  String get recentActivity => 'የቅርብ ጊዜ እንቅስቃሴ';
+
+  @override
+  String get noProjects => 'ምንም ፕሮጀክት የለም';
+
+  @override
+  String get noExpenses => 'ምንም ወጪ የለም';
+
+  @override
+  String get noLabor => 'ምንም የሰው ኃይል ግቤት የለም';
+
+  @override
+  String get loading => 'በመጫን ላይ...';
+
+  @override
+  String get errorOccurred => 'ስህተት ተፈጥሯል';
+
+  @override
+  String get retry => 'እንደገና ሞክር';
+
+  @override
+  String get logout => 'ውጣ';
+
+  @override
+  String get language => 'ቋንቋ';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get amharic => 'አማርኛ';
+
+  @override
+  String get afaanOromo => 'Afaan Oromo';
+
+  @override
+  String get tigrinya => 'ትግርኛ';
+
+  @override
+  String get workerName => 'ሠራተኛ / ቡድን ስም';
+
+  @override
+  String get numberOfWorkers => 'የሠራተኞች ቁጥር';
+
+  @override
+  String get dailyRate => 'ዕለታዊ ክፍያ (ብር)';
+
+  @override
+  String get totalAmount => 'ጠቅላላ መጠን (ብር)';
+
+  @override
+  String get workDate => 'የሥራ ቀን';
+
+  @override
+  String get workDescription => 'የሥራ መግለጫ';
+
+  @override
+  String get currentPrice => 'አሁናዊ ዋጋ';
+
+  @override
+  String get priceHistory => 'ዋጋ ታሪክ';
+
+  @override
+  String get region => 'ክልል';
+
+  @override
+  String get reportPrice => 'ዋጋ ዘግብ';
+
+  @override
+  String get verified => 'የተረጋገጠ';
+
+  @override
+  String get requestQuote => 'ዋጋ ጠይቅ';
+
+  @override
+  String get submitPO => 'የግዢ ትዕዛዝ አስቀምጥ';
+
+  @override
+  String get plannedStart => 'የታቀደ መጀመሪያ';
+
+  @override
+  String get plannedEnd => 'የታቀደ ፍጻሜ';
+
+  @override
+  String get percentComplete => '% ተጠናቋል';
+
+  @override
+  String get status => 'ሁኔታ';
+
+  @override
+  String get teamMembers => 'የቡድን አባላት';
+
+  @override
+  String get inviteMember => 'አባል ጋብዝ';
+
+  @override
+  String get subscription => 'ደንበኝነት';
+
+  @override
+  String get currentPlan => 'አሁናዊ ዕቅድ';
+
+  @override
+  String get upgradePlan => 'ዕቅድ አሻሽል';
+
+  @override
+  String get payWithTelebirr => 'ተሌቢር ይክፈሉ';
+
+  @override
+  String get paymentHistory => 'የክፍያ ታሪክ';
+
+  @override
+  String formatEtb(String amount) {
+    return 'ብር $amount';
+  }
+}

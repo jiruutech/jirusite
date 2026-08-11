@@ -1,0 +1,30 @@
+# ── Backend ───────────────────────────────────────────────────────────────────
+jirusite-backend/node_modules/
+jirusite-backend/.env
+jirusite-backend/firebase-service-account.json
+jirusite-backend/uploads/
+jirusite-backend/*.log
+jirusite-backend/coverage/
+jirusite-backend/dist/
+
+# ── Mobile ────────────────────────────────────────────────────────────────────
+jirusite-mobile/.dart_tool/
+jirusite-mobile/.flutter-plugins
+jirusite-mobile/.flutter-plugins-dependencies
+jirusite-mobile/build/
+jirusite-mobile/android/.gradle/
+jirusite-mobile/android/app/debug/
+jirusite-mobile/android/app/profile/
+jirusite-mobile/android/app/release/
+jirusite-mobile/android/local.properties
+jirusite-mobile/android/key.properties
+jirusite-mobile/ios/Pods/
+jirusite-mobile/ios/.symlinks/
+jirusite-mobile/ios/Flutter/ephemeral/
+jirusite-mobile/.env
+jirusite-mobile/coverage/
+
+# ── General ───────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.log
