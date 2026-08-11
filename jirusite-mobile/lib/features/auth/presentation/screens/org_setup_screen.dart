@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/theme.dart';
 import '../../../../shared_widgets/app_button.dart';
 import '../../../../shared_widgets/app_text_field.dart';
 import '../providers/auth_provider.dart';
@@ -35,8 +36,16 @@ class _OrgSetupScreenState extends ConsumerState<OrgSetupScreen> {
         _tinCtrl.text.trim().isEmpty ? null : _tinCtrl.text.trim(),
       );
       if (mounted) context.go('/language');
-    } catch (e) {
-      setState(() { _error = e.toString(); _loading = false; });
+    } on Exception catch (e) {
+      setState(() {
+        _error = e.toString().replaceAll('Exception: ', '');
+        _loading = false;
+      });
+    } catch (_) {
+      setState(() {
+        _error = 'Could not create organisation. Please try again.';
+        _loading = false;
+      });
     }
   }
 
@@ -73,7 +82,27 @@ class _OrgSetupScreenState extends ConsumerState<OrgSetupScreen> {
                 ),
                 if (_error != null) ...[
                   const SizedBox(height: 12),
-                  Text(_error!, style: const TextStyle(color: Colors.red)),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error_outline,
+                            color: AppColors.error, size: 18),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _error!,
+                            style: const TextStyle(
+                                color: AppColors.error, fontSize: 13),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
                 const Spacer(),
                 AppButton(label: 'Continue', onPressed: _setup, isLoading: _loading),

@@ -35,21 +35,30 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/login',
     refreshListenable: authNotifier,
     redirect: (context, state) {
-      final authVal =
-          ref.read(authStateProvider).valueOrNull;
+      final authVal = ref.read(authStateProvider).valueOrNull;
       final isAuthenticated = authVal?.isAuthenticated ?? false;
       final hasOrg = authVal?.user?.hasOrganization ?? false;
       final loc = state.matchedLocation;
-      final isAuthRoute = loc == '/login' ||
-          loc == '/register' ||
-          loc.startsWith('/otp') ||
-          loc == '/org-setup' ||
-          loc == '/language';
 
-      if (!isAuthenticated && !isAuthRoute) return '/login';
-      // Authenticated but no org → send to org setup
+      // Pure auth screens — never require login
+      final isLoginFlow = loc == '/login' ||
+          loc == '/register' ||
+          loc.startsWith('/otp');
+
+      // Post-auth onboarding screens — require login but not org
+      final isOnboarding = loc == '/org-setup' || loc == '/language';
+
+      // 1. Not logged in → send to login (except login-flow screens)
+      if (!isAuthenticated && !isLoginFlow && !isOnboarding) return '/login';
+
+      // 2. Logged in but no org → must finish org setup
+      //    (allow /language only after org is set up)
       if (isAuthenticated && !hasOrg && loc != '/org-setup') return '/org-setup';
-      if (isAuthenticated && isAuthRoute && loc != '/org-setup') return '/dashboard';
+
+      // 3. Fully authenticated with org → redirect away from login/register
+      if (isAuthenticated && hasOrg && isLoginFlow) return '/dashboard';
+
+      // All other cases (dashboard, projects/:id, expenses, language, etc.) — allow
       return null;
     },
     routes: [

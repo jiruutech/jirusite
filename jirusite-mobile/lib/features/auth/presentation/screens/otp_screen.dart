@@ -37,14 +37,15 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       return;
     }
     setState(() { _loading = true; _error = null; });
-    // OTP verify is handled by the backend — here we just show the success
-    // For password reset, we'd call otpVerify with the new_password
     try {
       ref.read(authStateProvider.notifier);
       // navigate back on success
       if (mounted) context.go('/login');
-    } catch (e) {
-      setState(() { _error = e.toString(); _loading = false; });
+    } catch (_) {
+      setState(() {
+        _error = 'Verification failed. Please try again.';
+        _loading = false;
+      });
     }
   }
 
@@ -68,7 +69,27 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             ),
             if (_error != null) ...[
               const SizedBox(height: 12),
-              Text(_error!, style: const TextStyle(color: AppColors.error)),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.error_outline,
+                        color: AppColors.error, size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _error!,
+                        style: const TextStyle(
+                            color: AppColors.error, fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
             const SizedBox(height: 40),
             AppButton(label: 'Verify', onPressed: _verify, isLoading: _loading),

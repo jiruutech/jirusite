@@ -83,7 +83,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 if (error != null) ...[
                   const SizedBox(height: 12),
-                  Text(error, style: const TextStyle(color: AppColors.error)),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error_outline,
+                            color: AppColors.error, size: 18),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            error,
+                            style: const TextStyle(
+                                color: AppColors.error, fontSize: 13),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
                 const SizedBox(height: 32),
                 AppButton(label: 'Create Account', onPressed: _register, isLoading: isLoading),

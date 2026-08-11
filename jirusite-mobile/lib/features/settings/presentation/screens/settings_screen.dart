@@ -30,10 +30,17 @@ class SettingsScreen extends ConsumerWidget {
             ),
             title: Text(user?.fullName ?? 'Unknown'),
             subtitle: Text(user?.phoneNumber ?? ''),
-            trailing: Chip(
-              label: Text(user?.role ?? 'viewer',
-                  style: const TextStyle(fontSize: 11)),
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            trailing: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                user?.role ?? 'viewer',
+                style: const TextStyle(fontSize: 11, color: AppColors.primary),
+              ),
             ),
           ),
 
@@ -61,13 +68,15 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.business_outlined),
             title: const Text('Team Members'),
-            trailing: const Icon(Icons.chevron_right),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            trailing: const Icon(Icons.chevron_right, size: 20),
             onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.credit_card_outlined),
             title: const Text('Billing & Subscription'),
-            trailing: const Icon(Icons.chevron_right),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            trailing: const Icon(Icons.chevron_right, size: 20),
             onTap: () => context.push('/billing'),
           ),
 

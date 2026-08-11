@@ -69,17 +69,26 @@ class _ProjectDetailLoaded extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 6,
-      child: Scaffold(
-        backgroundColor: AppColors.chalk,
-        appBar: _ProjectAppBar(
-          projectName: projectName,
-          projectId: projectId,
-        ),
-        body: NestedScrollView(
-          // CustomScrollView approach per spec — header collapses on scroll
-          // without a rebuild in a future iteration.
+    // DefaultTabController must live INSIDE NestedScrollView's builder,
+    // not wrapping it — otherwise SliverPersistentHeader gets null geometry.
+    return Scaffold(
+      backgroundColor: AppColors.chalk,
+      appBar: _ProjectAppBar(
+        projectName: projectName,
+        projectId: projectId,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () =>
+            context.push('/projects/$projectId/expenses/new'),
+        backgroundColor: AppColors.safetyOrange,
+        foregroundColor: AppColors.chalk,
+        shape: const CircleBorder(),
+        tooltip: 'Add expense',
+        child: const Icon(Icons.add, size: 26),
+      ),
+      body: DefaultTabController(
+        length: 6,
+        child: NestedScrollView(
           headerSliverBuilder: (_, __) => [
             SliverToBoxAdapter(
               child: _ProjectHero(data: data),
@@ -118,15 +127,6 @@ class _ProjectDetailLoaded extends StatelessWidget {
               ),
             ],
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () =>
-              context.push('/projects/$projectId/expenses/new'),
-          backgroundColor: AppColors.safetyOrange,
-          foregroundColor: AppColors.chalk,
-          shape: const CircleBorder(),
-          tooltip: 'Add expense',
-          child: const Icon(Icons.add, size: 26),
         ),
       ),
     );
@@ -353,9 +353,9 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: AppColors.chalk,
+    return DecoratedBox(
       decoration: const BoxDecoration(
+        color: AppColors.chalk,
         border: Border(
           bottom: BorderSide(color: AppColors.concrete, width: 0.5),
         ),

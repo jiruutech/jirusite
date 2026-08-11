@@ -780,26 +780,35 @@ class _QuickAddTile extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => ListTile(
-        minTileHeight: 52,
-        leading: Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            color: AppColors.blueprintInk.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Icon(icon, color: AppColors.blueprintInk, size: 19),
-        ),
-        title: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        trailing:
-            const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+  Widget build(BuildContext context) => InkWell(
         onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: AppColors.blueprintInk.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Icon(icon, color: AppColors.blueprintInk, size: 19),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              const Icon(Icons.chevron_right,
+                  color: AppColors.textSecondary, size: 20),
+            ],
+          ),
+        ),
       );
 }
