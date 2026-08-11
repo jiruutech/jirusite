@@ -1,11 +1,12 @@
 class ApiEndpoints {
   /// Base URL:
-  ///   - Web (Chrome): http://localhost:3000/api  (dev server on same machine)
-  ///   - Android device: override with --dart-define=API_BASE_URL=http://10.128.127.198:3000/api
-  ///   - Android emulator: --dart-define=API_BASE_URL=http://10.0.2.2:3000/api
+  ///   - Production (default): https://jirusite.onrender.com/api
+  ///   - Local dev override: --dart-define=API_BASE_URL=http://localhost:3000/api
+  ///   - Android emulator:   --dart-define=API_BASE_URL=http://10.0.2.2:3000/api
+  ///   - Android device:     --dart-define=API_BASE_URL=http://<your-ip>:3000/api
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:3000/api',
+    defaultValue: 'https://jirusite.onrender.com/api',
   );
 
   // ── Auth ──────────────────────────────────────────────────────────────────
