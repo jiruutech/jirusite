@@ -77,7 +77,7 @@ class AppLocalizationsOm extends AppLocalizations {
   String get laborEntries => 'Hojjettoota';
 
   @override
-  String get materials => 'Meeshaalee fi Gatii';
+  String get materials => 'Meeshaalee';
 
   @override
   String get suppliers => 'Dhiyeessitootaa';
@@ -92,7 +92,7 @@ class AppLocalizationsOm extends AppLocalizations {
   String get notifications => 'Beeksisawwan';
 
   @override
-  String get billing => 'Kafaltii';
+  String get billing => 'Kaffaltii';
 
   @override
   String get settings => 'Qindaa\'inaa';
@@ -101,7 +101,7 @@ class AppLocalizationsOm extends AppLocalizations {
   String get newExpense => 'Baasii Haaraa';
 
   @override
-  String get newLaborEntry => 'Galma Hojjettoo Haaraa';
+  String get newLaborEntry => 'Galma Hojjettoota Haaraa';
 
   @override
   String get amount => 'Baasii (ETB)';
@@ -301,4 +301,49 @@ class AppLocalizationsOm extends AppLocalizations {
   String formatEtb(String amount) {
     return 'ETB $amount';
   }
+
+  @override
+  String get noOrganisation => 'Dhaabbanni hin jiru';
+
+  @override
+  String get completeOrgSetup => 'Jalqabuuf dhaabbata kee qindeessi';
+
+  @override
+  String get setUp => 'Qindeessi';
+
+  @override
+  String get activeProjects => 'Pirojektiwwan Socho\'aa';
+
+  @override
+  String get portfolioHealth => 'Fayyaa Pirojektiwwanii';
+
+  @override
+  String get thisMonth => 'Ji\'a Kana';
+
+  @override
+  String get all => 'Hunda';
+
+  @override
+  String get active => 'Socho\'aa';
+
+  @override
+  String get needsAttention => 'Xiyyeeffannoo barbaada';
+
+  @override
+  String get quickAdd => 'Saffisaan Dabali';
+
+  @override
+  String get newExpenseShort => 'Baasii Haaraa';
+
+  @override
+  String get laborEntryShort => 'Galma Hojjettoo';
+
+  @override
+  String get purchaseOrderShort => 'Ajaja Bitachuu';
+
+  @override
+  String get spent => 'bahe';
+
+  @override
+  String get of => 'irraa';
 }

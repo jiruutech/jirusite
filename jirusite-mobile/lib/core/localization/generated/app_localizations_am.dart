@@ -77,7 +77,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get laborEntries => 'የሰው ኃይል';
 
   @override
-  String get materials => 'ቁሳቁሶችና ዋጋዎች';
+  String get materials => 'ቁሳቁሶች';
 
   @override
   String get suppliers => 'አቅራቢዎች';
@@ -301,4 +301,49 @@ class AppLocalizationsAm extends AppLocalizations {
   String formatEtb(String amount) {
     return 'ብር $amount';
   }
+
+  @override
+  String get noOrganisation => 'ድርጅት አልተዘጋጀም';
+
+  @override
+  String get completeOrgSetup => 'ለመጀመር የድርጅትዎን ማዋቀር ያጠናቅቁ';
+
+  @override
+  String get setUp => 'አዋቅር';
+
+  @override
+  String get activeProjects => 'ንቁ ፕሮጀክቶች';
+
+  @override
+  String get portfolioHealth => 'የፕሮጀክቶች ጤንነት';
+
+  @override
+  String get thisMonth => 'ይህን ወር';
+
+  @override
+  String get all => 'ሁሉም';
+
+  @override
+  String get active => 'ንቁ';
+
+  @override
+  String get needsAttention => 'ትኩረት ያስፈልጋል';
+
+  @override
+  String get quickAdd => 'ፈጣን ጨምር';
+
+  @override
+  String get newExpenseShort => 'አዲስ ወጪ';
+
+  @override
+  String get laborEntryShort => 'የሠራተኛ ግቤት';
+
+  @override
+  String get purchaseOrderShort => 'የግዥ ትዕዛዝ';
+
+  @override
+  String get spent => 'ወጪ';
+
+  @override
+  String get of => 'ከ';
 }

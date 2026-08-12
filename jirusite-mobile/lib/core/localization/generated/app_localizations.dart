@@ -235,7 +235,7 @@ abstract class AppLocalizations {
   /// No description provided for @materials.
   ///
   /// In en, this message translates to:
-  /// **'Materials & Prices'**
+  /// **'Materials'**
   String get materials;
 
   /// No description provided for @suppliers.
@@ -675,6 +675,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ETB {amount}'**
   String formatEtb(String amount);
+
+  /// No description provided for @noOrganisation.
+  ///
+  /// In en, this message translates to:
+  /// **'No organisation set up'**
+  String get noOrganisation;
+
+  /// No description provided for @completeOrgSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your organisation setup to get started'**
+  String get completeOrgSetup;
+
+  /// No description provided for @setUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Up'**
+  String get setUp;
+
+  /// No description provided for @activeProjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Projects'**
+  String get activeProjects;
+
+  /// No description provided for @portfolioHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio Health'**
+  String get portfolioHealth;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get thisMonth;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @needsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs attention'**
+  String get needsAttention;
+
+  /// No description provided for @quickAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Add'**
+  String get quickAdd;
+
+  /// No description provided for @newExpenseShort.
+  ///
+  /// In en, this message translates to:
+  /// **'New Expense'**
+  String get newExpenseShort;
+
+  /// No description provided for @laborEntryShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour Entry'**
+  String get laborEntryShort;
+
+  /// No description provided for @purchaseOrderShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Order'**
+  String get purchaseOrderShort;
+
+  /// No description provided for @spent.
+  ///
+  /// In en, this message translates to:
+  /// **'spent'**
+  String get spent;
+
+  /// No description provided for @of.
+  ///
+  /// In en, this message translates to:
+  /// **'of'**
+  String get of;
 }
 
 class _AppLocalizationsDelegate

@@ -77,7 +77,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get laborEntries => 'Labor';
 
   @override
-  String get materials => 'Materials & Prices';
+  String get materials => 'Materials';
 
   @override
   String get suppliers => 'Suppliers';
@@ -301,4 +301,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String formatEtb(String amount) {
     return 'ETB $amount';
   }
+
+  @override
+  String get noOrganisation => 'No organisation set up';
+
+  @override
+  String get completeOrgSetup =>
+      'Complete your organisation setup to get started';
+
+  @override
+  String get setUp => 'Set Up';
+
+  @override
+  String get activeProjects => 'Active Projects';
+
+  @override
+  String get portfolioHealth => 'Portfolio Health';
+
+  @override
+  String get thisMonth => 'This Month';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get needsAttention => 'Needs attention';
+
+  @override
+  String get quickAdd => 'Quick Add';
+
+  @override
+  String get newExpenseShort => 'New Expense';
+
+  @override
+  String get laborEntryShort => 'Labour Entry';
+
+  @override
+  String get purchaseOrderShort => 'Purchase Order';
+
+  @override
+  String get spent => 'spent';
+
+  @override
+  String get of => 'of';
 }
