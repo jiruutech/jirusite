@@ -30,6 +30,7 @@ class JiruSiteApp extends ConsumerWidget {
       supportedLocales: const [
         Locale('en'),
         Locale('am'),
+        Locale('om'),
       ],
       localeResolutionCallback: (requested, supported) {
         if (requested == null) return const Locale('am');

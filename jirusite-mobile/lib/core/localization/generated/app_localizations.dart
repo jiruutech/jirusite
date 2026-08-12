@@ -97,7 +97,7 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('am'),
     Locale('en'),
-    Locale('om'),
+    Locale('om')
   ];
 
   /// No description provided for @appName.
@@ -520,6 +520,12 @@ abstract class AppLocalizations {
   /// **'Afaan Oromo'**
   String get afaanOromo;
 
+  /// No description provided for @tigrinya.
+  ///
+  /// In en, this message translates to:
+  /// **'Tigrinya (ትግርኛ)'**
+  String get tigrinya;
+
   /// No description provided for @workerName.
   ///
   /// In en, this message translates to:
@@ -682,7 +688,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['am', 'en', 'om', 'ti'].contains(locale.languageCode);
+      <String>['am', 'en', 'om'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -697,8 +703,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'om':
       return AppLocalizationsOm();
-    case 'ti':
-      return AppLocalizationsTi();
   }
 
   throw FlutterError(

@@ -223,6 +223,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get afaanOromo => 'Afaan Oromo';
 
   @override
+  String get tigrinya => 'Tigrinya (ትግርኛ)';
+
+  @override
   String get workerName => 'Worker / Crew Name';
 
   @override
