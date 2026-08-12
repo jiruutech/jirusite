@@ -27,14 +27,21 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (curl, mobile apps, Postman)
+      // Allow requests with no origin (native mobile apps, Postman, curl)
       if (!origin) return callback(null, true);
+
       const allowed = (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+
       // Always allow localhost in development
-      const isLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
-      if (allowed.includes(origin) || (process.env.NODE_ENV === 'development' && isLocalhost)) {
-        return callback(null, true);
-      }
+      const isLocalhost =
+        origin.includes('localhost') || origin.includes('127.0.0.1');
+
+      // Always allow localhost regardless of env — Flutter web dev runs on
+      // random high ports (e.g. localhost:53487) and the port changes each run.
+      if (isLocalhost) return callback(null, true);
+
+      if (allowed.includes(origin)) return callback(null, true);
+
       callback(new Error(`CORS: origin ${origin} not allowed`));
     },
     credentials: true,
