@@ -23,14 +23,11 @@ class JiruSiteApp extends ConsumerWidget {
       themeMode: ThemeMode.light,
       routerConfig: router,
       locale: locale,
-      // Only list locales that Flutter's GlobalMaterialLocalizations ships.
-      // om and ti are supported by our own ARB strings but NOT by Flutter's
-      // material delegates — listing them here causes "No MaterialLocalizations"
-      // crashes. We handle om/ti display via our AppLocalizations delegate only.
+      // Only use locales that Flutter's built-in MaterialLocalizations supports.
+      // Our custom AppLocalizations handles om (Oromo) independently.
       supportedLocales: const [
         Locale('en'),
         Locale('am'),
-        Locale('om'),
       ],
       localeResolutionCallback: (requested, supported) {
         if (requested == null) return const Locale('am');
