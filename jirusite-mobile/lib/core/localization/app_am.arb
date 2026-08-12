@@ -113,5 +113,6 @@
   "laborEntryShort": "የሠራተኛ ግቤት",
   "purchaseOrderShort": "የግዥ ትዕዛዝ",
   "spent": "ወጪ",
-  "of": "ከ"
+  "outOf": "ከ",
+  "completed": "ተጠናቅቋል"
 }

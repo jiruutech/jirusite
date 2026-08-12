@@ -345,5 +345,8 @@ class AppLocalizationsOm extends AppLocalizations {
   String get spent => 'bahe';
 
   @override
-  String get of => 'irraa';
+  String get outOf => 'irraa';
+
+  @override
+  String get completed => 'Xumurameera';
 }

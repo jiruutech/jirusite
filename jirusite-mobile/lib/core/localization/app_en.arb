@@ -113,5 +113,6 @@
   "laborEntryShort": "Labour Entry",
   "purchaseOrderShort": "Purchase Order",
   "spent": "spent",
-  "of": "of"
+  "outOf": "of",
+  "completed": "Completed"
 }

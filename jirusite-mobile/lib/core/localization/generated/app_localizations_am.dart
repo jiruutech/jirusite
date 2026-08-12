@@ -345,5 +345,8 @@ class AppLocalizationsAm extends AppLocalizations {
   String get spent => 'ወጪ';
 
   @override
-  String get of => 'ከ';
+  String get outOf => 'ከ';
+
+  @override
+  String get completed => 'ተጠናቅቋል';
 }

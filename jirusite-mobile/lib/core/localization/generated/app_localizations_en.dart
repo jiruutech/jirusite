@@ -346,5 +346,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spent => 'spent';
 
   @override
-  String get of => 'of';
+  String get outOf => 'of';
+
+  @override
+  String get completed => 'Completed';
 }

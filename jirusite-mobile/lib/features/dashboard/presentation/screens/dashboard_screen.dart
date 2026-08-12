@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
 import '../../../../core/database/app_database.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/sync/sync_engine.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
@@ -36,15 +37,16 @@ class DashboardScreen extends ConsumerWidget {
     final authState = ref.watch(authStateProvider).valueOrNull;
     final user = authState?.user;
     final orgId = user?.organizationId;
+    final l = AppLocalizations.of(context);
 
     if (orgId == null) {
       return Scaffold(
         appBar: const _DashboardAppBar(orgName: 'JIRUSite'),
         body: EmptyState(
           icon: Icons.business_outlined,
-          title: 'No organisation set up',
-          subtitle: 'Complete your organisation setup to get started.',
-          actionLabel: 'Set Up',
+          title: l.noOrganisation,
+          subtitle: l.completeOrgSetup,
+          actionLabel: l.setUp,
           onAction: () => context.go('/org-setup'),
         ),
       );
@@ -198,6 +200,7 @@ class _PortfolioStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     final active =
         projects.where((p) => p.status == 'active').toList();
+    final l = AppLocalizations.of(context);
 
     // Portfolio-level aggregates
     final totalBudget = active.fold<double>(
@@ -215,7 +218,7 @@ class _PortfolioStrip extends StatelessWidget {
         child: Row(
           children: [
             _MetricCard(
-              label: 'Active Projects',
+              label: l.activeProjects,
               child: Text(
                 '${active.length}',
                 style: const TextStyle(
@@ -228,7 +231,7 @@ class _PortfolioStrip extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             _MetricCard(
-              label: 'Portfolio Health',
+              label: l.portfolioHealth,
               child: totalBudget > 0
                   ? LevelWidget(
                       budget: totalBudget,
@@ -240,7 +243,7 @@ class _PortfolioStrip extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             _MetricCard(
-              label: 'This Month',
+              label: l.thisMonth,
               child: thisMonthSpend != null
                   ? _MonthSpend(amount: thisMonthSpend)
                   : const _NoDataLine(),
@@ -359,12 +362,13 @@ class _FilterChipRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selected = ref.watch(_filterProvider);
+    final l = AppLocalizations.of(context);
 
-    const labels = {
-      _ProjectFilter.all: 'All',
-      _ProjectFilter.active: 'Active',
-      _ProjectFilter.needsAttention: 'Needs attention',
-      _ProjectFilter.completed: 'Completed',
+    final labels = {
+      _ProjectFilter.all: l.all,
+      _ProjectFilter.active: l.active,
+      _ProjectFilter.needsAttention: l.needsAttention,
+      _ProjectFilter.completed: l.completed,
     };
 
     return Container(
@@ -439,6 +443,7 @@ class _ProjectListSliver extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(_filterProvider);
     final filtered = _applyFilter(projects, filter);
+    final l = AppLocalizations.of(context);
 
     if (filtered.isEmpty) {
       return SliverFillRemaining(
@@ -446,13 +451,13 @@ class _ProjectListSliver extends ConsumerWidget {
         child: EmptyState(
           icon: Icons.foundation,
           title: filter == _ProjectFilter.all
-              ? 'No projects yet'
+              ? l.noProjects
               : 'No projects in this filter',
           subtitle: filter == _ProjectFilter.all
               ? 'Create your first project to start tracking costs.'
               : null,
           actionLabel:
-              filter == _ProjectFilter.all ? 'New Project' : null,
+              filter == _ProjectFilter.all ? l.projects : null,
           onAction: filter == _ProjectFilter.all
               ? () => context.push('/projects')
               : null,
@@ -681,6 +686,8 @@ class _QuickAddSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final projects =
         ref.watch(_orgProjectsProvider(orgId)).valueOrNull ?? [];
+    final l = AppLocalizations.of(context);
+    
     // Use most-recently-updated active project
     final recentProject = projects
         .where((p) => p.status == 'active')
@@ -709,7 +716,7 @@ class _QuickAddSheet extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                Text('Quick Add',
+                Text(l.quickAdd,
                     style: Theme.of(context).textTheme.titleMedium),
                 if (recentProject != null) ...[
                   const SizedBox(width: 8),
@@ -731,7 +738,7 @@ class _QuickAddSheet extends ConsumerWidget {
           const SizedBox(height: 4),
           _QuickAddTile(
             icon: Icons.receipt_long_outlined,
-            label: 'New Expense',
+            label: l.newExpenseShort,
             onTap: () {
               Navigator.pop(context);
               if (projectId != null) {
@@ -743,7 +750,7 @@ class _QuickAddSheet extends ConsumerWidget {
           ),
           _QuickAddTile(
             icon: Icons.people_outlined,
-            label: 'Labour Entry',
+            label: l.laborEntryShort,
             onTap: () {
               Navigator.pop(context);
               if (projectId != null) {
@@ -755,7 +762,7 @@ class _QuickAddSheet extends ConsumerWidget {
           ),
           _QuickAddTile(
             icon: Icons.assignment_outlined,
-            label: 'Purchase Order',
+            label: l.purchaseOrderShort,
             onTap: () {
               Navigator.pop(context);
               if (projectId != null) {

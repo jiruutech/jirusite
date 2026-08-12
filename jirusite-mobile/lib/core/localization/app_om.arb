@@ -113,5 +113,6 @@
   "laborEntryShort": "Galma Hojjettoo",
   "purchaseOrderShort": "Ajaja Bitachuu",
   "spent": "bahe",
-  "of": "irraa"
+  "outOf": "irraa",
+  "completed": "Xumurameera"
 }

@@ -760,11 +760,17 @@ abstract class AppLocalizations {
   /// **'spent'**
   String get spent;
 
-  /// No description provided for @of.
+  /// No description provided for @outOf.
   ///
   /// In en, this message translates to:
   /// **'of'**
-  String get of;
+  String get outOf;
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
 }
 
 class _AppLocalizationsDelegate
