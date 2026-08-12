@@ -33,8 +33,7 @@ class JiruSiteApp extends ConsumerWidget {
       ],
       localeResolutionCallback: (requested, supported) {
         if (requested == null) return const Locale('am');
-        // Our app supports en, am, om, ti — allow all four through
-        const appLocales = ['en', 'am', 'om', 'ti'];
+        const appLocales = ['en', 'am', 'om'];
         if (appLocales.contains(requested.languageCode)) return requested;
         return const Locale('am');
       },

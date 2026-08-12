@@ -21,7 +21,6 @@ class SettingsScreen extends ConsumerWidget {
       'en': l.english,
       'am': l.amharic,
       'om': l.afaanOromo,
-      'ti': l.tigrinya,
     };
 
     return Scaffold(

@@ -24,42 +24,42 @@ class AppLocalizationsOm extends AppLocalizations {
   String get password => 'Jecha Darbii';
 
   @override
-  String get confirmPassword => 'Confirm Password';
+  String get confirmPassword => 'Jecha Darbii Mirkaneessi';
 
   @override
-  String get fullName => 'Full Name';
+  String get fullName => 'Maqaa Guutuu';
 
   @override
-  String get email => 'Email (optional)';
+  String get email => 'Imeelii (dirqama miti)';
 
   @override
-  String get loginButton => 'Login';
+  String get loginButton => 'Seeni';
 
   @override
-  String get registerButton => 'Create Account';
+  String get registerButton => 'Herreegaa Bani';
 
   @override
-  String get otpTitle => 'Enter Verification Code';
+  String get otpTitle => 'Koodii Mirkaneessaa Galchi';
 
   @override
   String otpSubtitle(String phone) {
-    return 'We sent a 6-digit code to $phone';
+    return 'Koodii lakkoofsa 6 $phone ergine';
   }
 
   @override
-  String get verify => 'Verify';
+  String get verify => 'Mirkaneessi';
 
   @override
-  String get resendCode => 'Resend Code';
+  String get resendCode => 'Koodii Irra Ergi';
 
   @override
-  String get orgSetupTitle => 'Set Up Your Organization';
+  String get orgSetupTitle => 'Dhaabbata Kee Qindeessi';
 
   @override
-  String get orgName => 'Organization Name';
+  String get orgName => 'Maqaa Dhaabbataa';
 
   @override
-  String get tinNumber => 'TIN Number (optional)';
+  String get tinNumber => 'Lakkoofsa TIN (dirqama miti)';
 
   @override
   String get continueButton => 'Itti Fufi';
@@ -98,49 +98,49 @@ class AppLocalizationsOm extends AppLocalizations {
   String get settings => 'Qindaa\'inaa';
 
   @override
-  String get newExpense => 'New Expense';
+  String get newExpense => 'Baasii Haaraa';
 
   @override
-  String get newLaborEntry => 'New Labor Entry';
+  String get newLaborEntry => 'Galma Hojjettoo Haaraa';
 
   @override
   String get amount => 'Baasii (ETB)';
 
   @override
-  String get description => 'Description';
+  String get description => 'Ibsa';
 
   @override
-  String get date => 'Date';
+  String get date => 'Guyyaa';
 
   @override
-  String get costCode => 'Cost Code';
+  String get costCode => 'Koodii Baasii';
 
   @override
-  String get expenseType => 'Expense Type';
+  String get expenseType => 'Gosa Baasii';
 
   @override
-  String get material => 'Material';
+  String get material => 'Meeshaa';
 
   @override
-  String get labor => 'Labor';
+  String get labor => 'Hojjettoo';
 
   @override
-  String get equipment => 'Equipment';
+  String get equipment => 'Meeshaa Hojii';
 
   @override
-  String get other => 'Other';
+  String get other => 'Kan Biraa';
 
   @override
-  String get quantity => 'Quantity';
+  String get quantity => 'Baay\'ina';
 
   @override
-  String get unit => 'Unit';
+  String get unit => 'Lakkoofsa';
 
   @override
-  String get supplier => 'Supplier';
+  String get supplier => 'Dhiyeessituu';
 
   @override
-  String get addReceipt => 'Add Receipt Photo';
+  String get addReceipt => 'Suuraa Rasiidhaa Dabaluu';
 
   @override
   String get save => 'Olkaa\'i';
@@ -149,30 +149,30 @@ class AppLocalizationsOm extends AppLocalizations {
   String get cancel => 'Dhiisi';
 
   @override
-  String get delete => 'Delete';
+  String get delete => 'Haqi';
 
   @override
-  String get approve => 'Approve';
+  String get approve => 'Hayyami';
 
   @override
-  String get reject => 'Reject';
+  String get reject => 'Didi';
 
   @override
-  String get pending => 'Pending';
+  String get pending => 'Eeggachaa';
 
   @override
-  String get approved => 'Approved';
+  String get approved => 'Hayyamameera';
 
   @override
-  String get synced => 'Synced';
+  String get synced => 'Walmadaalee';
 
   @override
   String syncPending(int count) {
-    return '$count pending';
+    return '$count eeggachaa';
   }
 
   @override
-  String get syncing => 'Syncing...';
+  String get syncing => 'Walmadaallaa...';
 
   @override
   String get totalBudget => 'Bajatii Walii Galaa';
@@ -184,19 +184,19 @@ class AppLocalizationsOm extends AppLocalizations {
   String get remaining => 'Hafee';
 
   @override
-  String get budgetHealth => 'Budget Health';
+  String get budgetHealth => 'Fayyaa Bajataa';
 
   @override
-  String get recentActivity => 'Recent Activity';
+  String get recentActivity => 'Hojii Dhiyoo';
 
   @override
-  String get noProjects => 'No projects yet';
+  String get noProjects => 'Pirojektiin hin jiru';
 
   @override
-  String get noExpenses => 'No expenses yet';
+  String get noExpenses => 'Baasiin hin jiru';
 
   @override
-  String get noLabor => 'No labor entries yet';
+  String get noLabor => 'Galma hojjettoo hin jiru';
 
   @override
   String get loading => 'Fe\'aa jira...';
@@ -208,10 +208,10 @@ class AppLocalizationsOm extends AppLocalizations {
   String get retry => 'Irra deebi\'i yaali';
 
   @override
-  String get logout => 'Logout';
+  String get logout => 'Bahi';
 
   @override
-  String get language => 'Language';
+  String get language => 'Afaan';
 
   @override
   String get english => 'English';
@@ -223,79 +223,76 @@ class AppLocalizationsOm extends AppLocalizations {
   String get afaanOromo => 'Afaan Oromo';
 
   @override
-  String get tigrinya => 'Tigrinya (ትግርኛ)';
+  String get workerName => 'Maqaa Hojjettoo / Garee';
 
   @override
-  String get workerName => 'Worker / Crew Name';
+  String get numberOfWorkers => 'Lakkoofsa Hojjettootaa';
 
   @override
-  String get numberOfWorkers => 'Number of Workers';
+  String get dailyRate => 'Kaffaltii Guyyaa (ETB)';
 
   @override
-  String get dailyRate => 'Daily Rate (ETB)';
+  String get totalAmount => 'Baasii Waliigalaa (ETB)';
 
   @override
-  String get totalAmount => 'Total Amount (ETB)';
+  String get workDate => 'Guyyaa Hojii';
 
   @override
-  String get workDate => 'Work Date';
+  String get workDescription => 'Ibsa Hojii';
 
   @override
-  String get workDescription => 'Work Description';
+  String get currentPrice => 'Gatii Ammaa';
 
   @override
-  String get currentPrice => 'Current Price';
+  String get priceHistory => 'Seenaa Gatii';
 
   @override
-  String get priceHistory => 'Price History';
+  String get region => 'Godinaa';
 
   @override
-  String get region => 'Region';
+  String get reportPrice => 'Gatii Gabaasi';
 
   @override
-  String get reportPrice => 'Report a Price';
+  String get verified => 'Mirkanaa\'e';
 
   @override
-  String get verified => 'Verified';
+  String get requestQuote => 'Gatii Gaafadhu';
 
   @override
-  String get requestQuote => 'Request Quote';
+  String get submitPO => 'Ajaja Bitachuu Ergi';
 
   @override
-  String get submitPO => 'Submit Purchase Order';
+  String get plannedStart => 'Jalqaba Karoorfame';
 
   @override
-  String get plannedStart => 'Planned Start';
+  String get plannedEnd => 'Xumura Karoorfame';
 
   @override
-  String get plannedEnd => 'Planned End';
+  String get percentComplete => '% Xumurame';
 
   @override
-  String get percentComplete => '% Complete';
+  String get status => 'Haala';
 
   @override
-  String get status => 'Status';
+  String get teamMembers => 'Miseensota Garee';
 
   @override
-  String get teamMembers => 'Team Members';
+  String get inviteMember => 'Miseensa Affeeri';
 
   @override
-  String get inviteMember => 'Invite Member';
+  String get subscription => 'Miseensummaa';
 
   @override
-  String get subscription => 'Subscription';
+  String get currentPlan => 'Karoora Ammaa';
 
   @override
-  String get currentPlan => 'Current Plan';
+  String get upgradePlan => 'Karoora Fooyi\'i';
 
   @override
-  String get upgradePlan => 'Upgrade Plan';
+  String get payWithTelebirr => 'Telebirr Itti Kafali';
 
   @override
-  String get payWithTelebirr => 'Pay with Telebirr';
-
-  @override
-  String get paymentHistory => 'Payment History';
+  String get paymentHistory => 'Seenaa Kaffaltii';
 
   @override
   String formatEtb(String amount) {

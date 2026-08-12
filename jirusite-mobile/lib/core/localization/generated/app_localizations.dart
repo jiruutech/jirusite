@@ -8,7 +8,6 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_am.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_om.dart';
-import 'app_localizations_ti.dart';
 
 // ignore_for_file: type=lint
 
@@ -99,7 +98,6 @@ abstract class AppLocalizations {
     Locale('am'),
     Locale('en'),
     Locale('om'),
-    Locale('ti')
   ];
 
   /// No description provided for @appName.
@@ -521,12 +519,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Afaan Oromo'**
   String get afaanOromo;
-
-  /// No description provided for @tigrinya.
-  ///
-  /// In en, this message translates to:
-  /// **'Tigrinya (ትግርኛ)'**
-  String get tigrinya;
 
   /// No description provided for @workerName.
   ///

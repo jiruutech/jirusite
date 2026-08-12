@@ -27,7 +27,6 @@ class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
       'en': l.english,
       'am': l.amharic,
       'om': l.afaanOromo,
-      'ti': l.tigrinya,
     };
 
     return Scaffold(

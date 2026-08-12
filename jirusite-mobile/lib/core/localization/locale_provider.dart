@@ -17,7 +17,7 @@ class LocaleNotifier extends StateNotifier<Locale> {
   // Locales that Flutter's GlobalMaterialLocalizations supports.
   // om/ti use our ARB strings but fall back to 'am' for system widgets.
   static const _materialSupported = {'en', 'am'};
-  static const _appSupported = {'en', 'am', 'om', 'ti'};
+  static const _appSupported = {'en', 'am', 'om'};
 
   Future<void> _load() async {
     final code = await _storage.read(key: _key);
@@ -43,17 +43,14 @@ class LocaleNotifier extends StateNotifier<Locale> {
       : const Locale('am');
 }
 
-/// Supported locales
 const kSupportedLocales = [
   Locale('en'),
   Locale('am'),
   Locale('om'),
-  Locale('ti'),
 ];
 
 const kLocaleNames = {
   'en': 'English',
   'am': 'አማርኛ (Amharic)',
   'om': 'Afaan Oromo',
-  'ti': 'ትግርኛ (Tigrinya)',
 };
