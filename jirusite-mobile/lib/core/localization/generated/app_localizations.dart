@@ -771,6 +771,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Completed'**
   String get completed;
+
+  /// No description provided for @newProject.
+  ///
+  /// In en, this message translates to:
+  /// **'New Project'**
+  String get newProject;
+
+  /// No description provided for @projectName.
+  ///
+  /// In en, this message translates to:
+  /// **'Project Name'**
+  String get projectName;
+
+  /// No description provided for @totalBudgetEtb.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Budget (ETB)'**
+  String get totalBudgetEtb;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @noProjectsInFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'No projects in this filter'**
+  String get noProjectsInFilter;
+
+  /// No description provided for @createFirstProject.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first project to start tracking costs'**
+  String get createFirstProject;
+
+  /// No description provided for @project.
+  ///
+  /// In en, this message translates to:
+  /// **'Project'**
+  String get project;
+
+  /// No description provided for @trendingOverBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending over budget'**
+  String get trendingOverBudget;
+
+  /// No description provided for @approachingBudgetLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Approaching budget limit'**
+  String get approachingBudgetLimit;
+
+  /// No description provided for @onTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'On track'**
+  String get onTrack;
+
+  /// No description provided for @budget.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get budget;
+
+  /// No description provided for @overview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overview;
+
+  /// No description provided for @labour.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour'**
+  String get labour;
+
+  /// No description provided for @team.
+  ///
+  /// In en, this message translates to:
+  /// **'Team'**
+  String get team;
+
+  /// No description provided for @budgetByCostCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget by Cost Code'**
+  String get budgetByCostCode;
+
+  /// No description provided for @sortedByVariance.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorted by variance'**
+  String get sortedByVariance;
+
+  /// No description provided for @seeAllActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'See all activity'**
+  String get seeAllActivity;
+
+  /// No description provided for @noRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent activity'**
+  String get noRecentActivity;
+
+  /// No description provided for @daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Days left'**
+  String get daysLeft;
+
+  /// No description provided for @pendingSyncCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending sync'**
+  String get pendingSyncCount;
+
+  /// No description provided for @loadingEllipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading…'**
+  String get loadingEllipsis;
+
+  /// No description provided for @addExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Expense'**
+  String get addExpense;
+
+  /// No description provided for @noExpensesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses yet'**
+  String get noExpensesYet;
+
+  /// No description provided for @pendingSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending sync'**
+  String get pendingSync;
+
+  /// No description provided for @syncConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync conflict'**
+  String get syncConflict;
+
+  /// No description provided for @saveExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Expense'**
+  String get saveExpense;
+
+  /// No description provided for @expenseTypeCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Type'**
+  String get expenseTypeCaps;
+
+  /// No description provided for @amountRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount *'**
+  String get amountRequired;
+
+  /// No description provided for @etb.
+  ///
+  /// In en, this message translates to:
+  /// **'ETB'**
+  String get etb;
+
+  /// No description provided for @quantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get quantityLabel;
+
+  /// No description provided for @unitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get unitLabel;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @transactionDateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Date *'**
+  String get transactionDateRequired;
+
+  /// No description provided for @enterValidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid amount'**
+  String get enterValidAmount;
+
+  /// No description provided for @offlineWillSync.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline — expense will sync automatically when connected'**
+  String get offlineWillSync;
+
+  /// No description provided for @expenseSavedSyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense saved & syncing'**
+  String get expenseSavedSyncing;
+
+  /// No description provided for @expenseSavedOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense saved — will sync when online'**
+  String get expenseSavedOffline;
+
+  /// No description provided for @failedToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save'**
+  String get failedToSave;
+
+  /// No description provided for @laborEntriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Labor Entries'**
+  String get laborEntriesTitle;
+
+  /// No description provided for @addLabor.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Labor'**
+  String get addLabor;
+
+  /// No description provided for @noLaborEntriesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No labor entries yet'**
+  String get noLaborEntriesYet;
+
+  /// No description provided for @addLaborEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Labor Entry'**
+  String get addLaborEntry;
+
+  /// No description provided for @workersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'workers'**
+  String get workersCount;
+
+  /// No description provided for @workerCrewNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker / Crew Name *'**
+  String get workerCrewNameRequired;
+
+  /// No description provided for @workerCrewPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Rebar Crew (Gebru & team)'**
+  String get workerCrewPlaceholder;
+
+  /// No description provided for @workDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Description'**
+  String get workDescriptionLabel;
+
+  /// No description provided for @workDescriptionPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Foundation rebar installation, ground floor'**
+  String get workDescriptionPlaceholder;
+
+  /// No description provided for @workersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers'**
+  String get workersLabel;
+
+  /// No description provided for @dailyRateEtb.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Rate (ETB)'**
+  String get dailyRateEtb;
+
+  /// No description provided for @totalAmountEtb.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount (ETB) *'**
+  String get totalAmountEtb;
+
+  /// No description provided for @workDateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Date *'**
+  String get workDateRequired;
+
+  /// No description provided for @offlineWillSyncShort.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline — will sync when connected'**
+  String get offlineWillSyncShort;
+
+  /// No description provided for @enterTotalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter total amount'**
+  String get enterTotalAmount;
+
+  /// No description provided for @saveLaborEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Labor Entry'**
+  String get saveLaborEntry;
+
+  /// No description provided for @laborEntrySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Labor entry saved & syncing'**
+  String get laborEntrySaved;
+
+  /// No description provided for @laborEntrySavedOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Labor entry saved — will sync when online'**
+  String get laborEntrySavedOffline;
+
+  /// No description provided for @invalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid'**
+  String get invalidNumber;
+
+  /// No description provided for @required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get required;
 }
 
 class _AppLocalizationsDelegate

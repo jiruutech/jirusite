@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/currency.dart';
@@ -23,14 +24,15 @@ class ProjectListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final projectsAsync = ref.watch(projectListProvider);
     final user = ref.watch(authStateProvider).valueOrNull?.user;
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Projects')),
+      appBar: AppBar(title: Text(l.projects)),
       floatingActionButton: (user?.canApprove ?? false) || (user?.canCreateExpense ?? false)
           ? FloatingActionButton.extended(
               onPressed: () => _showCreateDialog(context, ref),
               icon: const Icon(Icons.add),
-              label: const Text('New Project'),
+              label: Text(l.newProject),
             )
           : null,
       body: projectsAsync.when(
@@ -40,8 +42,8 @@ class ProjectListScreen extends ConsumerWidget {
           if (projects.isEmpty) {
             return EmptyState(
               icon: Icons.construction_outlined,
-              title: 'No projects yet',
-              actionLabel: 'Create Project',
+              title: l.noProjects,
+              actionLabel: l.newProject,
               onAction: () => _showCreateDialog(context, ref),
             );
           }
@@ -61,22 +63,24 @@ class ProjectListScreen extends ConsumerWidget {
   void _showCreateDialog(BuildContext context, WidgetRef ref) {
     final nameCtrl = TextEditingController();
     final budgetCtrl = TextEditingController();
+    final l = AppLocalizations.of(context);
+    
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('New Project'),
+        title: Text(l.newProject),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Project Name')),
+            TextField(controller: nameCtrl, decoration: InputDecoration(labelText: l.projectName)),
             const SizedBox(height: 12),
             TextField(controller: budgetCtrl,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Total Budget (ETB)')),
+                decoration: InputDecoration(labelText: l.totalBudgetEtb)),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.cancel)),
           ElevatedButton(
             onPressed: () async {
               final dio = ref.read(dioClientProvider);
@@ -88,7 +92,7 @@ class ProjectListScreen extends ConsumerWidget {
               ref.invalidate(projectListProvider);
               if (ctx.mounted) Navigator.pop(ctx);
             },
-            child: const Text('Create'),
+            child: Text(l.create),
           ),
         ],
       ),

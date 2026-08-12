@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
 import '../../../../core/database/app_database.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../shared_widgets/empty_state.dart';
 import '../../../../shared_widgets/status_stripe_card.dart';
@@ -18,13 +19,14 @@ class ExpenseListScreen extends ConsumerWidget {
       StreamProvider.autoDispose((ref) =>
           ref.read(appDatabaseProvider).watchExpenses(projectId)),
     );
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Expenses')),
+      appBar: AppBar(title: Text(l.expenses)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/projects/$projectId/expenses/new'),
         icon: const Icon(Icons.add),
-        label: const Text('Add Expense'),
+        label: Text(l.addExpense),
         backgroundColor: AppColors.safetyOrange,
         foregroundColor: AppColors.chalk,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
@@ -36,8 +38,8 @@ class ExpenseListScreen extends ConsumerWidget {
           if (expenses.isEmpty) {
             return EmptyState(
               icon: Icons.receipt_long_outlined,
-              title: 'No expenses yet',
-              actionLabel: 'Add Expense',
+              title: l.noExpensesYet,
+              actionLabel: l.addExpense,
               onAction: () =>
                   context.push('/projects/$projectId/expenses/new'),
             );
@@ -143,6 +145,8 @@ class _SyncDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    
     final color = switch (syncStatus) {
       'pending' => AppColors.ochreDust,
       'conflict' => AppColors.rebarRust,
@@ -150,9 +154,9 @@ class _SyncDot extends StatelessWidget {
     };
 
     final tooltip = switch (syncStatus) {
-      'pending' => 'Pending sync',
-      'conflict' => 'Sync conflict',
-      _ => 'Synced',
+      'pending' => l.pendingSync,
+      'conflict' => l.syncConflict,
+      _ => l.synced,
     };
 
     return Tooltip(

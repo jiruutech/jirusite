@@ -350,4 +350,183 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get completed => 'Completed';
+
+  @override
+  String get newProject => 'New Project';
+
+  @override
+  String get projectName => 'Project Name';
+
+  @override
+  String get totalBudgetEtb => 'Total Budget (ETB)';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get noProjectsInFilter => 'No projects in this filter';
+
+  @override
+  String get createFirstProject =>
+      'Create your first project to start tracking costs';
+
+  @override
+  String get project => 'Project';
+
+  @override
+  String get trendingOverBudget => 'Trending over budget';
+
+  @override
+  String get approachingBudgetLimit => 'Approaching budget limit';
+
+  @override
+  String get onTrack => 'On track';
+
+  @override
+  String get budget => 'Budget';
+
+  @override
+  String get overview => 'Overview';
+
+  @override
+  String get labour => 'Labour';
+
+  @override
+  String get team => 'Team';
+
+  @override
+  String get budgetByCostCode => 'Budget by Cost Code';
+
+  @override
+  String get sortedByVariance => 'Sorted by variance';
+
+  @override
+  String get seeAllActivity => 'See all activity';
+
+  @override
+  String get noRecentActivity => 'No recent activity';
+
+  @override
+  String get daysLeft => 'Days left';
+
+  @override
+  String get pendingSyncCount => 'Pending sync';
+
+  @override
+  String get loadingEllipsis => 'Loading…';
+
+  @override
+  String get addExpense => 'Add Expense';
+
+  @override
+  String get noExpensesYet => 'No expenses yet';
+
+  @override
+  String get pendingSync => 'Pending sync';
+
+  @override
+  String get syncConflict => 'Sync conflict';
+
+  @override
+  String get saveExpense => 'Save Expense';
+
+  @override
+  String get expenseTypeCaps => 'Expense Type';
+
+  @override
+  String get amountRequired => 'Amount *';
+
+  @override
+  String get etb => 'ETB';
+
+  @override
+  String get quantityLabel => 'Quantity';
+
+  @override
+  String get unitLabel => 'Unit';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get transactionDateRequired => 'Transaction Date *';
+
+  @override
+  String get enterValidAmount => 'Enter a valid amount';
+
+  @override
+  String get offlineWillSync =>
+      'You\'re offline — expense will sync automatically when connected';
+
+  @override
+  String get expenseSavedSyncing => 'Expense saved & syncing';
+
+  @override
+  String get expenseSavedOffline => 'Expense saved — will sync when online';
+
+  @override
+  String get failedToSave => 'Failed to save';
+
+  @override
+  String get laborEntriesTitle => 'Labor Entries';
+
+  @override
+  String get addLabor => 'Add Labor';
+
+  @override
+  String get noLaborEntriesYet => 'No labor entries yet';
+
+  @override
+  String get addLaborEntry => 'Add Labor Entry';
+
+  @override
+  String get workersCount => 'workers';
+
+  @override
+  String get workerCrewNameRequired => 'Worker / Crew Name *';
+
+  @override
+  String get workerCrewPlaceholder => 'Rebar Crew (Gebru & team)';
+
+  @override
+  String get workDescriptionLabel => 'Work Description';
+
+  @override
+  String get workDescriptionPlaceholder =>
+      'Foundation rebar installation, ground floor';
+
+  @override
+  String get workersLabel => 'Workers';
+
+  @override
+  String get dailyRateEtb => 'Daily Rate (ETB)';
+
+  @override
+  String get totalAmountEtb => 'Total Amount (ETB) *';
+
+  @override
+  String get workDateRequired => 'Work Date *';
+
+  @override
+  String get offlineWillSyncShort =>
+      'You\'re offline — will sync when connected';
+
+  @override
+  String get enterTotalAmount => 'Enter total amount';
+
+  @override
+  String get saveLaborEntry => 'Save Labor Entry';
+
+  @override
+  String get laborEntrySaved => 'Labor entry saved & syncing';
+
+  @override
+  String get laborEntrySavedOffline =>
+      'Labor entry saved — will sync when online';
+
+  @override
+  String get invalidNumber => 'Invalid';
+
+  @override
+  String get required => 'Required';
 }

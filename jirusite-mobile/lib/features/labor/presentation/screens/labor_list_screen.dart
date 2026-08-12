@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
 import '../../../../core/database/app_database.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../shared_widgets/empty_state.dart';
 
@@ -17,13 +18,14 @@ class LaborListScreen extends ConsumerWidget {
       StreamProvider.autoDispose((ref) =>
           ref.read(appDatabaseProvider).watchLabor(projectId)),
     );
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Labor Entries')),
+      appBar: AppBar(title: Text(l.laborEntriesTitle)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/projects/$projectId/labor/new'),
         icon: const Icon(Icons.add),
-        label: const Text('Add Labor'),
+        label: Text(l.addLabor),
       ),
       body: laborAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -32,8 +34,8 @@ class LaborListScreen extends ConsumerWidget {
           if (entries.isEmpty) {
             return EmptyState(
               icon: Icons.people_outlined,
-              title: 'No labor entries yet',
-              actionLabel: 'Add Labor Entry',
+              title: l.noLaborEntriesYet,
+              actionLabel: l.addLaborEntry,
               onAction: () => context.push('/projects/$projectId/labor/new'),
             );
           }
@@ -54,6 +56,8 @@ class _LaborTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -62,7 +66,7 @@ class _LaborTile extends StatelessWidget {
           child: Icon(Icons.people_outlined, color: Colors.purple, size: 20),
         ),
         title: Text(entry.workerOrCrewName, maxLines: 1, overflow: TextOverflow.ellipsis),
-        subtitle: Text('${entry.numberOfWorkers} workers · ${entry.workDate}',
+        subtitle: Text('${entry.numberOfWorkers} ${l.workersCount} · ${entry.workDate}',
             style: Theme.of(context).textTheme.bodySmall),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,

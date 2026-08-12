@@ -101,7 +101,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get newExpense => 'አዲስ ወጪ';
 
   @override
-  String get newLaborEntry => 'አዲስ የሰው ኃይል ግቤት';
+  String get newLaborEntry => 'አዲስ የሠራተኛ ግቤት';
 
   @override
   String get amount => 'መጠን (ብር)';
@@ -164,7 +164,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get approved => 'ፀድቋል';
 
   @override
-  String get synced => 'ተመሳሰለ';
+  String get synced => 'ተመሳስሏል';
 
   @override
   String syncPending(int count) {
@@ -181,7 +181,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get totalSpent => 'ጠቅላላ ወጪ';
 
   @override
-  String get remaining => 'ቀሪ';
+  String get remaining => 'የቀረው';
 
   @override
   String get budgetHealth => 'የበጀት ሁኔታ';
@@ -349,4 +349,178 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get completed => 'ተጠናቅቋል';
+
+  @override
+  String get newProject => 'አዲስ ፕሮጀክት';
+
+  @override
+  String get projectName => 'የፕሮጀክት ስም';
+
+  @override
+  String get totalBudgetEtb => 'ጠቅላላ በጀት (ብር)';
+
+  @override
+  String get create => 'ፍጠር';
+
+  @override
+  String get noProjectsInFilter => 'በዚህ ማጣሪያ ውስጥ ፕሮጀክቶች የሉም';
+
+  @override
+  String get createFirstProject => 'ወጪዎችን ለመከታተል የመጀመሪያ ፕሮጀክትዎን ይፍጠሩ';
+
+  @override
+  String get project => 'ፕሮጀክት';
+
+  @override
+  String get trendingOverBudget => 'ከበጀት በላይ እየሆነ ነው';
+
+  @override
+  String get approachingBudgetLimit => 'የበጀት ገደብ እየቀረበ ነው';
+
+  @override
+  String get onTrack => 'በትክክለኛው መንገድ ላይ';
+
+  @override
+  String get budget => 'በጀት';
+
+  @override
+  String get overview => 'አጠቃላይ እይታ';
+
+  @override
+  String get labour => 'ሠራተኞች';
+
+  @override
+  String get team => 'ቡድን';
+
+  @override
+  String get budgetByCostCode => 'በወጪ ኮድ በጀት';
+
+  @override
+  String get sortedByVariance => 'በልዩነት ተለይቷል';
+
+  @override
+  String get seeAllActivity => 'ሁሉንም እንቅስቃሴ ይመልከቱ';
+
+  @override
+  String get noRecentActivity => 'የቅርብ ጊዜ እንቅስቃሴ የለም';
+
+  @override
+  String get daysLeft => 'የቀሩ ቀናት';
+
+  @override
+  String get pendingSyncCount => 'መመሳሰል በመጠባበቅ ላይ';
+
+  @override
+  String get loadingEllipsis => 'በመጫን ላይ…';
+
+  @override
+  String get addExpense => 'ወጪ ጨምር';
+
+  @override
+  String get noExpensesYet => 'ወጪዎች የሉም';
+
+  @override
+  String get pendingSync => 'መመሳሰል በመጠባበቅ ላይ';
+
+  @override
+  String get syncConflict => 'የመመሳሰል ግጭት';
+
+  @override
+  String get saveExpense => 'ወጪን አስቀምጥ';
+
+  @override
+  String get expenseTypeCaps => 'የወጪ አይነት';
+
+  @override
+  String get amountRequired => 'መጠን *';
+
+  @override
+  String get etb => 'ብር';
+
+  @override
+  String get quantityLabel => 'ብዛት';
+
+  @override
+  String get unitLabel => 'አሃድ';
+
+  @override
+  String get select => 'ምረጥ';
+
+  @override
+  String get transactionDateRequired => 'የግብይት ቀን *';
+
+  @override
+  String get enterValidAmount => 'ትክክለኛ መጠን ያስገቡ';
+
+  @override
+  String get offlineWillSync => 'ከመስመር ውጭ ነዎት — ወጪው ሲገናኙ በራስሰር ይመሳሰላል';
+
+  @override
+  String get expenseSavedSyncing => 'ወጪ ተቀምጧል እና እየተመሳሰለ ነው';
+
+  @override
+  String get expenseSavedOffline => 'ወጪ ተቀምጧል — ሲገናኙ ይመሳሰላል';
+
+  @override
+  String get failedToSave => 'ማስቀመጥ አልተሳካም';
+
+  @override
+  String get laborEntriesTitle => 'የሠራተኛ ግቤቶች';
+
+  @override
+  String get addLabor => 'ሠራተኛ ጨምር';
+
+  @override
+  String get noLaborEntriesYet => 'የሠራተኛ ግቤቶች የሉም';
+
+  @override
+  String get addLaborEntry => 'የሠራተኛ ግቤት ጨምር';
+
+  @override
+  String get workersCount => 'ሠራተኞች';
+
+  @override
+  String get workerCrewNameRequired => 'ሠራተኛ / የቡድን ስም *';
+
+  @override
+  String get workerCrewPlaceholder => 'የብረት ቡድን (ገብሩ እና ቡድን)';
+
+  @override
+  String get workDescriptionLabel => 'የሥራ መግለጫ';
+
+  @override
+  String get workDescriptionPlaceholder => 'የመሠረት ብረት መትከል፣ የመሬት ወለል';
+
+  @override
+  String get workersLabel => 'ሠራተኞች';
+
+  @override
+  String get dailyRateEtb => 'ዕለታዊ ክፍያ (ብር)';
+
+  @override
+  String get totalAmountEtb => 'ጠቅላላ መጠን (ብር) *';
+
+  @override
+  String get workDateRequired => 'የሥራ ቀን *';
+
+  @override
+  String get offlineWillSyncShort => 'ከመስመር ውጭ ነዎት — ሲገናኙ ይመሳሰላል';
+
+  @override
+  String get enterTotalAmount => 'ጠቅላላ መጠን ያስገቡ';
+
+  @override
+  String get saveLaborEntry => 'የሠራተኛ ግቤት አስቀምጥ';
+
+  @override
+  String get laborEntrySaved => 'የሠራተኛ ግቤት ተቀምጧል እና እየተመሳሰለ ነው';
+
+  @override
+  String get laborEntrySavedOffline => 'የሠራተኛ ግቤት ተቀምጧል — ሲገናኙ ይመሳሰላል';
+
+  @override
+  String get invalidNumber => 'ልክ ያልሆነ';
+
+  @override
+  String get required => 'ያስፈልጋል';
 }

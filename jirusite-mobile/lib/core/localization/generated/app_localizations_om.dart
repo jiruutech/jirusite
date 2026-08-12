@@ -101,7 +101,7 @@ class AppLocalizationsOm extends AppLocalizations {
   String get newExpense => 'Baasii Haaraa';
 
   @override
-  String get newLaborEntry => 'Galma Hojjettoota Haaraa';
+  String get newLaborEntry => 'Galma Hojjettoo Haaraa';
 
   @override
   String get amount => 'Baasii (ETB)';
@@ -349,4 +349,185 @@ class AppLocalizationsOm extends AppLocalizations {
 
   @override
   String get completed => 'Xumurameera';
+
+  @override
+  String get newProject => 'Pirojektii Haaraa';
+
+  @override
+  String get projectName => 'Maqaa Pirojektii';
+
+  @override
+  String get totalBudgetEtb => 'Bajatii Waliigalaa (ETB)';
+
+  @override
+  String get create => 'Uumi';
+
+  @override
+  String get noProjectsInFilter => 'Pirojektiin filannoo kana keessa hin jiru';
+
+  @override
+  String get createFirstProject =>
+      'Baasii hordofuuf pirojektii kee jalqabaa uumi';
+
+  @override
+  String get project => 'Pirojektii';
+
+  @override
+  String get trendingOverBudget => 'Bajatii ol ta\'aa jira';
+
+  @override
+  String get approachingBudgetLimit => 'Daangaa bajaatii bira ga\'aa jira';
+
+  @override
+  String get onTrack => 'Karaa sirrii irra jira';
+
+  @override
+  String get budget => 'Bajatii';
+
+  @override
+  String get overview => 'Waliigala';
+
+  @override
+  String get labour => 'Hojjettoota';
+
+  @override
+  String get team => 'Garee';
+
+  @override
+  String get budgetByCostCode => 'Bajatii Koodii Baasiin';
+
+  @override
+  String get sortedByVariance => 'Jijjiiramaan tartiibame';
+
+  @override
+  String get seeAllActivity => 'Hojii hunda ilaali';
+
+  @override
+  String get noRecentActivity => 'Hojiin dhiyoo hin jiru';
+
+  @override
+  String get daysLeft => 'Guyyoonni hafan';
+
+  @override
+  String get pendingSyncCount => 'Walmadaaluu eeggachaa';
+
+  @override
+  String get loadingEllipsis => 'Fe\'aa jira…';
+
+  @override
+  String get addExpense => 'Baasii Dabaluu';
+
+  @override
+  String get noExpensesYet => 'Baasiin hin jiru';
+
+  @override
+  String get pendingSync => 'Walmadaaluu eeggachaa';
+
+  @override
+  String get syncConflict => 'Waldorgommii walmadaallii';
+
+  @override
+  String get saveExpense => 'Baasii Olkaa\'i';
+
+  @override
+  String get expenseTypeCaps => 'Gosa Baasii';
+
+  @override
+  String get amountRequired => 'Baasii *';
+
+  @override
+  String get etb => 'ETB';
+
+  @override
+  String get quantityLabel => 'Baay\'ina';
+
+  @override
+  String get unitLabel => 'Lakkoofsa';
+
+  @override
+  String get select => 'Filadhu';
+
+  @override
+  String get transactionDateRequired => 'Guyyaa Daldalaa *';
+
+  @override
+  String get enterValidAmount => 'Baasii sirrii galchi';
+
+  @override
+  String get offlineWillSync =>
+      'Toora ala jirta — baasiin yeroo walitti qabamu ofumaan walmadaala';
+
+  @override
+  String get expenseSavedSyncing => 'Baasiin olkaa\'ame fi walmadaalaa jira';
+
+  @override
+  String get expenseSavedOffline =>
+      'Baasiin olkaa\'ame — yeroo toora irra jirtu walmadaala';
+
+  @override
+  String get failedToSave => 'Olkaa\'uun dhabame';
+
+  @override
+  String get laborEntriesTitle => 'Galma Hojjettootaa';
+
+  @override
+  String get addLabor => 'Hojjettoo Dabaluu';
+
+  @override
+  String get noLaborEntriesYet => 'Galma hojjettoo hin jiru';
+
+  @override
+  String get addLaborEntry => 'Galma Hojjettoo Dabaluu';
+
+  @override
+  String get workersCount => 'hojjettootaa';
+
+  @override
+  String get workerCrewNameRequired => 'Maqaa Hojjettoo / Garee *';
+
+  @override
+  String get workerCrewPlaceholder => 'Garee Sibiila (Gebruu fi garee)';
+
+  @override
+  String get workDescriptionLabel => 'Ibsa Hojii';
+
+  @override
+  String get workDescriptionPlaceholder =>
+      'Sibiila bu\'uuraa kaa\'uu, sadarkaa jalqabaa';
+
+  @override
+  String get workersLabel => 'Hojjettootaa';
+
+  @override
+  String get dailyRateEtb => 'Kaffaltii Guyyaa (ETB)';
+
+  @override
+  String get totalAmountEtb => 'Baasii Waliigalaa (ETB) *';
+
+  @override
+  String get workDateRequired => 'Guyyaa Hojii *';
+
+  @override
+  String get offlineWillSyncShort =>
+      'Toora ala jirta — yeroo walitti qabamu walmadaala';
+
+  @override
+  String get enterTotalAmount => 'Baasii waliigalaa galchi';
+
+  @override
+  String get saveLaborEntry => 'Galma Hojjettoo Olkaa\'i';
+
+  @override
+  String get laborEntrySaved =>
+      'Galma hojjettoo olkaa\'ame fi walmadaalaa jira';
+
+  @override
+  String get laborEntrySavedOffline =>
+      'Galma hojjettoo olkaa\'ame — yeroo toora irra jirtu walmadaala';
+
+  @override
+  String get invalidNumber => 'Sirrii miti';
+
+  @override
+  String get required => 'Dirqama';
 }
