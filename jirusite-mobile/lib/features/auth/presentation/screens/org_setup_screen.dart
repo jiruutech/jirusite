@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../shared_widgets/app_button.dart';
 import '../../../../shared_widgets/app_text_field.dart';
 import '../providers/auth_provider.dart';
@@ -23,7 +24,8 @@ class _OrgSetupScreenState extends ConsumerState<OrgSetupScreen> {
 
   @override
   void dispose() {
-    _nameCtrl.dispose(); _tinCtrl.dispose();
+    _nameCtrl.dispose();
+    _tinCtrl.dispose();
     super.dispose();
   }
 
@@ -43,7 +45,7 @@ class _OrgSetupScreenState extends ConsumerState<OrgSetupScreen> {
       });
     } catch (_) {
       setState(() {
-        _error = 'Could not create organisation. Please try again.';
+        _error = AppLocalizations.of(context).errorOccurred;
         _loading = false;
       });
     }
@@ -51,6 +53,8 @@ class _OrgSetupScreenState extends ConsumerState<OrgSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -61,21 +65,21 @@ class _OrgSetupScreenState extends ConsumerState<OrgSetupScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 40),
-                Text('Set Up Your Organization',
+                Text(l.orgSetupTitle,
                     style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 8),
                 Text('This info helps us tailor the app for your business.',
                     style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 32),
                 AppTextField(
-                  label: 'Company Name',
+                  label: l.orgName,
                   controller: _nameCtrl,
                   hint: 'Zemen Construction PLC',
                   validator: (v) => (v?.isEmpty ?? true) ? 'Required' : null,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
-                  label: 'TIN Number (Optional)',
+                  label: l.tinNumber,
                   controller: _tinCtrl,
                   hint: '0001234567',
                   keyboardType: TextInputType.number,
@@ -90,22 +94,22 @@ class _OrgSetupScreenState extends ConsumerState<OrgSetupScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.error_outline,
-                            color: AppColors.error, size: 18),
+                        const Icon(Icons.error_outline, color: AppColors.error, size: 18),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
-                            _error!,
-                            style: const TextStyle(
-                                color: AppColors.error, fontSize: 13),
-                          ),
+                          child: Text(_error!,
+                              style: const TextStyle(color: AppColors.error, fontSize: 13)),
                         ),
                       ],
                     ),
                   ),
                 ],
                 const Spacer(),
-                AppButton(label: 'Continue', onPressed: _setup, isLoading: _loading),
+                AppButton(
+                  label: l.continueButton,
+                  onPressed: _setup,
+                  isLoading: _loading,
+                ),
               ],
             ),
           ),

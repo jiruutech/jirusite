@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/localization/locale_provider.dart';
 import '../../../../shared_widgets/app_button.dart';
 
@@ -10,7 +11,8 @@ class LanguageSelectScreen extends ConsumerStatefulWidget {
   const LanguageSelectScreen({super.key});
 
   @override
-  ConsumerState<LanguageSelectScreen> createState() => _LanguageSelectScreenState();
+  ConsumerState<LanguageSelectScreen> createState() =>
+      _LanguageSelectScreenState();
 }
 
 class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
@@ -18,6 +20,16 @@ class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+
+    // Use ARB keys for language names so they translate too
+    final languages = {
+      'en': l.english,
+      'am': l.amharic,
+      'om': l.afaanOromo,
+      'ti': l.tigrinya,
+    };
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -29,13 +41,13 @@ class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
               Text('Choose Your Language',
                   style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 8),
-              Text('You can change this later in Settings.',
+              Text('You can change this later in ${l.settings}.',
                   style: Theme.of(context).textTheme.bodyMedium),
               const SizedBox(height: 32),
-              ...kLocaleNames.entries.map((e) => _buildTile(e.key, e.value)),
+              ...languages.entries.map((e) => _buildTile(e.key, e.value)),
               const Spacer(),
               AppButton(
-                label: 'Continue',
+                label: l.continueButton,
                 onPressed: () {
                   final router = GoRouter.of(context);
                   ref
@@ -66,12 +78,18 @@ class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
-          color: isSelected ? AppColors.primary.withValues(alpha: 0.05) : Colors.white,
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.05)
+              : AppColors.chalk,
         ),
         child: Row(
           children: [
-            Expanded(child: Text(name, style: Theme.of(context).textTheme.titleMedium)),
-            if (isSelected) const Icon(Icons.check_circle, color: AppColors.primary),
+            Expanded(
+              child: Text(name,
+                  style: Theme.of(context).textTheme.titleMedium),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle, color: AppColors.primary),
           ],
         ),
       ),

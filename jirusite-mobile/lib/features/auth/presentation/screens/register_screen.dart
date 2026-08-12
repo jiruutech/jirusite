@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../shared_widgets/app_button.dart';
 import '../../../../shared_widgets/app_text_field.dart';
-import '../../../../app/theme.dart';
 import '../providers/auth_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -23,7 +24,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   void dispose() {
-    _nameCtrl.dispose(); _phoneCtrl.dispose(); _passCtrl.dispose();
+    _nameCtrl.dispose();
+    _phoneCtrl.dispose();
+    _passCtrl.dispose();
     super.dispose();
   }
 
@@ -42,11 +45,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final isLoading = ref.watch(authStateProvider).isLoading;
     final error = ref.watch(authStateProvider).valueOrNull?.error;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Account'), leading: const BackButton()),
+      appBar: AppBar(
+        title: Text(l.registerButton),
+        leading: const BackButton(),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -55,24 +62,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             child: Column(
               children: [
                 AppTextField(
-                  label: 'Full Name',
+                  label: l.fullName,
                   controller: _nameCtrl,
                   hint: 'Abebe Girma',
                   prefixIcon: const Icon(Icons.person_outlined),
-                  validator: (v) => (v?.isEmpty ?? true) ? 'Full name is required' : null,
+                  validator: (v) => (v?.isEmpty ?? true) ? '${l.fullName} is required' : null,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
-                  label: 'Phone Number',
+                  label: l.phoneNumber,
                   controller: _phoneCtrl,
                   hint: '+251911000001',
                   keyboardType: TextInputType.phone,
                   prefixIcon: const Icon(Icons.phone_outlined),
-                  validator: (v) => (v?.isEmpty ?? true) ? 'Phone number is required' : null,
+                  validator: (v) => (v?.isEmpty ?? true) ? '${l.phoneNumber} is required' : null,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
-                  label: 'Password',
+                  label: l.password,
                   controller: _passCtrl,
                   obscureText: _obscure,
                   suffixIcon: IconButton(
@@ -91,26 +98,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.error_outline,
-                            color: AppColors.error, size: 18),
+                        const Icon(Icons.error_outline, color: AppColors.error, size: 18),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
-                            error,
-                            style: const TextStyle(
-                                color: AppColors.error, fontSize: 13),
-                          ),
+                          child: Text(error,
+                              style: const TextStyle(color: AppColors.error, fontSize: 13)),
                         ),
                       ],
                     ),
                   ),
                 ],
                 const SizedBox(height: 32),
-                AppButton(label: 'Create Account', onPressed: _register, isLoading: isLoading),
+                AppButton(
+                  label: l.registerButton,
+                  onPressed: _register,
+                  isLoading: isLoading,
+                ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () => context.pop(),
-                  child: const Text('Already have an account? Login'),
+                  child: Text('Already have an account? ${l.login}'),
                 ),
               ],
             ),

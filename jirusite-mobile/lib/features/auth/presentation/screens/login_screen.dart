@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../shared_widgets/app_button.dart';
 import '../../../../shared_widgets/app_text_field.dart';
-import '../../../../app/theme.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -33,11 +34,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           _phoneCtrl.text.trim(),
           _passCtrl.text,
         );
-    // Router redirect handles navigation
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final authAsync = ref.watch(authStateProvider);
     final isLoading = authAsync.isLoading;
     final error = authAsync.valueOrNull?.error;
@@ -53,7 +54,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 40),
-                // Logo / branding
                 Row(
                   children: [
                     Container(
@@ -68,7 +68,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('JIRUSite',
+                        Text(l.appName,
                             style: Theme.of(context).textTheme.headlineMedium),
                         Text('Construction Cost Tracking',
                             style: Theme.of(context).textTheme.bodySmall),
@@ -87,7 +87,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 32),
 
                 AppTextField(
-                  label: 'Phone Number',
+                  label: l.phoneNumber,
                   controller: _phoneCtrl,
                   hint: '+251 9XX XXX XXX',
                   keyboardType: TextInputType.phone,
@@ -95,14 +95,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   autofillHints: const [AutofillHints.telephoneNumber],
                   textInputAction: TextInputAction.next,
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Phone number is required';
+                    if (v == null || v.trim().isEmpty) return '${l.phoneNumber} is required';
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
 
                 AppTextField(
-                  label: 'Password',
+                  label: l.password,
                   controller: _passCtrl,
                   obscureText: _obscurePass,
                   autofillHints: const [AutofillHints.password],
@@ -113,7 +113,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: () => setState(() => _obscurePass = !_obscurePass),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Password is required';
+                    if (v == null || v.isEmpty) return '${l.password} is required';
                     return null;
                   },
                 ),
@@ -139,7 +139,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                 const SizedBox(height: 32),
                 AppButton(
-                  label: 'Login',
+                  label: l.loginButton,
                   onPressed: isLoading ? null : _login,
                   isLoading: isLoading,
                 ),
@@ -147,7 +147,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Center(
                   child: TextButton(
                     onPressed: () => context.push('/register'),
-                    child: const Text("Don't have an account? Register"),
+                    child: Text("Don't have an account? ${l.register}"),
                   ),
                 ),
                 Center(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/localization/locale_provider.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
 
@@ -13,13 +14,21 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authStateProvider).valueOrNull?.user;
     final locale = ref.watch(localeProvider);
+    final l = AppLocalizations.of(context);
+
+    // Language names from ARB so they switch with locale
+    final languages = {
+      'en': l.english,
+      'am': l.amharic,
+      'om': l.afaanOromo,
+      'ti': l.tigrinya,
+    };
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l.settings)),
       body: ListView(
         children: [
-          // Profile section
-          const _SectionHeader(title: 'Profile'),
+          _SectionHeader(title: l.settings),
           ListTile(
             leading: CircleAvatar(
               backgroundColor: AppColors.primary.withValues(alpha: 0.12),
@@ -45,8 +54,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           // Language
-          const _SectionHeader(title: 'Language'),
-          ...kLocaleNames.entries.map((e) {
+          _SectionHeader(title: l.language),
+          ...languages.entries.map((e) {
             final isSelected = locale.languageCode == e.key;
             return InkWell(
               onTap: () =>
@@ -64,17 +73,17 @@ class SettingsScreen extends ConsumerWidget {
           }),
 
           // Organization
-          const _SectionHeader(title: 'Organization'),
+          _SectionHeader(title: 'Organization'),
           ListTile(
             leading: const Icon(Icons.business_outlined),
-            title: const Text('Team Members'),
+            title: Text(l.teamMembers),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             trailing: const Icon(Icons.chevron_right, size: 20),
             onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.credit_card_outlined),
-            title: const Text('Billing & Subscription'),
+            title: Text(l.billing),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             trailing: const Icon(Icons.chevron_right, size: 20),
             onTap: () => context.push('/billing'),
@@ -82,10 +91,10 @@ class SettingsScreen extends ConsumerWidget {
 
           // About
           const _SectionHeader(title: 'About'),
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('JIRUSite'),
-            subtitle: Text('Version 1.0.0'),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(l.appName),
+            subtitle: const Text('Version 1.0.0'),
           ),
 
           // Logout
@@ -94,14 +103,14 @@ class SettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: OutlinedButton.icon(
               icon: const Icon(Icons.logout, color: AppColors.error),
-              label: const Text('Log Out', style: TextStyle(color: AppColors.error)),
+              label: Text(l.logout,
+                  style: const TextStyle(color: AppColors.error)),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: AppColors.error),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: () {
-                ref.read(authStateProvider.notifier).logout();
-              },
+              onPressed: () =>
+                  ref.read(authStateProvider.notifier).logout(),
             ),
           ),
           const SizedBox(height: 32),

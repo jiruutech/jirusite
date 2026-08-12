@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../shared_widgets/app_button.dart';
 import '../providers/auth_provider.dart';
 
@@ -32,6 +33,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   String get _code => _ctrlList.map((c) => c.text).join();
 
   Future<void> _verify() async {
+    final l = AppLocalizations.of(context);
     if (_code.length < 6) {
       setState(() => _error = 'Enter all 6 digits');
       return;
@@ -39,11 +41,10 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     setState(() { _loading = true; _error = null; });
     try {
       ref.read(authStateProvider.notifier);
-      // navigate back on success
       if (mounted) context.go('/login');
     } catch (_) {
       setState(() {
-        _error = 'Verification failed. Please try again.';
+        _error = l.errorOccurred;
         _loading = false;
       });
     }
@@ -51,17 +52,18 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Verify Phone')),
+      appBar: AppBar(title: Text(l.otpTitle)),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
             const SizedBox(height: 24),
-            Text('We sent a code to', style: Theme.of(context).textTheme.bodyLarge),
-            const SizedBox(height: 4),
-            Text(widget.phoneNumber,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.primary)),
+            Text(l.otpSubtitle(widget.phoneNumber),
+                style: Theme.of(context).textTheme.bodyLarge,
+                textAlign: TextAlign.center),
             const SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,27 +79,23 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline,
-                        color: AppColors.error, size: 18),
+                    const Icon(Icons.error_outline, color: AppColors.error, size: 18),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Text(
-                        _error!,
-                        style: const TextStyle(
-                            color: AppColors.error, fontSize: 13),
-                      ),
+                      child: Text(_error!,
+                          style: const TextStyle(color: AppColors.error, fontSize: 13)),
                     ),
                   ],
                 ),
               ),
             ],
             const SizedBox(height: 40),
-            AppButton(label: 'Verify', onPressed: _verify, isLoading: _loading),
+            AppButton(label: l.verify, onPressed: _verify, isLoading: _loading),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () => ref.read(authStateProvider.notifier)
                   .requestOtp(widget.phoneNumber),
-              child: const Text('Resend Code'),
+              child: Text(l.resendCode),
             ),
           ],
         ),
@@ -123,12 +121,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
         onChanged: (v) {
-          if (v.isNotEmpty && index < 5) {
-            _focusList[index + 1].requestFocus();
-          }
-          if (v.isEmpty && index > 0) {
-            _focusList[index - 1].requestFocus();
-          }
+          if (v.isNotEmpty && index < 5) _focusList[index + 1].requestFocus();
+          if (v.isEmpty && index > 0) _focusList[index - 1].requestFocus();
         },
       ),
     );
