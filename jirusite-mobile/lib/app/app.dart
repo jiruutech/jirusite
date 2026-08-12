@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../core/localization/generated/app_localizations.dart';
 import '../core/localization/locale_provider.dart';
+import '../core/localization/fallback_delegates.dart';
 import 'router.dart';
 import 'theme.dart';
 
@@ -23,11 +24,11 @@ class JiruSiteApp extends ConsumerWidget {
       themeMode: ThemeMode.light,
       routerConfig: router,
       locale: locale,
-      // Only use locales that Flutter's built-in MaterialLocalizations supports.
-      // Our custom AppLocalizations handles om (Oromo) independently.
+      // Include om for AppLocalizations - fallback delegates handle framework strings
       supportedLocales: const [
         Locale('en'),
         Locale('am'),
+        Locale('om'),
       ],
       localeResolutionCallback: (requested, supported) {
         if (requested == null) return const Locale('am');
@@ -37,9 +38,9 @@ class JiruSiteApp extends ConsumerWidget {
       },
       localizationsDelegates: const [
         AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        FallbackMaterialLocalizationsDelegate(),
+        FallbackWidgetsLocalizationsDelegate(),
+        FallbackCupertinoLocalizationsDelegate(),
       ],
     );
   }
