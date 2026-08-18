@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/currency.dart';
@@ -38,6 +39,7 @@ class _PurchaseOrderCreateScreenState
     if (!_formKey.currentState!.validate()) return;
     setState(() { _saving = true; _error = null; });
     try {
+      final l = AppLocalizations.of(context);
       final dio = ref.read(dioClientProvider);
       await dio.post(ApiEndpoints.projectPurchaseOrders(widget.projectId), data: {
         'notes': _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
@@ -49,8 +51,8 @@ class _PurchaseOrderCreateScreenState
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Purchase order submitted for approval'),
+          SnackBar(
+            content: Text(l.poSubmitted),
             backgroundColor: AppColors.success,
           ),
         );
@@ -63,8 +65,9 @@ class _PurchaseOrderCreateScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('New Purchase Order')),
+      appBar: AppBar(title: Text(l.newPurchaseOrder)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -73,7 +76,7 @@ class _PurchaseOrderCreateScreenState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Line Items', style: Theme.of(context).textTheme.titleMedium),
+                Text(l.lineItems, style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 12),
                 ..._items.asMap().entries.map((e) => _LineItemWidget(
                   item: e.value,
@@ -86,11 +89,11 @@ class _PurchaseOrderCreateScreenState
                 TextButton.icon(
                   onPressed: () => setState(() => _items.add(_LineItem())),
                   icon: const Icon(Icons.add),
-                  label: const Text('Add Line Item'),
+                  label: Text(l.addLineItem),
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
-                  label: 'Notes (optional)',
+                  label: l.notes,
                   controller: _notesCtrl,
                   maxLines: 3,
                 ),
@@ -104,7 +107,7 @@ class _PurchaseOrderCreateScreenState
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Total', style: TextStyle(fontWeight: FontWeight.w600)),
+                      Text(l.total, style: const TextStyle(fontWeight: FontWeight.w600)),
                       Text(formatEtb(_total),
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(color: AppColors.primary)),
@@ -117,7 +120,7 @@ class _PurchaseOrderCreateScreenState
                 ],
                 const SizedBox(height: 24),
                 AppButton(
-                  label: 'Submit for Approval',
+                  label: l.submitForApproval,
                   onPressed: _saving ? null : _submit,
                   isLoading: _saving,
                   icon: Icons.send_outlined,
@@ -147,6 +150,7 @@ class _LineItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: Padding(
@@ -155,7 +159,7 @@ class _LineItemWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text('Item ${index + 1}',
+                Text(l.itemNumber(index + 1),
                     style: Theme.of(context).textTheme.labelLarge),
                 const Spacer(),
                 if (onRemove != null)
@@ -170,7 +174,7 @@ class _LineItemWidget extends StatelessWidget {
                   child: TextFormField(
                     initialValue: item.quantity.toString(),
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Qty'),
+                    decoration: InputDecoration(labelText: l.qty),
                     onChanged: (v) {
                       item.quantity = double.tryParse(v) ?? 1;
                       onChanged();
@@ -182,8 +186,8 @@ class _LineItemWidget extends StatelessWidget {
                   child: TextFormField(
                     initialValue: item.unitPrice > 0 ? item.unitPrice.toString() : '',
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Unit Price (ETB)'),
-                    validator: (v) => (double.tryParse(v ?? '') == null) ? 'Invalid' : null,
+                    decoration: InputDecoration(labelText: l.unitPriceEtb),
+                    validator: (v) => (double.tryParse(v ?? '') == null) ? l.invalidNumber : null,
                     onChanged: (v) {
                       item.unitPrice = double.tryParse(v) ?? 0;
                       onChanged();
@@ -195,7 +199,7 @@ class _LineItemWidget extends StatelessWidget {
             const SizedBox(height: 6),
             Align(
               alignment: Alignment.centerRight,
-              child: Text('Line total: ${formatEtb(item.lineTotal)}',
+              child: Text(l.lineTotal(formatEtb(item.lineTotal)),
                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
             ),
           ],

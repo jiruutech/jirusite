@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 import '../app/theme.dart';
+import '../core/localization/generated/app_localizations.dart';
 
 class ReceiptPhotoCapture extends StatefulWidget {
   const ReceiptPhotoCapture({
@@ -27,12 +28,13 @@ class _ReceiptPhotoCaptureState extends State<ReceiptPhotoCapture> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final hasPhoto = _localPath != null || widget.existingPhotoUrl != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Receipt Photo', style: Theme.of(context).textTheme.labelLarge),
+        Text(l.receiptPhoto, style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         GestureDetector(
           onTap: _processing ? null : _showSourcePicker,
@@ -58,14 +60,22 @@ class _ReceiptPhotoCaptureState extends State<ReceiptPhotoCapture> {
     );
   }
 
-  Widget _buildPlaceholder() => const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.add_photo_alternate_outlined, size: 36, color: AppColors.textSecondary),
-          SizedBox(height: 8),
-          Text('Tap to add receipt photo', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
-        ],
-      );
+  Widget _buildPlaceholder() {
+    // context is available through the State's build chain; use a Builder
+    return Builder(
+      builder: (context) {
+        final l = AppLocalizations.of(context);
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.add_photo_alternate_outlined, size: 36, color: AppColors.textSecondary),
+            const SizedBox(height: 8),
+            Text(l.tapToAddReceipt, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+          ],
+        );
+      },
+    );
+  }
 
   Widget _buildPhotoPreview() {
     if (_localPath != null) {
@@ -98,6 +108,7 @@ class _ReceiptPhotoCaptureState extends State<ReceiptPhotoCapture> {
   }
 
   Future<void> _showSourcePicker() async {
+    final l = AppLocalizations.of(context);
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (_) => SafeArea(
@@ -106,12 +117,12 @@ class _ReceiptPhotoCaptureState extends State<ReceiptPhotoCapture> {
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('Take Photo'),
+              title: Text(l.takePhoto),
               onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Choose from Gallery'),
+              title: Text(l.chooseFromGallery),
               onTap: () => Navigator.pop(context, ImageSource.gallery),
             ),
           ],

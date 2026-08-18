@@ -66,7 +66,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   controller: _nameCtrl,
                   hint: 'Abebe Girma',
                   prefixIcon: const Icon(Icons.person_outlined),
-                  validator: (v) => (v?.isEmpty ?? true) ? '${l.fullName} is required' : null,
+                  validator: (v) => (v?.isEmpty ?? true) ? l.fieldRequired(l.fullName) : null,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
@@ -75,7 +75,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   hint: '+251911000001',
                   keyboardType: TextInputType.phone,
                   prefixIcon: const Icon(Icons.phone_outlined),
-                  validator: (v) => (v?.isEmpty ?? true) ? '${l.phoneNumber} is required' : null,
+                  validator: (v) => (v?.isEmpty ?? true) ? l.fieldRequired(l.phoneNumber) : null,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
@@ -86,7 +86,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility),
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
-                  validator: (v) => (v?.length ?? 0) < 6 ? 'Min 6 characters' : null,
+                  validator: (v) => (v?.length ?? 0) < 6 ? l.minCharacters(6) : null,
                 ),
                 if (error != null) ...[
                   const SizedBox(height: 12),
@@ -117,7 +117,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () => context.pop(),
-                  child: Text('Already have an account? ${l.login}'),
+                  child: Text('${l.alreadyHaveAccount} ${l.login}'),
                 ),
               ],
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../app/theme.dart';
+import '../core/localization/generated/app_localizations.dart';
 import 'app_button.dart';
 
 class EmptyState extends StatelessWidget {
@@ -65,6 +66,7 @@ class ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -81,7 +83,7 @@ class ErrorState extends StatelessWidget {
             if (onRetry != null) ...[
               const SizedBox(height: 16),
               AppButton(
-                label: 'Retry',
+                label: l.retry,
                 onPressed: onRetry,
                 minimumSize: const Size(160, 44),
               ),

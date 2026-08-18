@@ -68,14 +68,14 @@ class _OrgSetupScreenState extends ConsumerState<OrgSetupScreen> {
                 Text(l.orgSetupTitle,
                     style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 8),
-                Text('This info helps us tailor the app for your business.',
+                Text(l.orgSetupTagline,
                     style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 32),
                 AppTextField(
                   label: l.orgName,
                   controller: _nameCtrl,
                   hint: 'Zemen Construction PLC',
-                  validator: (v) => (v?.isEmpty ?? true) ? 'Required' : null,
+                  validator: (v) => (v?.isEmpty ?? true) ? l.required : null,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(

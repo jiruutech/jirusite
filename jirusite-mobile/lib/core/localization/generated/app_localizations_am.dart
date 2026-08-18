@@ -155,7 +155,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get approve => 'ፍቀድ';
 
   @override
-  String get reject => 'አሳፍር';
+  String get reject => 'ውድቅ አድርግ';
 
   @override
   String get pending => 'በመጠባበቅ ላይ';
@@ -292,7 +292,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get upgradePlan => 'ዕቅድ አሻሽል';
 
   @override
-  String get payWithTelebirr => 'ተሌቢር ይክፈሉ';
+  String get payWithTelebirr => 'በቴሌብር ይክፈሉ';
 
   @override
   String get paymentHistory => 'የክፍያ ታሪክ';
@@ -523,4 +523,285 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get required => 'ያስፈልጋል';
+
+  @override
+  String get hintQuantity => '0.0';
+
+  @override
+  String get hintDescription => 'ለምሳሌ ሲሚንቶ ግዢ — 50 ኩንታል';
+
+  @override
+  String get back => 'ተመለስ';
+
+  @override
+  String get schedulePercentage => 'መርሃ ግብር';
+
+  @override
+  String viewTab(String tab) {
+    return '$tab ይመልከቱ';
+  }
+
+  @override
+  String minutesAgo(int count) {
+    return 'ከ$count ደቂቃ በፊት';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return 'ከ$count ሰዓት በፊት';
+  }
+
+  @override
+  String daysAgo(int count) {
+    return 'ከ$count ቀን በፊት';
+  }
+
+  @override
+  String weeksAgo(int count) {
+    return 'ከ$count ሳምንት በፊት';
+  }
+
+  @override
+  String get markAllRead => 'ሁሉንም አንብቤያለሁ አድርግ';
+
+  @override
+  String get noNotifications => 'ማሳወቂያዎች የሉም';
+
+  @override
+  String get materialsAndPrices => 'ቁሳቁሶች እና ዋጋዎች';
+
+  @override
+  String get searchMaterials => 'ቁሳቁሶችን ይፈልጉ...';
+
+  @override
+  String get noMaterialsFound => 'ቁሳቁስ አልተገኘም';
+
+  @override
+  String get priceReportingComingSoon => 'የዋጋ ሪፖርት ቅጽ — በቅርብ ጊዜ';
+
+  @override
+  String get currentPriceAddis => 'አሁናዊ ዋጋ (አዲስ አበባ)';
+
+  @override
+  String get noPriceHistory => 'ለዚህ ክልል ገና የዋጋ ታሪክ የለም።';
+
+  @override
+  String get failedToLoadPrices => 'ዋጋዎችን መጫን አልተሳካም';
+
+  @override
+  String get billingAndSubscription => 'ክፍያ እና ደንበኝነት';
+
+  @override
+  String get month => '/ወር';
+
+  @override
+  String upgradeTo(String tier) {
+    return 'ወደ $tier አሻሽል';
+  }
+
+  @override
+  String upgradeMessage(String amount) {
+    return '$amount በወር በቴሌብር ይከፈላል።';
+  }
+
+  @override
+  String get telebirrInitiated => 'የቴሌብር ክፍያ ተጀምሯል — ስልክዎን ይመልከቱ';
+
+  @override
+  String get failed => 'አልተሳካም';
+
+  @override
+  String get upgrade => 'አሻሽል';
+
+  @override
+  String get starter => 'መጀመሪያ';
+
+  @override
+  String get growth => 'እድገት';
+
+  @override
+  String get professional => 'ሙያዊ';
+
+  @override
+  String get enterprise => 'ኢንተርፕራይዝ';
+
+  @override
+  String get trial => 'ሙከራ';
+
+  @override
+  String get expired => 'ጊዜው አልፏል';
+
+  @override
+  String get supplierDirectory => 'የአቅራቢዎች ማውጫ';
+
+  @override
+  String get searchSuppliers => 'አቅራቢዎችን ይፈልጉ...';
+
+  @override
+  String get noSuppliersFound => 'አቅራቢ አልተገኘም';
+
+  @override
+  String get call => 'ደውል';
+
+  @override
+  String get sms => 'ኤስኤምኤስ';
+
+  @override
+  String get newPO => 'አዲስ ትዕዛዝ';
+
+  @override
+  String get noPurchaseOrders => 'የግዥ ትዕዛዞች የሉም';
+
+  @override
+  String get createPO => 'ትዕዛዝ ፍጠር';
+
+  @override
+  String get addTask => 'ስራ ጨምር';
+
+  @override
+  String get noTasksScheduled => 'ገና የታቀዱ ስራዎች የሉም';
+
+  @override
+  String get newTask => 'አዲስ ስራ';
+
+  @override
+  String get taskName => 'የስራ ስም';
+
+  @override
+  String get add => 'ጨምር';
+
+  @override
+  String get notStarted => 'አልተጀመረም';
+
+  @override
+  String get inProgress => 'በሂደት ላይ';
+
+  @override
+  String get complete => 'ተጠናቋል';
+
+  @override
+  String get delayed => 'ዘግይቷል';
+
+  @override
+  String get constructionCostTracking => 'የግንባታ ወጪ ክትትል';
+
+  @override
+  String get welcomeBack => 'እንኳን ደህና መጡ';
+
+  @override
+  String get signInWithPhone => 'በስልክ ቁጥርዎ ይግቡ';
+
+  @override
+  String get dontHaveAccount => 'አካውንት የለዎትም?';
+
+  @override
+  String get forgotPassword => 'የምስጢር ቁጥር ረሱ?';
+
+  @override
+  String fieldRequired(String field) {
+    return '$field ያስፈልጋል';
+  }
+
+  @override
+  String minCharacters(int count) {
+    return 'ቢያንስ $count ቁምፊዎች';
+  }
+
+  @override
+  String get alreadyHaveAccount => 'አካውንት አለዎት?';
+
+  @override
+  String get chooseYourLanguage => 'ቋንቋዎን ይምረጡ';
+
+  @override
+  String changeLanguageLater(String settings) {
+    return 'ይህን በኋላ በ$settings ሊቀይሩ ይችላሉ።';
+  }
+
+  @override
+  String get enterAllDigits => 'ሁሉንም 6 አሃዞች ያስገቡ';
+
+  @override
+  String get orgSetupTagline => 'ይህ መረጃ ለንግድዎ መተግበሪያውን ለማዘጋጀት ይረዳናል።';
+
+  @override
+  String get organization => 'ድርጅት';
+
+  @override
+  String get about => 'ስለ';
+
+  @override
+  String version(String version) {
+    return 'ስሪት $version';
+  }
+
+  @override
+  String spentAmount(String amount) {
+    return '$amount ወጪ';
+  }
+
+  @override
+  String ofAmount(String amount) {
+    return 'ከ $amount';
+  }
+
+  @override
+  String get newPurchaseOrder => 'አዲስ የግዥ ትዕዛዝ';
+
+  @override
+  String get lineItems => 'የሸቀጣ ሸቀጥ ዝርዝር';
+
+  @override
+  String get addLineItem => 'ሸቀጣ ሸቀጥ ጨምር';
+
+  @override
+  String get notes => 'ማስታወሻ (አማራጭ)';
+
+  @override
+  String get total => 'ድምር';
+
+  @override
+  String get submitForApproval => 'ለፅድቀት አስገባ';
+
+  @override
+  String get poSubmitted => 'የግዥ ትዕዛዝ ለፅድቀት ቀርቧል';
+
+  @override
+  String itemNumber(int number) {
+    return 'ዕቃ $number';
+  }
+
+  @override
+  String get qty => 'ብዛት';
+
+  @override
+  String get unitPriceEtb => 'ዋጋ በአሃድ (ብር)';
+
+  @override
+  String lineTotal(String amount) {
+    return 'የሸቀጥ ድምር: $amount';
+  }
+
+  @override
+  String get receiptPhoto => 'የደረሰኝ ፎቶ';
+
+  @override
+  String get tapToAddReceipt => 'ፎቶ ለመጨመር ይጫኑ';
+
+  @override
+  String get takePhoto => 'ፎቶ አንሳ';
+
+  @override
+  String get chooseFromGallery => 'ከጋለሪ ምረጥ';
+
+  @override
+  String get syncTriggered => 'ማመሳሰል ተጀምሯል';
+
+  @override
+  String get syncingEllipsis => 'በማመሳሰል ላይ...';
+
+  @override
+  String pendingCount(int count) {
+    return '$count በመጠባበቅ';
+  }
 }

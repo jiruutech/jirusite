@@ -37,10 +37,10 @@ class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              Text('Choose Your Language',
+              Text(l.chooseYourLanguage,
                   style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 8),
-              Text('You can change this later in ${l.settings}.',
+              Text(l.changeLanguageLater(l.settings),
                   style: Theme.of(context).textTheme.bodyMedium),
               const SizedBox(height: 32),
               ...languages.entries.map((e) => _buildTile(e.key, e.value)),

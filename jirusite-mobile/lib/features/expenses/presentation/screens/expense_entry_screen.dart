@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../app/theme.dart';
 import '../../../../core/database/app_database.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/connectivity_service.dart';
 import '../../../../core/sync/sync_engine.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
@@ -109,6 +110,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
       if (isOnline) ref.read(syncEngineProvider).sync().ignore();
 
       if (mounted) {
+        final l = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(children: [
@@ -116,8 +118,8 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(isOnline
-                    ? 'Expense saved & syncing'
-                    : 'Expense saved — will sync when online'),
+                    ? l.expenseSavedSyncing
+                    : l.expenseSavedOffline),
               ),
             ]),
             backgroundColor: AppColors.levelGreen,
@@ -128,7 +130,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
       }
     } catch (e) {
       setState(() {
-        _error = 'Failed to save: $e';
+        _error = '${AppLocalizations.of(context).failedToSave}: $e';
         _saving = false;
       });
     }
@@ -137,16 +139,17 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
   @override
   Widget build(BuildContext context) {
     final isOnline = ref.watch(isOnlineProvider);
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('New Expense')),
+      appBar: AppBar(title: Text(l.newExpense)),
 
       // ── Sticky Save button at bottom ─────────────────────────────────
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
           child: AppButton(
-            label: 'Save Expense',
+            label: l.saveExpense,
             onPressed: _saving ? null : _save,
             isLoading: _saving,
             icon: Icons.save_outlined,
@@ -161,7 +164,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             children: [
               // ── Expense type chips ─────────────────────────────────
-              Text('Expense Type',
+              Text(l.expenseTypeCaps,
                   style: Theme.of(context).textTheme.labelLarge),
               const SizedBox(height: 8),
               Wrap(
@@ -169,7 +172,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
                 runSpacing: 4,
                 children: _expenseTypes
                     .map((t) => ChoiceChip(
-                          label: Text(t[0].toUpperCase() + t.substring(1)),
+                          label: Text(t == 'material' ? l.material : t == 'labor' ? l.labor : t == 'equipment' ? l.equipment : l.other),
                           selected: _expenseType == t,
                           onSelected: (_) =>
                               setState(() => _expenseType = t),
@@ -182,7 +185,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
               const SizedBox(height: 20),
 
               // ── Amount with ETB prefix ─────────────────────────────
-              Text('Amount *',
+              Text(l.amountRequired,
                   style: Theme.of(context).textTheme.labelLarge),
               const SizedBox(height: 6),
               Row(
@@ -201,9 +204,9 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
                       ),
                       border: Border.all(color: AppColors.concrete),
                     ),
-                    child: const Text(
-                      'ETB',
-                      style: TextStyle(
+                    child: Text(
+                      l.etb,
+                      style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: AppColors.textSecondary),
@@ -222,11 +225,11 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
                       ],
                       textInputAction: TextInputAction.next,
                       style: AppTextStyles.numeric.copyWith(fontSize: 15),
-                      decoration: const InputDecoration(
-                        hintText: '0.00',
-                        contentPadding: EdgeInsets.symmetric(
+                      decoration: InputDecoration(
+                        hintText: l.hintQuantity,
+                        contentPadding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 14),
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                           borderSide:
                               BorderSide(color: AppColors.concrete),
                           borderRadius: BorderRadius.only(
@@ -234,7 +237,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
                             bottomRight: Radius.circular(4),
                           ),
                         ),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                           borderSide:
                               BorderSide(color: AppColors.concrete),
                           borderRadius: BorderRadius.only(
@@ -242,7 +245,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
                             bottomRight: Radius.circular(4),
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                               color: AppColors.blueprintInk, width: 1.5),
                           borderRadius: BorderRadius.only(
@@ -257,7 +260,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
                         final n = double.tryParse(
                             v?.replaceAll(',', '') ?? '');
                         return (n == null || n <= 0)
-                            ? 'Enter a valid amount'
+                            ? l.enterValidAmount
                             : null;
                       },
                     ),
@@ -268,9 +271,9 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
 
               // ── Description ────────────────────────────────────────
               AppTextField(
-                label: 'Description',
+                label: l.description,
                 controller: _descCtrl,
-                hint: 'e.g. Cement purchase — 50 quintals',
+                hint: l.hintDescription,
                 maxLines: 2,
               ),
               const SizedBox(height: 16),
@@ -279,9 +282,9 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
               Row(children: [
                 Expanded(
                   child: AppTextField(
-                    label: 'Quantity',
+                    label: l.quantityLabel,
                     controller: _quantityCtrl,
-                    hint: '0.0',
+                    hint: l.hintQuantity,
                     keyboardType: const TextInputType.numberWithOptions(
                         decimal: true),
                   ),
@@ -291,12 +294,12 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Unit',
+                      Text(l.unitLabel,
                           style: Theme.of(context).textTheme.labelLarge),
                       const SizedBox(height: 6),
                       DropdownMenu<String>(
                         initialSelection: _selectedUnit,
-                        hintText: 'Select',
+                        hintText: l.select,
                         width: double.infinity,
                         inputDecorationTheme: const InputDecorationTheme(
                           contentPadding: EdgeInsets.symmetric(
@@ -319,7 +322,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
               const SizedBox(height: 16),
 
               // ── Date picker ────────────────────────────────────────
-              Text('Transaction Date *',
+              Text(l.transactionDateRequired,
                   style: Theme.of(context).textTheme.labelLarge),
               const SizedBox(height: 6),
               SizedBox(
@@ -373,14 +376,14 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
                     border: Border.all(
                         color: AppColors.ochreDust.withValues(alpha: 0.3)),
                   ),
-                  child: const Row(children: [
-                    Icon(Icons.wifi_off,
+                  child: Row(children: [
+                    const Icon(Icons.wifi_off,
                         size: 16, color: AppColors.ochreDust),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "You're offline — expense will sync automatically when connected.",
-                        style: TextStyle(
+                        l.offlineWillSync,
+                        style: const TextStyle(
                             fontSize: 12, color: AppColors.ochreDust),
                       ),
                     ),

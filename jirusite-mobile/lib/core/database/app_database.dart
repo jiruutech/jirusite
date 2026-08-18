@@ -59,6 +59,11 @@ abstract class AppDatabase {
   Future<DateTime?> getLastSyncedAt(String orgId);
   Future<void> updateLastSyncedAt(String orgId);
 
+  // Aggregates
+  Future<double> getProjectTotalSpent(String projectId);
+  Future<double> getProjectThisMonthSpent(String projectId);
+  Future<Map<String, double>> getOrgTotalSpentByProject(String orgId);
+
   Future<void> close();
 
   @visibleForTesting
@@ -248,6 +253,47 @@ class WebAppDatabase extends AppDatabase {
   @override
   Future<void> updateLastSyncedAt(String orgId) async =>
       _syncMeta[orgId] = DateTime.now();
+
+  // ── Aggregates ─────────────────────────────────────────────────────────────
+
+  @override
+  Future<double> getProjectTotalSpent(String projectId) async {
+    final expenses = _expenses.values
+        .where((e) => e.projectId == projectId)
+        .fold<double>(0, (sum, e) => sum + e.amount);
+    final labor = _labor.values
+        .where((l) => l.projectId == projectId)
+        .fold<double>(0, (sum, l) => sum + l.totalAmount);
+    return expenses + labor;
+  }
+
+  @override
+  Future<double> getProjectThisMonthSpent(String projectId) async {
+    final now = DateTime.now();
+    final monthStart = DateTime(now.year, now.month, 1);
+    final expenses = _expenses.values
+        .where((e) => e.projectId == projectId &&
+            e.createdAt.isAfter(monthStart))
+        .fold<double>(0, (sum, e) => sum + e.amount);
+    final labor = _labor.values
+        .where((l) => l.projectId == projectId &&
+            l.createdAt.isAfter(monthStart))
+        .fold<double>(0, (sum, l) => sum + l.totalAmount);
+    return expenses + labor;
+  }
+
+  @override
+  Future<Map<String, double>> getOrgTotalSpentByProject(String orgId) async {
+    final orgProjects = _projects.values
+        .where((p) => p.organizationId == orgId)
+        .map((p) => p.id)
+        .toSet();
+    final result = <String, double>{};
+    for (final pid in orgProjects) {
+      result[pid] = await getProjectTotalSpent(pid);
+    }
+    return result;
+  }
 
   @override
   Future<void> close() async {}

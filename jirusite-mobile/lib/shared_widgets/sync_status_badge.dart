@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app/theme.dart';
+import '../core/localization/generated/app_localizations.dart';
 import '../core/sync/sync_engine.dart';
 
 /// Small persistent badge shown in the app bar.
@@ -82,7 +83,7 @@ class _SyncStatusBadgeState extends ConsumerState<SyncStatusBadge>
                 Icon(_icon(status, pending), size: 13, color: color),
                 const SizedBox(width: 4),
                 Text(
-                  _label(status, pending),
+                  _label(context, status, pending),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -111,18 +112,20 @@ class _SyncStatusBadgeState extends ConsumerState<SyncStatusBadge>
     return Icons.check_circle_outline;
   }
 
-  String _label(SyncStatus status, int pending) {
-    if (status == SyncStatus.syncing) return 'Syncing...';
-    if (pending > 0) return '$pending pending';
-    return 'Synced';
+  String _label(BuildContext context, SyncStatus status, int pending) {
+    final l = AppLocalizations.of(context);
+    if (status == SyncStatus.syncing) return l.syncingEllipsis;
+    if (pending > 0) return l.pendingCount(pending);
+    return l.synced;
   }
 
   void _onTap(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     ref.read(syncEngineProvider).sync();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-          content: Text('Sync triggered'),
-          duration: Duration(seconds: 2)),
+      SnackBar(
+          content: Text(l.syncTriggered),
+          duration: const Duration(seconds: 2)),
     );
   }
 }

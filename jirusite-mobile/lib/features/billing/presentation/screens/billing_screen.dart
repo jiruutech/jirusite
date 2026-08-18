@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/currency.dart';
@@ -35,10 +36,11 @@ class BillingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final billingAsync = ref.watch(_billingProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Billing & Subscription')),
+      appBar: AppBar(title: Text(l.billingAndSubscription)),
       body: billingAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorState(
@@ -93,7 +95,7 @@ class BillingScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Upgrade options
-              Text('Upgrade Plan', style: Theme.of(context).textTheme.titleMedium),
+              Text(l.upgradePlan, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 12),
               ...['growth', 'professional', 'enterprise']
                   .where((t) => t != currentTier)
@@ -104,7 +106,7 @@ class BillingScreen extends ConsumerWidget {
 
               // Payment history
               if (payments.isNotEmpty) ...[
-                Text('Payment History', style: Theme.of(context).textTheme.titleMedium),
+                Text(l.paymentHistory, style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 12),
                 ...payments.map((p) => _PaymentTile(payment: p)),
               ],
@@ -116,14 +118,15 @@ class BillingScreen extends ConsumerWidget {
   }
 
   Future<void> _initiatePay(BuildContext context, WidgetRef ref, String tier) async {
+    final l = AppLocalizations.of(context);
+    final tierName = tier[0].toUpperCase() + tier.substring(1);
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Upgrade to ${tier[0].toUpperCase()}${tier.substring(1)}'),
-        content: Text(
-            'You will be charged ${formatEtb(_tierPrices[tier]?.toDouble())} per month via Telebirr.'),
+        title: Text(l.upgradeTo(tierName)),
+        content: Text(l.upgradeMessage(formatEtb(_tierPrices[tier]?.toDouble()))),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
@@ -132,8 +135,8 @@ class BillingScreen extends ConsumerWidget {
                 await dio.post(ApiEndpoints.telebirrInitiate, data: {'tier': tier});
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Telebirr payment initiated — check your phone'),
+                    SnackBar(
+                      content: Text(l.telebirrInitiated),
                       backgroundColor: AppColors.success,
                     ),
                   );
@@ -141,12 +144,12 @@ class BillingScreen extends ConsumerWidget {
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed: $e'), backgroundColor: AppColors.error),
+                    SnackBar(content: Text('${l.failed}: $e'), backgroundColor: AppColors.error),
                   );
                 }
               }
             },
-            child: const Text('Pay with Telebirr'),
+            child: Text(l.payWithTelebirr),
           ),
         ],
       ),
@@ -180,6 +183,7 @@ class _TierCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final features = _tierFeatures[tier] ?? [];
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
@@ -194,7 +198,7 @@ class _TierCard extends StatelessWidget {
                 Text(tier[0].toUpperCase() + tier.substring(1),
                     style: Theme.of(context).textTheme.titleMedium),
                 Text(
-                  '${formatEtb(_tierPrices[tier]?.toDouble())}/mo',
+                  '${formatEtb(_tierPrices[tier]?.toDouble())}${l.month}',
                   style: Theme.of(context).textTheme.titleMedium
                       ?.copyWith(color: AppColors.primary)),
               ],
@@ -210,7 +214,7 @@ class _TierCard extends StatelessWidget {
             )),
             const SizedBox(height: 12),
             AppButton(
-              label: 'Upgrade',
+              label: l.upgrade,
               onPressed: onUpgrade,
               minimumSize: const Size(double.infinity, 42),
             ),

@@ -106,6 +106,7 @@ class _ProjectListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final budget = parseDouble(project['total_budget']);
     final spent = parseDoubleOrZero(project['total_spent']);
     final health = budgetHealthPercent(budget, spent);
@@ -142,8 +143,8 @@ class _ProjectListTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${formatEtb(spent)} spent', style: Theme.of(context).textTheme.bodySmall),
-                    Text('of ${formatEtb(budget)}', style: Theme.of(context).textTheme.bodySmall),
+                    Text(l.spentAmount(formatEtb(spent)), style: Theme.of(context).textTheme.bodySmall),
+                    Text(l.ofAmount(formatEtb(budget)), style: Theme.of(context).textTheme.bodySmall),
                   ],
                 ),
                 const SizedBox(height: 4),

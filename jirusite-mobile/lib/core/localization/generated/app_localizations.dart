@@ -583,7 +583,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportPrice.
   ///
   /// In en, this message translates to:
-  /// **'Report a Price'**
+  /// **'Report Price'**
   String get reportPrice;
 
   /// No description provided for @verified.
@@ -619,7 +619,7 @@ abstract class AppLocalizations {
   /// No description provided for @percentComplete.
   ///
   /// In en, this message translates to:
-  /// **'% Complete'**
+  /// **'% complete'**
   String get percentComplete;
 
   /// No description provided for @status.
@@ -1119,6 +1119,504 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Required'**
   String get required;
+
+  /// No description provided for @hintQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'0.0'**
+  String get hintQuantity;
+
+  /// No description provided for @hintDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Cement purchase — 50 quintals'**
+  String get hintDescription;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @schedulePercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get schedulePercentage;
+
+  /// No description provided for @viewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'View {tab}'**
+  String viewTab(String tab);
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m ago'**
+  String minutesAgo(int count);
+
+  /// No description provided for @hoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h ago'**
+  String hoursAgo(int count);
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d ago'**
+  String daysAgo(int count);
+
+  /// No description provided for @weeksAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}w ago'**
+  String weeksAgo(int count);
+
+  /// No description provided for @markAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark All Read'**
+  String get markAllRead;
+
+  /// No description provided for @noNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications'**
+  String get noNotifications;
+
+  /// No description provided for @materialsAndPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials & Prices'**
+  String get materialsAndPrices;
+
+  /// No description provided for @searchMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Search materials...'**
+  String get searchMaterials;
+
+  /// No description provided for @noMaterialsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No materials found'**
+  String get noMaterialsFound;
+
+  /// No description provided for @priceReportingComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Price reporting form — coming soon'**
+  String get priceReportingComingSoon;
+
+  /// No description provided for @currentPriceAddis.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Price (Addis Ababa)'**
+  String get currentPriceAddis;
+
+  /// No description provided for @noPriceHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No price history yet for this region.'**
+  String get noPriceHistory;
+
+  /// No description provided for @failedToLoadPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load prices'**
+  String get failedToLoadPrices;
+
+  /// No description provided for @billingAndSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing & Subscription'**
+  String get billingAndSubscription;
+
+  /// No description provided for @month.
+  ///
+  /// In en, this message translates to:
+  /// **'/month'**
+  String get month;
+
+  /// No description provided for @upgradeTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to {tier}'**
+  String upgradeTo(String tier);
+
+  /// No description provided for @upgradeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You will be charged {amount} per month via Telebirr.'**
+  String upgradeMessage(String amount);
+
+  /// No description provided for @telebirrInitiated.
+  ///
+  /// In en, this message translates to:
+  /// **'Telebirr payment initiated — check your phone'**
+  String get telebirrInitiated;
+
+  /// No description provided for @failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get failed;
+
+  /// No description provided for @upgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get upgrade;
+
+  /// No description provided for @starter.
+  ///
+  /// In en, this message translates to:
+  /// **'Starter'**
+  String get starter;
+
+  /// No description provided for @growth.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth'**
+  String get growth;
+
+  /// No description provided for @professional.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional'**
+  String get professional;
+
+  /// No description provided for @enterprise.
+  ///
+  /// In en, this message translates to:
+  /// **'Enterprise'**
+  String get enterprise;
+
+  /// No description provided for @trial.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial'**
+  String get trial;
+
+  /// No description provided for @expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get expired;
+
+  /// No description provided for @supplierDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier Directory'**
+  String get supplierDirectory;
+
+  /// No description provided for @searchSuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'Search suppliers...'**
+  String get searchSuppliers;
+
+  /// No description provided for @noSuppliersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No suppliers found'**
+  String get noSuppliersFound;
+
+  /// No description provided for @call.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get call;
+
+  /// No description provided for @sms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get sms;
+
+  /// No description provided for @newPO.
+  ///
+  /// In en, this message translates to:
+  /// **'New PO'**
+  String get newPO;
+
+  /// No description provided for @noPurchaseOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'No purchase orders'**
+  String get noPurchaseOrders;
+
+  /// No description provided for @createPO.
+  ///
+  /// In en, this message translates to:
+  /// **'Create PO'**
+  String get createPO;
+
+  /// No description provided for @addTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Task'**
+  String get addTask;
+
+  /// No description provided for @noTasksScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks scheduled yet'**
+  String get noTasksScheduled;
+
+  /// No description provided for @newTask.
+  ///
+  /// In en, this message translates to:
+  /// **'New Task'**
+  String get newTask;
+
+  /// No description provided for @taskName.
+  ///
+  /// In en, this message translates to:
+  /// **'Task Name'**
+  String get taskName;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @notStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Started'**
+  String get notStarted;
+
+  /// No description provided for @inProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get inProgress;
+
+  /// No description provided for @complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get complete;
+
+  /// No description provided for @delayed.
+  ///
+  /// In en, this message translates to:
+  /// **'Delayed'**
+  String get delayed;
+
+  /// No description provided for @constructionCostTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Construction Cost Tracking'**
+  String get constructionCostTracking;
+
+  /// No description provided for @welcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get welcomeBack;
+
+  /// No description provided for @signInWithPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with your phone number'**
+  String get signInWithPhone;
+
+  /// No description provided for @dontHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account?'**
+  String get dontHaveAccount;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'{field} is required'**
+  String fieldRequired(String field);
+
+  /// No description provided for @minCharacters.
+  ///
+  /// In en, this message translates to:
+  /// **'Min {count} characters'**
+  String minCharacters(int count);
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @chooseYourLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Language'**
+  String get chooseYourLanguage;
+
+  /// No description provided for @changeLanguageLater.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change this later in {settings}.'**
+  String changeLanguageLater(String settings);
+
+  /// No description provided for @enterAllDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter all 6 digits'**
+  String get enterAllDigits;
+
+  /// No description provided for @orgSetupTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'This helps us tailor the app for your business.'**
+  String get orgSetupTagline;
+
+  /// No description provided for @organization.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization'**
+  String get organization;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String version(String version);
+
+  /// No description provided for @spentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} spent'**
+  String spentAmount(String amount);
+
+  /// No description provided for @ofAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'of {amount}'**
+  String ofAmount(String amount);
+
+  /// No description provided for @newPurchaseOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'New Purchase Order'**
+  String get newPurchaseOrder;
+
+  /// No description provided for @lineItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Line Items'**
+  String get lineItems;
+
+  /// No description provided for @addLineItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Line Item'**
+  String get addLineItem;
+
+  /// No description provided for @notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get notes;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @submitForApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for Approval'**
+  String get submitForApproval;
+
+  /// No description provided for @poSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase order submitted for approval'**
+  String get poSubmitted;
+
+  /// No description provided for @itemNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Item {number}'**
+  String itemNumber(int number);
+
+  /// No description provided for @qty.
+  ///
+  /// In en, this message translates to:
+  /// **'Qty'**
+  String get qty;
+
+  /// No description provided for @unitPriceEtb.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit Price (ETB)'**
+  String get unitPriceEtb;
+
+  /// No description provided for @lineTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Line total: {amount}'**
+  String lineTotal(String amount);
+
+  /// No description provided for @receiptPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt Photo'**
+  String get receiptPhoto;
+
+  /// No description provided for @tapToAddReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to add receipt photo'**
+  String get tapToAddReceipt;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get chooseFromGallery;
+
+  /// No description provided for @syncTriggered.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync triggered'**
+  String get syncTriggered;
+
+  /// No description provided for @syncingEllipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get syncingEllipsis;
+
+  /// No description provided for @pendingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pending'**
+  String pendingCount(int count);
 }
 
 class _AppLocalizationsDelegate

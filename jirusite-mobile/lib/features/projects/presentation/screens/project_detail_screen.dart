@@ -1,8 +1,11 @@
+// ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/database/app_database.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/currency.dart';
@@ -20,6 +23,11 @@ final _projectDashboardProvider = FutureProvider.autoDispose
   return resp.data as Map<String, dynamic>;
 });
 
+/// Local spent for the project (expenses + labour from SQLite)
+final _localSpentProvider = FutureProvider.autoDispose
+    .family<double, String>((ref, projectId) =>
+        ref.read(appDatabaseProvider).getProjectTotalSpent(projectId));
+
 // ── Screen ────────────────────────────────────────────────────────────────────
 
 class ProjectDetailScreen extends ConsumerWidget {
@@ -29,6 +37,7 @@ class ProjectDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dashAsync = ref.watch(_projectDashboardProvider(projectId));
+    final localSpent = ref.watch(_localSpentProvider(projectId)).valueOrNull;
 
     return dashAsync.when(
       loading: () => _ProjectDetailSkeleton(projectId: projectId),
@@ -44,10 +53,18 @@ class ProjectDetailScreen extends ConsumerWidget {
         final name = data['name'] as String? ??
             (data['budget'] as Map?)?['project_name'] as String? ??
             'Project';
+        // Merge local spent into the budget map if server didn't provide it
+        final enriched = Map<String, dynamic>.from(data);
+        if (localSpent != null && localSpent > 0) {
+          final budget = Map<String, dynamic>.from(
+              enriched['budget'] as Map<String, dynamic>? ?? {});
+          budget['total_spent'] ??= localSpent;
+          enriched['budget'] = budget;
+        }
         return _ProjectDetailLoaded(
           projectId: projectId,
           projectName: name,
-          data: data,
+          data: enriched,
         );
       },
     );
@@ -69,6 +86,7 @@ class _ProjectDetailLoaded extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     // DefaultTabController must live INSIDE NestedScrollView's builder,
     // not wrapping it — otherwise SliverPersistentHeader gets null geometry.
     return Scaffold(
@@ -83,7 +101,7 @@ class _ProjectDetailLoaded extends StatelessWidget {
         backgroundColor: AppColors.safetyOrange,
         foregroundColor: AppColors.chalk,
         shape: const CircleBorder(),
-        tooltip: 'Add expense',
+        tooltip: l.addExpense,
         child: const Icon(Icons.add, size: 26),
       ),
       body: DefaultTabController(
@@ -93,38 +111,27 @@ class _ProjectDetailLoaded extends StatelessWidget {
             SliverToBoxAdapter(
               child: _ProjectHero(data: data),
             ),
-            const SliverPersistentHeader(
+            SliverPersistentHeader(
               pinned: true,
-              delegate: _TabBarDelegate(),
+              delegate: const _TabBarDelegate(),
             ),
           ],
           body: TabBarView(
             children: [
               _OverviewTab(projectId: projectId, data: data),
+              _ExpensesTab(projectId: projectId),
+              _LaborTab(projectId: projectId),
               _PlaceholderTab(
-                label: 'Expenses',
-                onAction: () =>
-                    context.push('/projects/$projectId/expenses'),
+                label: l.materials,
+                icon: Icons.inventory_2_outlined,
+                onAction: () => context.push('/projects/$projectId/expenses'),
               ),
               _PlaceholderTab(
-                label: 'Labour',
-                onAction: () =>
-                    context.push('/projects/$projectId/labor'),
+                label: l.schedule,
+                icon: Icons.calendar_month_outlined,
+                onAction: () => context.push('/projects/$projectId/schedule'),
               ),
-              _PlaceholderTab(
-                label: 'Materials',
-                onAction: () =>
-                    context.push('/projects/$projectId/expenses'),
-              ),
-              _PlaceholderTab(
-                label: 'Schedule',
-                onAction: () =>
-                    context.push('/projects/$projectId/schedule'),
-              ),
-              _PlaceholderTab(
-                label: 'Team',
-                onAction: () => context.push('/projects/$projectId'),
-              ),
+              _TeamTab(projectId: projectId, data: data),
             ],
           ),
         ),
@@ -147,6 +154,7 @@ class _ProjectAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       height: 56 + MediaQuery.of(context).padding.top,
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
@@ -165,7 +173,7 @@ class _ProjectAppBar extends StatelessWidget implements PreferredSizeWidget {
               icon: const Icon(Icons.chevron_left,
                   color: AppColors.blueprintInk, size: 26),
               onPressed: () => context.pop(),
-              tooltip: 'Back',
+              tooltip: l.back,
             ),
             Expanded(
               child: Text(
@@ -194,6 +202,7 @@ class _ProjectHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final budget = data['budget'] as Map<String, dynamic>? ?? {};
     final totalBudget = parseDouble(budget['total_budget']);
     final totalSpent = parseDoubleOrZero(budget['total_spent']);
@@ -213,10 +222,10 @@ class _ProjectHero extends StatelessWidget {
             : AppColors.rebarRust;
 
     final statusLine = ratio > 1.0
-        ? 'Trending over budget'
+        ? l.trendingOverBudget
         : ratio > 0.85
-            ? 'Approaching budget limit'
-            : 'On track';
+            ? l.approachingBudgetLimit
+            : l.onTrack;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
@@ -271,7 +280,7 @@ class _ProjectHero extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _HeroStat(
-                  label: 'Budget',
+                  label: l.budget,
                   value: formatEtb(totalBudget),
                 ),
                 Container(
@@ -281,7 +290,7 @@ class _ProjectHero extends StatelessWidget {
                   color: AppColors.concrete,
                 ),
                 _HeroStat(
-                  label: 'Spent',
+                  label: l.spent,
                   value: formatEtb(totalSpent),
                   valueColor: varianceColor,
                 ),
@@ -292,7 +301,7 @@ class _ProjectHero extends StatelessWidget {
                   color: AppColors.concrete,
                 ),
                 _HeroStat(
-                  label: 'Remaining',
+                  label: l.remaining,
                   value: formatEtb(
                       (totalBudget - totalSpent).abs()),
                   valueColor: totalSpent > totalBudget
@@ -353,6 +362,7 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final l = AppLocalizations.of(context);
     return DecoratedBox(
       decoration: const BoxDecoration(
         color: AppColors.chalk,
@@ -360,27 +370,27 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
           bottom: BorderSide(color: AppColors.concrete, width: 0.5),
         ),
       ),
-      child: const TabBar(
+      child: TabBar(
         isScrollable: true,
         tabAlignment: TabAlignment.start,
         labelColor: AppColors.safetyOrange,
         unselectedLabelColor: AppColors.textSecondary,
         labelStyle:
-            TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         unselectedLabelStyle:
-            TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+            const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         indicatorColor: AppColors.safetyOrange,
         indicatorWeight: 2,
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
         padding: EdgeInsets.zero,
         tabs: [
-          Tab(text: 'Overview'),
-          Tab(text: 'Expenses'),
-          Tab(text: 'Labour'),
-          Tab(text: 'Materials'),
-          Tab(text: 'Schedule'),
-          Tab(text: 'Team'),
+          Tab(text: l.overview),
+          Tab(text: l.expenses),
+          Tab(text: l.labour),
+          Tab(text: l.materials),
+          Tab(text: l.schedule),
+          Tab(text: l.team),
         ],
       ),
     );
@@ -399,6 +409,7 @@ class _OverviewTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final costCodes = (data['costCodes'] as List?)
             ?.cast<Map<String, dynamic>>()
         ?? [];
@@ -426,10 +437,10 @@ class _OverviewTab extends StatelessWidget {
       slivers: [
         // ── Cost-code breakdown ─────────────────────────────────────────
         if (sorted.isNotEmpty) ...[
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: _SectionLabel(
-              label: 'Budget by Cost Code',
-              trailing: 'Sorted by variance',
+              label: l.budgetByCostCode,
+              trailing: l.sortedByVariance,
             ),
           ),
           SliverList.builder(
@@ -450,8 +461,8 @@ class _OverviewTab extends StatelessWidget {
         ],
 
         // ── Recent activity ─────────────────────────────────────────────
-        const SliverToBoxAdapter(
-          child: _SectionLabel(label: 'Recent Activity'),
+        SliverToBoxAdapter(
+          child: _SectionLabel(label: l.recentActivity),
         ),
         if (recent.isEmpty)
           const SliverToBoxAdapter(
@@ -475,9 +486,9 @@ class _OverviewTab extends StatelessWidget {
               child: GestureDetector(
                 onTap: () =>
                     context.push('/projects/$projectId/expenses'),
-                child: const Text(
-                  'See all activity',
-                  style: TextStyle(
+                child: Text(
+                  l.seeAllActivity,
+                  style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: AppColors.safetyOrange,
@@ -576,7 +587,7 @@ class _ActivityRow extends StatelessWidget {
     final amount = parseDouble(entry['amount']);
     final createdAt = DateTime.tryParse(
         entry['created_at'] as String? ?? '');
-    final relTime = createdAt != null ? _relativeTime(createdAt) : '';
+    final relTime = createdAt != null ? _relativeTime(context, createdAt) : '';
 
     return Container(
       height: 52,
@@ -642,12 +653,13 @@ class _ActivityRow extends StatelessWidget {
     );
   }
 
-  String _relativeTime(DateTime dt) {
+  String _relativeTime(BuildContext context, DateTime dt) {
+    final l = AppLocalizations.of(context);
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    if (diff.inDays < 7) return '${diff.inDays}d ago';
-    return '${(diff.inDays / 7).floor()}w ago';
+    if (diff.inMinutes < 60) return l.minutesAgo(diff.inMinutes);
+    if (diff.inHours < 24) return l.hoursAgo(diff.inHours);
+    if (diff.inDays < 7) return l.daysAgo(diff.inDays);
+    return l.weeksAgo((diff.inDays / 7).floor());
   }
 
   Color _typeColor(String type) => switch (type) {
@@ -670,11 +682,12 @@ class _EmptyActivityRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+    final l = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       child: Text(
-        'No recent activity',
-        style: TextStyle(
+        l.noRecentActivity,
+        style: const TextStyle(
           fontSize: 13,
           color: AppColors.textSecondary,
         ),
@@ -698,6 +711,7 @@ class _QuickStatsFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: const BoxDecoration(
@@ -709,13 +723,13 @@ class _QuickStatsFooter extends StatelessWidget {
         children: [
           if (daysRemaining != null)
             _FooterStat(
-              label: 'Days left',
+              label: l.daysLeft,
               value: '$daysRemaining',
             ),
           if (schedPct != null) ...[
             if (daysRemaining != null) const _FooterDivider(),
             _FooterStat(
-              label: 'Schedule',
+              label: l.schedulePercentage,
               value: '${schedPct!.toStringAsFixed(0)}%',
             ),
           ],
@@ -723,7 +737,7 @@ class _QuickStatsFooter extends StatelessWidget {
             if (daysRemaining != null || schedPct != null)
               const _FooterDivider(),
             _FooterStat(
-              label: 'Pending sync',
+              label: l.pendingSyncCount,
               value: '$pendingSync',
               valueColor: AppColors.ochreDust,
             ),
@@ -780,27 +794,212 @@ class _FooterDivider extends StatelessWidget {
 // ── Placeholder tabs ──────────────────────────────────────────────────────────
 
 class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab({required this.label, required this.onAction});
+  const _PlaceholderTab({required this.label, required this.icon, required this.onAction});
   final String label;
+  final IconData icon;
   final VoidCallback onAction;
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          Icon(icon, size: 48, color: AppColors.textSecondary.withValues(alpha: 0.4)),
+          const SizedBox(height: 12),
+          Text(label, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
           OutlinedButton(
             onPressed: onAction,
-            child: Text('View $label'),
+            child: Text(l.viewTab(label)),
           ),
         ],
       ),
+    );
+  }
+}
+
+// ── Expenses tab ──────────────────────────────────────────────────────────────
+
+class _ExpensesTab extends ConsumerWidget {
+  const _ExpensesTab({required this.projectId});
+  final String projectId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final expensesAsync = ref.watch(
+      StreamProvider.autoDispose((ref) =>
+          ref.read(appDatabaseProvider).watchExpenses(projectId)),
+    );
+
+    return expensesAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => ErrorState(message: e.toString()),
+      data: (expenses) {
+        if (expenses.isEmpty) {
+          return EmptyState(
+            icon: Icons.receipt_long_outlined,
+            title: l.noExpensesYet,
+            actionLabel: l.addExpense,
+            onAction: () => context.push('/projects/$projectId/expenses/new'),
+          );
+        }
+        return ListView.builder(
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
+          itemCount: expenses.length,
+          itemBuilder: (_, i) {
+            final e = expenses[i];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: _expenseColor(e.expenseType).withValues(alpha: 0.1),
+                  child: Icon(_expenseIcon(e.expenseType),
+                      color: _expenseColor(e.expenseType), size: 18),
+                ),
+                title: Text(e.description ?? e.expenseType,
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                subtitle: Text(e.transactionDate,
+                    style: Theme.of(context).textTheme.bodySmall),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(formatEtb(e.amount),
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                    Text(e.syncStatus == 'pending' ? '⏳' : '✓',
+                        style: TextStyle(fontSize: 10,
+                            color: e.syncStatus == 'pending'
+                                ? AppColors.syncPending
+                                : AppColors.syncSynced)),
+                  ],
+                ),
+                onTap: () => context.push('/projects/$projectId/expenses/new'),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Color _expenseColor(String type) => switch (type) {
+    'material' => AppColors.blueprintInk,
+    'labor' => AppColors.levelGreen,
+    'equipment' => AppColors.safetyOrange,
+    _ => AppColors.textSecondary,
+  };
+
+  IconData _expenseIcon(String type) => switch (type) {
+    'material' => Icons.inventory_2_outlined,
+    'labor' => Icons.people_outlined,
+    'equipment' => Icons.build_outlined,
+    _ => Icons.receipt_outlined,
+  };
+}
+
+// ── Labour tab ────────────────────────────────────────────────────────────────
+
+class _LaborTab extends ConsumerWidget {
+  const _LaborTab({required this.projectId});
+  final String projectId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final laborAsync = ref.watch(
+      StreamProvider.autoDispose((ref) =>
+          ref.read(appDatabaseProvider).watchLabor(projectId)),
+    );
+
+    return laborAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => ErrorState(message: e.toString()),
+      data: (entries) {
+        if (entries.isEmpty) {
+          return EmptyState(
+            icon: Icons.people_outlined,
+            title: l.noLaborEntriesYet,
+            actionLabel: l.addLaborEntry,
+            onAction: () => context.push('/projects/$projectId/labor/new'),
+          );
+        }
+        return ListView.builder(
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
+          itemCount: entries.length,
+          itemBuilder: (_, i) {
+            final e = entries[i];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: const CircleAvatar(
+                  backgroundColor: Color(0x1A9C27B0),
+                  child: Icon(Icons.people_outlined, color: Colors.purple, size: 20),
+                ),
+                title: Text(e.workerOrCrewName,
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                subtitle: Text('${e.numberOfWorkers} ${l.workersCount} · ${e.workDate}',
+                    style: Theme.of(context).textTheme.bodySmall),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(formatEtb(e.totalAmount),
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                    Text(e.syncStatus == 'pending' ? '⏳' : '✓',
+                        style: TextStyle(fontSize: 10,
+                            color: e.syncStatus == 'pending'
+                                ? AppColors.syncPending
+                                : AppColors.syncSynced)),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+// ── Team tab ──────────────────────────────────────────────────────────────────
+
+class _TeamTab extends StatelessWidget {
+  const _TeamTab({required this.projectId, required this.data});
+  final String projectId;
+  final Map<String, dynamic> data;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final team = (data['team'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+
+    if (team.isEmpty) {
+      return EmptyState(
+        icon: Icons.group_outlined,
+        title: l.teamMembers,
+        subtitle: l.inviteMember,
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: team.length,
+      itemBuilder: (_, i) {
+        final member = team[i];
+        final name = member['full_name'] as String? ?? '—';
+        final role = member['role'] as String? ?? 'viewer';
+        return ListTile(
+          leading: CircleAvatar(
+            backgroundColor: AppColors.primary.withValues(alpha: 0.12),
+            child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?',
+                style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+          ),
+          title: Text(name),
+          subtitle: Text(role, style: Theme.of(context).textTheme.bodySmall),
+        );
+      },
     );
   }
 }
@@ -813,10 +1012,11 @@ class _ProjectDetailSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.chalk,
       appBar: _ProjectAppBar(
-          projectName: 'Loading…', projectId: projectId),
+          projectName: l.loadingEllipsis, projectId: projectId),
       body: Column(
         children: [
           // Hero skeleton

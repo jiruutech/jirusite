@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../app/theme.dart';
 import '../../../../core/database/app_database.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/connectivity_service.dart';
 import '../../../../core/sync/sync_engine.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
@@ -83,11 +84,12 @@ class _LaborEntryScreenState extends ConsumerState<LaborEntryScreen> {
       if (isOnline) ref.read(syncEngineProvider).sync().ignore();
 
       if (mounted) {
+        final l = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(isOnline
-                ? 'Labor entry saved & syncing'
-                : 'Labor entry saved — will sync when online'),
+                ? l.laborEntrySaved
+                : l.laborEntrySavedOffline),
             backgroundColor: AppColors.success,
           ),
         );
@@ -101,9 +103,10 @@ class _LaborEntryScreenState extends ConsumerState<LaborEntryScreen> {
   @override
   Widget build(BuildContext context) {
     final isOnline = ref.watch(isOnlineProvider);
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('New Labor Entry')),
+      appBar: AppBar(title: Text(l.newLaborEntry)),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -111,36 +114,36 @@ class _LaborEntryScreenState extends ConsumerState<LaborEntryScreen> {
             padding: const EdgeInsets.all(20),
             children: [
               AppTextField(
-                label: 'Worker / Crew Name *',
+                label: l.workerCrewNameRequired,
                 controller: _nameCtrl,
-                hint: 'Rebar Crew (Gebru & team)',
+                hint: l.workerCrewPlaceholder,
                 prefixIcon: const Icon(Icons.people_outlined),
-                validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null,
+                validator: (v) => (v?.trim().isEmpty ?? true) ? l.required : null,
               ),
               const SizedBox(height: 16),
               AppTextField(
-                label: 'Work Description',
+                label: l.workDescriptionLabel,
                 controller: _descCtrl,
-                hint: 'Foundation rebar installation, ground floor',
+                hint: l.workDescriptionPlaceholder,
                 maxLines: 2,
               ),
               const SizedBox(height: 16),
               Row(children: [
                 Expanded(
                   child: AppTextField(
-                    label: 'Workers',
+                    label: l.workersLabel,
                     controller: _workersCtrl,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onChanged: (_) => _recalcTotal(),
                     validator: (v) =>
-                        (int.tryParse(v ?? '') == null) ? 'Invalid' : null,
+                        (int.tryParse(v ?? '') == null) ? l.invalidNumber : null,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: AppTextField(
-                    label: 'Daily Rate (ETB)',
+                    label: l.dailyRateEtb,
                     controller: _rateCtrl,
                     hint: '450',
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -150,19 +153,19 @@ class _LaborEntryScreenState extends ConsumerState<LaborEntryScreen> {
               ]),
               const SizedBox(height: 16),
               AppTextField(
-                label: 'Total Amount (ETB) *',
+                label: l.totalAmountEtb,
                 controller: _totalCtrl,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 prefixIcon: const Icon(Icons.monetization_on_outlined),
                 validator: (v) {
                   final n = double.tryParse(v ?? '');
-                  return (n == null || n <= 0) ? 'Enter total amount' : null;
+                  return (n == null || n <= 0) ? l.enterTotalAmount : null;
                 },
               ),
               const SizedBox(height: 16),
 
               // Date
-              Text('Work Date *', style: Theme.of(context).textTheme.labelLarge),
+              Text(l.workDateRequired, style: Theme.of(context).textTheme.labelLarge),
               const SizedBox(height: 6),
               InkWell(
                 onTap: () async {
@@ -198,13 +201,13 @@ class _LaborEntryScreenState extends ConsumerState<LaborEntryScreen> {
                     color: AppColors.syncPending.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Row(children: [
-                    Icon(Icons.wifi_off, size: 16, color: AppColors.syncPending),
-                    SizedBox(width: 8),
+                  child: Row(children: [
+                    const Icon(Icons.wifi_off, size: 16, color: AppColors.syncPending),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "You're offline — will sync when connected.",
-                        style: TextStyle(fontSize: 12, color: AppColors.syncPending),
+                        l.offlineWillSyncShort,
+                        style: const TextStyle(fontSize: 12, color: AppColors.syncPending),
                       ),
                     ),
                   ]),
@@ -218,7 +221,7 @@ class _LaborEntryScreenState extends ConsumerState<LaborEntryScreen> {
 
               const SizedBox(height: 28),
               AppButton(
-                label: 'Save Labor Entry',
+                label: l.saveLaborEntry,
                 onPressed: _saving ? null : _save,
                 isLoading: _saving,
                 icon: Icons.save_outlined,

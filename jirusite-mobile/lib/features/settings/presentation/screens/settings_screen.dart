@@ -72,7 +72,7 @@ class SettingsScreen extends ConsumerWidget {
           }),
 
           // Organization
-          _SectionHeader(title: 'Organization'),
+          _SectionHeader(title: l.organization),
           ListTile(
             leading: const Icon(Icons.business_outlined),
             title: Text(l.teamMembers),
@@ -89,11 +89,11 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           // About
-          const _SectionHeader(title: 'About'),
+          _SectionHeader(title: l.about),
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text(l.appName),
-            subtitle: const Text('Version 1.0.0'),
+            subtitle: Text(l.version('1.0.0')),
           ),
 
           // Logout

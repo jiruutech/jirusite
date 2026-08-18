@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../shared_widgets/empty_state.dart';
@@ -36,10 +37,11 @@ class _SupplierListScreenState extends ConsumerState<SupplierListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final suppliersAsync = ref.watch(_suppliersProvider(_filters));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Supplier Directory')),
+      appBar: AppBar(title: Text(l.supplierDirectory)),
       body: Column(
         children: [
           // Filter bar
@@ -50,7 +52,7 @@ class _SupplierListScreenState extends ConsumerState<SupplierListScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               children: [
                 FilterChip(
-                  label: const Text('Verified'),
+                  label: Text(l.verified),
                   selected: _verifiedOnly,
                   onSelected: (v) => setState(() => _verifiedOnly = v),
                 ),
@@ -70,10 +72,10 @@ class _SupplierListScreenState extends ConsumerState<SupplierListScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: TextField(
               onChanged: (v) => setState(() => _search = v),
-              decoration: const InputDecoration(
-                hintText: 'Search suppliers...',
-                prefixIcon: Icon(Icons.search),
-                contentPadding: EdgeInsets.symmetric(vertical: 10),
+              decoration: InputDecoration(
+                hintText: l.searchSuppliers,
+                prefixIcon: const Icon(Icons.search),
+                contentPadding: const EdgeInsets.symmetric(vertical: 10),
               ),
             ),
           ),
@@ -83,9 +85,9 @@ class _SupplierListScreenState extends ConsumerState<SupplierListScreen> {
               error: (e, _) => ErrorState(message: e.toString()),
               data: (suppliers) {
                 if (suppliers.isEmpty) {
-                  return const EmptyState(
+                  return EmptyState(
                     icon: Icons.storefront_outlined,
-                    title: 'No suppliers found',
+                    title: l.noSuppliersFound,
                   );
                 }
                 return ListView.builder(
@@ -108,6 +110,7 @@ class _SupplierCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final isVerified = supplier['is_verified'] as bool? ?? false;
     final phone = supplier['phone_number'] as String?;
 
@@ -131,12 +134,12 @@ class _SupplierCard extends StatelessWidget {
                       color: AppColors.success.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.verified, size: 12, color: AppColors.success),
-                        SizedBox(width: 4),
-                        Text('Verified', style: TextStyle(fontSize: 10, color: AppColors.success, fontWeight: FontWeight.w600)),
+                        const Icon(Icons.verified, size: 12, color: AppColors.success),
+                        const SizedBox(width: 4),
+                        Text(l.verified, style: const TextStyle(fontSize: 10, color: AppColors.success, fontWeight: FontWeight.w600)),
                       ],
                     ),
                   ),
@@ -163,13 +166,13 @@ class _SupplierCard extends StatelessWidget {
                 children: [
                   _ContactButton(
                     icon: Icons.call_outlined,
-                    label: 'Call',
+                    label: l.call,
                     onTap: () => launchUrl(Uri.parse('tel:$phone')),
                   ),
                   const SizedBox(width: 8),
                   _ContactButton(
                     icon: Icons.sms_outlined,
-                    label: 'SMS',
+                    label: l.sms,
                     onTap: () => launchUrl(Uri.parse('sms:$phone')),
                   ),
                 ],

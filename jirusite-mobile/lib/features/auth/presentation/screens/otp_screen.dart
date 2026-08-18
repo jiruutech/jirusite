@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
 
 import '../../../../app/theme.dart';
 import '../../../../core/localization/generated/app_localizations.dart';
+import '../../../../core/network/api_endpoints.dart';
+import '../../../../core/network/dio_client.dart';
 import '../../../../shared_widgets/app_button.dart';
 import '../providers/auth_provider.dart';
 
@@ -35,19 +38,49 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   Future<void> _verify() async {
     final l = AppLocalizations.of(context);
     if (_code.length < 6) {
-      setState(() => _error = 'Enter all 6 digits');
+      setState(() => _error = l.enterAllDigits);
       return;
     }
     setState(() { _loading = true; _error = null; });
     try {
-      ref.read(authStateProvider.notifier);
-      if (mounted) context.go('/login');
+      final dio = ref.read(dioClientProvider);
+      await dio.post(ApiEndpoints.otpVerify, data: {
+        'phone_number': widget.phoneNumber,
+        'code': _code,
+      });
+      // OTP verified — navigate based on whether user is already authenticated
+      if (mounted) {
+        final user = ref.read(authStateProvider).valueOrNull?.user;
+        if (user != null && user.hasOrganization) {
+          context.go('/dashboard');
+        } else if (user != null) {
+          context.go('/org-setup');
+        } else {
+          context.go('/login');
+        }
+      }
+    } on DioException catch (e) {
+      setState(() {
+        _error = _parseOtpError(e, AppLocalizations.of(context));
+        _loading = false;
+      });
     } catch (_) {
       setState(() {
-        _error = l.errorOccurred;
+        _error = AppLocalizations.of(context).errorOccurred;
         _loading = false;
       });
     }
+  }
+
+  String _parseOtpError(DioException e, AppLocalizations l) {
+    final data = e.response?.data;
+    if (data is Map) {
+      final msg = (data['error'] ?? data['message'] ?? '').toString().toLowerCase();
+      if (msg.contains('invalid') || msg.contains('expired') || msg.contains('incorrect')) {
+        return 'Invalid or expired code. Please request a new one.';
+      }
+    }
+    return l.errorOccurred;
   }
 
   @override

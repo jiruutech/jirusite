@@ -253,6 +253,60 @@ class NativeAppDatabase extends AppDatabase {
       conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  // ── Aggregates ─────────────────────────────────────────────────────────────
+
+  @override
+  Future<double> getProjectTotalSpent(String projectId) async {
+    final db = await _database;
+    final expRow = await db.rawQuery(
+      'SELECT COALESCE(SUM(amount), 0) AS total FROM local_expenses WHERE project_id = ?',
+      [projectId],
+    );
+    final labRow = await db.rawQuery(
+      'SELECT COALESCE(SUM(total_amount), 0) AS total FROM local_labor_entries WHERE project_id = ?',
+      [projectId],
+    );
+    final exp = (expRow.first['total'] as num?)?.toDouble() ?? 0;
+    final lab = (labRow.first['total'] as num?)?.toDouble() ?? 0;
+    return exp + lab;
+  }
+
+  @override
+  Future<double> getProjectThisMonthSpent(String projectId) async {
+    final db = await _database;
+    final now = DateTime.now();
+    final monthStart = DateTime(now.year, now.month, 1).millisecondsSinceEpoch;
+    final expRow = await db.rawQuery(
+      'SELECT COALESCE(SUM(amount), 0) AS total FROM local_expenses WHERE project_id = ? AND created_at >= ?',
+      [projectId, monthStart],
+    );
+    final labRow = await db.rawQuery(
+      'SELECT COALESCE(SUM(total_amount), 0) AS total FROM local_labor_entries WHERE project_id = ? AND created_at >= ?',
+      [projectId, monthStart],
+    );
+    final exp = (expRow.first['total'] as num?)?.toDouble() ?? 0;
+    final lab = (labRow.first['total'] as num?)?.toDouble() ?? 0;
+    return exp + lab;
+  }
+
+  @override
+  Future<Map<String, double>> getOrgTotalSpentByProject(String orgId) async {
+    final db = await _database;
+    // Get all project IDs for this org
+    final projectRows = await db.query(
+      'local_projects',
+      columns: ['id'],
+      where: 'organization_id = ?',
+      whereArgs: [orgId],
+    );
+    final result = <String, double>{};
+    for (final row in projectRows) {
+      final pid = row['id'] as String;
+      result[pid] = await getProjectTotalSpent(pid);
+    }
+    return result;
+  }
+
   @override
   Future<void> close() async => _db?.close();
 

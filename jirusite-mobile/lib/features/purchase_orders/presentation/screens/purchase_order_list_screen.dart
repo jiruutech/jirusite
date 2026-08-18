@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/currency.dart';
@@ -23,15 +24,16 @@ class PurchaseOrderListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final posAsync = ref.watch(_poListProvider(projectId));
     final user = ref.watch(authStateProvider).valueOrNull?.user;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Purchase Orders')),
+      appBar: AppBar(title: Text(l.purchaseOrders)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/projects/$projectId/purchase-orders/new'),
         icon: const Icon(Icons.add),
-        label: const Text('New PO'),
+        label: Text(l.newPO),
       ),
       body: posAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -42,8 +44,8 @@ class PurchaseOrderListScreen extends ConsumerWidget {
           if (pos.isEmpty) {
             return EmptyState(
               icon: Icons.shopping_cart_outlined,
-              title: 'No purchase orders',
-              actionLabel: 'Create PO',
+              title: l.noPurchaseOrders,
+              actionLabel: l.createPO,
               onAction: () => context.push('/projects/$projectId/purchase-orders/new'),
             );
           }
@@ -70,6 +72,7 @@ class _PoCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final status = po['status'] as String? ?? 'pending';
     final color = switch (status) {
       'approved'  => AppColors.success,
@@ -96,7 +99,7 @@ class _PoCard extends ConsumerWidget {
             ),
             if (po['supplier_name'] != null) ...[
               const SizedBox(height: 4),
-              Text('Supplier: ${po['supplier_name']}',
+              Text('${l.supplier}: ${po['supplier_name']}',
                   style: Theme.of(context).textTheme.bodySmall),
             ],
             const SizedBox(height: 8),
@@ -110,7 +113,7 @@ class _PoCard extends ConsumerWidget {
                   Expanded(
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.check, size: 16),
-                      label: const Text('Approve'),
+                      label: Text(l.approve),
                       style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.success),
                       onPressed: () => _approve(context, ref, 'approve'),
@@ -120,7 +123,7 @@ class _PoCard extends ConsumerWidget {
                   Expanded(
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.close, size: 16),
-                      label: const Text('Reject'),
+                      label: Text(l.reject),
                       style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.error),
                       onPressed: () => _approve(context, ref, 'reject'),
@@ -136,6 +139,7 @@ class _PoCard extends ConsumerWidget {
   }
 
   Future<void> _approve(BuildContext context, WidgetRef ref, String action) async {
+    final l = AppLocalizations.of(context);
     try {
       final dio = ref.read(dioClientProvider);
       await dio.patch(ApiEndpoints.approvePO(po['id'] as String), data: {'action': action});
@@ -143,7 +147,7 @@ class _PoCard extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed: $e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text('${l.failed}: $e'), backgroundColor: AppColors.error),
         );
       }
     }

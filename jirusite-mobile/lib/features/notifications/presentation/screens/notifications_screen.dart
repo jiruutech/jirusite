@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../shared_widgets/empty_state.dart';
@@ -18,11 +19,12 @@ class NotificationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final notifAsync = ref.watch(_notificationsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: Text(l.notifications),
         actions: [
           TextButton(
             onPressed: () async {
@@ -30,7 +32,7 @@ class NotificationsScreen extends ConsumerWidget {
               await dio.patch(ApiEndpoints.readAll);
               ref.invalidate(_notificationsProvider);
             },
-            child: const Text('Mark All Read', style: TextStyle(color: Colors.white)),
+            child: Text(l.markAllRead, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -39,9 +41,9 @@ class NotificationsScreen extends ConsumerWidget {
         error: (e, _) => ErrorState(message: e.toString()),
         data: (notifications) {
           if (notifications.isEmpty) {
-            return const EmptyState(
+            return EmptyState(
               icon: Icons.notifications_none_outlined,
-              title: 'No notifications',
+              title: l.noNotifications,
             );
           }
           return ListView.builder(

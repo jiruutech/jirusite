@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/currency.dart';
@@ -38,10 +39,11 @@ class _MaterialsScreenState extends ConsumerState<MaterialsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final materialsAsync = ref.watch(_materialsProvider(_search));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Materials & Prices')),
+      appBar: AppBar(title: Text(l.materialsAndPrices)),
       body: Column(
         children: [
           // Search
@@ -49,9 +51,9 @@ class _MaterialsScreenState extends ConsumerState<MaterialsScreen> {
             padding: const EdgeInsets.all(16),
             child: TextField(
               onChanged: (v) => setState(() => _search = v),
-              decoration: const InputDecoration(
-                hintText: 'Search materials...',
-                prefixIcon: Icon(Icons.search),
+              decoration: InputDecoration(
+                hintText: l.searchMaterials,
+                prefixIcon: const Icon(Icons.search),
               ),
             ),
           ),
@@ -62,9 +64,9 @@ class _MaterialsScreenState extends ConsumerState<MaterialsScreen> {
               error: (e, _) => ErrorState(message: e.toString()),
               data: (materials) {
                 if (materials.isEmpty) {
-                  return const EmptyState(
+                  return EmptyState(
                     icon: Icons.inventory_2_outlined,
-                    title: 'No materials found',
+                    title: l.noMaterialsFound,
                   );
                 }
                 return ListView.builder(
@@ -100,15 +102,16 @@ class _MaterialsScreenState extends ConsumerState<MaterialsScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showReportPriceDialog(context),
         icon: const Icon(Icons.add_chart),
-        label: const Text('Report Price'),
+        label: Text(l.reportPrice),
       ),
     );
   }
 
   void _showReportPriceDialog(BuildContext context) {
+    final l = AppLocalizations.of(context);
     // TODO: implement price reporting form
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Price reporting form — coming soon')),
+      SnackBar(content: Text(l.priceReportingComingSoon)),
     );
   }
 }
@@ -119,6 +122,7 @@ class _PriceHistoryPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final historyAsync = ref.watch(_priceHistoryProvider(materialId));
 
     return Container(
@@ -131,11 +135,11 @@ class _PriceHistoryPanel extends ConsumerWidget {
       ),
       child: historyAsync.when(
         loading: () => const SizedBox(height: 80, child: Center(child: CircularProgressIndicator())),
-        error: (e, _) => Text('Failed to load prices: $e', style: const TextStyle(color: AppColors.error)),
+        error: (e, _) => Text('${l.failedToLoadPrices}: $e', style: const TextStyle(color: AppColors.error)),
         data: (prices) {
           if (prices.isEmpty) {
-            return const Text('No price history yet for this region.',
-                style: TextStyle(color: AppColors.textSecondary));
+            return Text(l.noPriceHistory,
+                style: const TextStyle(color: AppColors.textSecondary));
           }
           final latest = prices.first;
           return Column(
@@ -144,7 +148,7 @@ class _PriceHistoryPanel extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Current Price (Addis Ababa)',
+                  Text(l.currentPriceAddis,
                       style: Theme.of(context).textTheme.labelLarge),
                   Text(formatEtb(parseDouble(latest['price'])),
                       style: Theme.of(context).textTheme.titleMedium

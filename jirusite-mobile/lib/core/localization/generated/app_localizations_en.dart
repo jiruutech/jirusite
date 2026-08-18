@@ -253,7 +253,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get region => 'Region';
 
   @override
-  String get reportPrice => 'Report a Price';
+  String get reportPrice => 'Report Price';
 
   @override
   String get verified => 'Verified';
@@ -271,7 +271,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plannedEnd => 'Planned End';
 
   @override
-  String get percentComplete => '% Complete';
+  String get percentComplete => '% complete';
 
   @override
   String get status => 'Status';
@@ -529,4 +529,287 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get required => 'Required';
+
+  @override
+  String get hintQuantity => '0.0';
+
+  @override
+  String get hintDescription => 'e.g. Cement purchase — 50 quintals';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get schedulePercentage => 'Schedule';
+
+  @override
+  String viewTab(String tab) {
+    return 'View $tab';
+  }
+
+  @override
+  String minutesAgo(int count) {
+    return '${count}m ago';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String daysAgo(int count) {
+    return '${count}d ago';
+  }
+
+  @override
+  String weeksAgo(int count) {
+    return '${count}w ago';
+  }
+
+  @override
+  String get markAllRead => 'Mark All Read';
+
+  @override
+  String get noNotifications => 'No notifications';
+
+  @override
+  String get materialsAndPrices => 'Materials & Prices';
+
+  @override
+  String get searchMaterials => 'Search materials...';
+
+  @override
+  String get noMaterialsFound => 'No materials found';
+
+  @override
+  String get priceReportingComingSoon => 'Price reporting form — coming soon';
+
+  @override
+  String get currentPriceAddis => 'Current Price (Addis Ababa)';
+
+  @override
+  String get noPriceHistory => 'No price history yet for this region.';
+
+  @override
+  String get failedToLoadPrices => 'Failed to load prices';
+
+  @override
+  String get billingAndSubscription => 'Billing & Subscription';
+
+  @override
+  String get month => '/month';
+
+  @override
+  String upgradeTo(String tier) {
+    return 'Upgrade to $tier';
+  }
+
+  @override
+  String upgradeMessage(String amount) {
+    return 'You will be charged $amount per month via Telebirr.';
+  }
+
+  @override
+  String get telebirrInitiated =>
+      'Telebirr payment initiated — check your phone';
+
+  @override
+  String get failed => 'Failed';
+
+  @override
+  String get upgrade => 'Upgrade';
+
+  @override
+  String get starter => 'Starter';
+
+  @override
+  String get growth => 'Growth';
+
+  @override
+  String get professional => 'Professional';
+
+  @override
+  String get enterprise => 'Enterprise';
+
+  @override
+  String get trial => 'Trial';
+
+  @override
+  String get expired => 'Expired';
+
+  @override
+  String get supplierDirectory => 'Supplier Directory';
+
+  @override
+  String get searchSuppliers => 'Search suppliers...';
+
+  @override
+  String get noSuppliersFound => 'No suppliers found';
+
+  @override
+  String get call => 'Call';
+
+  @override
+  String get sms => 'SMS';
+
+  @override
+  String get newPO => 'New PO';
+
+  @override
+  String get noPurchaseOrders => 'No purchase orders';
+
+  @override
+  String get createPO => 'Create PO';
+
+  @override
+  String get addTask => 'Add Task';
+
+  @override
+  String get noTasksScheduled => 'No tasks scheduled yet';
+
+  @override
+  String get newTask => 'New Task';
+
+  @override
+  String get taskName => 'Task Name';
+
+  @override
+  String get add => 'Add';
+
+  @override
+  String get notStarted => 'Not Started';
+
+  @override
+  String get inProgress => 'In Progress';
+
+  @override
+  String get complete => 'Complete';
+
+  @override
+  String get delayed => 'Delayed';
+
+  @override
+  String get constructionCostTracking => 'Construction Cost Tracking';
+
+  @override
+  String get welcomeBack => 'Welcome back';
+
+  @override
+  String get signInWithPhone => 'Sign in with your phone number';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account?';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String fieldRequired(String field) {
+    return '$field is required';
+  }
+
+  @override
+  String minCharacters(int count) {
+    return 'Min $count characters';
+  }
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get chooseYourLanguage => 'Choose Your Language';
+
+  @override
+  String changeLanguageLater(String settings) {
+    return 'You can change this later in $settings.';
+  }
+
+  @override
+  String get enterAllDigits => 'Enter all 6 digits';
+
+  @override
+  String get orgSetupTagline =>
+      'This helps us tailor the app for your business.';
+
+  @override
+  String get organization => 'Organization';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String version(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String spentAmount(String amount) {
+    return '$amount spent';
+  }
+
+  @override
+  String ofAmount(String amount) {
+    return 'of $amount';
+  }
+
+  @override
+  String get newPurchaseOrder => 'New Purchase Order';
+
+  @override
+  String get lineItems => 'Line Items';
+
+  @override
+  String get addLineItem => 'Add Line Item';
+
+  @override
+  String get notes => 'Notes (optional)';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get submitForApproval => 'Submit for Approval';
+
+  @override
+  String get poSubmitted => 'Purchase order submitted for approval';
+
+  @override
+  String itemNumber(int number) {
+    return 'Item $number';
+  }
+
+  @override
+  String get qty => 'Qty';
+
+  @override
+  String get unitPriceEtb => 'Unit Price (ETB)';
+
+  @override
+  String lineTotal(String amount) {
+    return 'Line total: $amount';
+  }
+
+  @override
+  String get receiptPhoto => 'Receipt Photo';
+
+  @override
+  String get tapToAddReceipt => 'Tap to add receipt photo';
+
+  @override
+  String get takePhoto => 'Take Photo';
+
+  @override
+  String get chooseFromGallery => 'Choose from Gallery';
+
+  @override
+  String get syncTriggered => 'Sync triggered';
+
+  @override
+  String get syncingEllipsis => 'Syncing...';
+
+  @override
+  String pendingCount(int count) {
+    return '$count pending';
+  }
 }

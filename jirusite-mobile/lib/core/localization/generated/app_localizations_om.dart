@@ -271,7 +271,7 @@ class AppLocalizationsOm extends AppLocalizations {
   String get plannedEnd => 'Xumura Karoorfame';
 
   @override
-  String get percentComplete => '% Xumurame';
+  String get percentComplete => '% xumurame';
 
   @override
   String get status => 'Haala';
@@ -530,4 +530,287 @@ class AppLocalizationsOm extends AppLocalizations {
 
   @override
   String get required => 'Dirqama';
+
+  @override
+  String get hintQuantity => '0.0';
+
+  @override
+  String get hintDescription => 'Fkf. Simentoo bitachuu — kuintaala 50';
+
+  @override
+  String get back => 'Duubatti Deebi\'i';
+
+  @override
+  String get schedulePercentage => 'Sagantaa';
+
+  @override
+  String viewTab(String tab) {
+    return '$tab Ilaali';
+  }
+
+  @override
+  String minutesAgo(int count) {
+    return 'daqiiqaa $count dura';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return 'sa\'aatii $count dura';
+  }
+
+  @override
+  String daysAgo(int count) {
+    return 'guyyaa $count dura';
+  }
+
+  @override
+  String weeksAgo(int count) {
+    return 'torban $count dura';
+  }
+
+  @override
+  String get markAllRead => 'Hunda Dubbifame Godhi';
+
+  @override
+  String get noNotifications => 'Beeksisawwan hin jiru';
+
+  @override
+  String get materialsAndPrices => 'Meeshaalee fi Gatii';
+
+  @override
+  String get searchMaterials => 'Meeshaalee barbaadi...';
+
+  @override
+  String get noMaterialsFound => 'Meeshaan hin argamne';
+
+  @override
+  String get priceReportingComingSoon => 'Unka gabaasaa gatii — dhiyootti';
+
+  @override
+  String get currentPriceAddis => 'Gatii Ammaa (Finfinnee)';
+
+  @override
+  String get noPriceHistory => 'Godinaa kanaaf seenaan gatii amma hin jiru.';
+
+  @override
+  String get failedToLoadPrices => 'Gatii fe\'uun dhabame';
+
+  @override
+  String get billingAndSubscription => 'Kaffaltii fi Miseensummaa';
+
+  @override
+  String get month => '/ji\'a';
+
+  @override
+  String upgradeTo(String tier) {
+    return 'Gara $tier fooyi\'i';
+  }
+
+  @override
+  String upgradeMessage(String amount) {
+    return '$amount ji\'aa ji\'aan Telebirr itti kaffalama.';
+  }
+
+  @override
+  String get telebirrInitiated =>
+      'Kaffaltiin Telebirr jalqabameera — bilbila kee ilaali';
+
+  @override
+  String get failed => 'Dhabame';
+
+  @override
+  String get upgrade => 'Fooyi\'i';
+
+  @override
+  String get starter => 'Jalqaba';
+
+  @override
+  String get growth => 'Guddina';
+
+  @override
+  String get professional => 'Ogeessa';
+
+  @override
+  String get enterprise => 'Dhaabbata';
+
+  @override
+  String get trial => 'Yaalii';
+
+  @override
+  String get expired => 'Xumurameera';
+
+  @override
+  String get supplierDirectory => 'Galmee Dhiyeessitootaa';
+
+  @override
+  String get searchSuppliers => 'Dhiyeessitootaa barbaadi...';
+
+  @override
+  String get noSuppliersFound => 'Dhiyeessituun hin argamne';
+
+  @override
+  String get call => 'Bilbili';
+
+  @override
+  String get sms => 'SMS';
+
+  @override
+  String get newPO => 'Ajaja Haaraa';
+
+  @override
+  String get noPurchaseOrders => 'Ajajni bitaa hin jiru';
+
+  @override
+  String get createPO => 'Ajaja Uumi';
+
+  @override
+  String get addTask => 'Hojii Dabaluu';
+
+  @override
+  String get noTasksScheduled => 'Hojiin karoorfame hin jiru';
+
+  @override
+  String get newTask => 'Hojii Haaraa';
+
+  @override
+  String get taskName => 'Maqaa Hojii';
+
+  @override
+  String get add => 'Dabali';
+
+  @override
+  String get notStarted => 'Hin jalqabne';
+
+  @override
+  String get inProgress => 'Adeemsa irra jira';
+
+  @override
+  String get complete => 'Xumurame';
+
+  @override
+  String get delayed => 'Turu';
+
+  @override
+  String get constructionCostTracking => 'Hordoffii Baasii Ijaarsa';
+
+  @override
+  String get welcomeBack => 'Baga Deebittan';
+
+  @override
+  String get signInWithPhone => 'Lakkoofsa bilbilaan seeni';
+
+  @override
+  String get dontHaveAccount => 'Herreegaa hin qabduu?';
+
+  @override
+  String get forgotPassword => 'Jecha darbii dagatte?';
+
+  @override
+  String fieldRequired(String field) {
+    return '$field dirqama';
+  }
+
+  @override
+  String minCharacters(int count) {
+    return 'Xiqqaate qubee $count';
+  }
+
+  @override
+  String get alreadyHaveAccount => 'Herreegaa qabdaa?';
+
+  @override
+  String get chooseYourLanguage => 'Afaan Kee Filadhu';
+
+  @override
+  String changeLanguageLater(String settings) {
+    return 'Kana booda $settings keessatti jijjiiruu dandeessa.';
+  }
+
+  @override
+  String get enterAllDigits => 'Lakkoofsa 6 hunda galchi';
+
+  @override
+  String get orgSetupTagline =>
+      'Odeeffannoon kun dhaabbata keetiif app qindeessuuf nu gargaara.';
+
+  @override
+  String get organization => 'Dhaabbata';
+
+  @override
+  String get about => 'Waa\'ee';
+
+  @override
+  String version(String version) {
+    return 'Versiyon $version';
+  }
+
+  @override
+  String spentAmount(String amount) {
+    return '$amount bahe';
+  }
+
+  @override
+  String ofAmount(String amount) {
+    return '$amount keessaa';
+  }
+
+  @override
+  String get newPurchaseOrder => 'Ajaja Bitachuu Haaraa';
+
+  @override
+  String get lineItems => 'Meeshaalee Tarreeffaman';
+
+  @override
+  String get addLineItem => 'Meeshaa Dabaluu';
+
+  @override
+  String get notes => 'Yaadannoo (dirqama miti)';
+
+  @override
+  String get total => 'Waliigala';
+
+  @override
+  String get submitForApproval => 'Hayyamaaf Ergi';
+
+  @override
+  String get poSubmitted => 'Ajajni bitachuu hayyamaaf ergameera';
+
+  @override
+  String itemNumber(int number) {
+    return 'Meeshaa $number';
+  }
+
+  @override
+  String get qty => 'Baay\'ina';
+
+  @override
+  String get unitPriceEtb => 'Gatii Ahadaa (ETB)';
+
+  @override
+  String lineTotal(String amount) {
+    return 'Waliigala saree: $amount';
+  }
+
+  @override
+  String get receiptPhoto => 'Suuraa Rasiidhaa';
+
+  @override
+  String get tapToAddReceipt => 'Suuraa dabaluuf tuqi';
+
+  @override
+  String get takePhoto => 'Suuraa Ka\'i';
+
+  @override
+  String get chooseFromGallery => 'Galarii irraa Filadhu';
+
+  @override
+  String get syncTriggered => 'Walmadaaluu jalqabame';
+
+  @override
+  String get syncingEllipsis => 'Walmadaalaa...';
+
+  @override
+  String pendingCount(int count) {
+    return '$count eeggachaa';
+  }
 }

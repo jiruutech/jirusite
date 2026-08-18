@@ -70,17 +70,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       children: [
                         Text(l.appName,
                             style: Theme.of(context).textTheme.headlineMedium),
-                        Text('Construction Cost Tracking',
+                        Text(l.constructionCostTracking,
                             style: Theme.of(context).textTheme.bodySmall),
                       ],
                     ),
                   ],
                 ),
                 const SizedBox(height: 48),
-                Text('Welcome back',
+                Text(l.welcomeBack,
                     style: Theme.of(context).textTheme.headlineLarge),
                 const SizedBox(height: 8),
-                Text('Sign in with your phone number',
+                Text(l.signInWithPhone,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                         )),
@@ -95,7 +95,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   autofillHints: const [AutofillHints.telephoneNumber],
                   textInputAction: TextInputAction.next,
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return '${l.phoneNumber} is required';
+                    if (v == null || v.trim().isEmpty) return l.fieldRequired(l.phoneNumber);
                     return null;
                   },
                 ),
@@ -113,7 +113,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: () => setState(() => _obscurePass = !_obscurePass),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return '${l.password} is required';
+                    if (v == null || v.isEmpty) return l.fieldRequired(l.password);
                     return null;
                   },
                 ),
@@ -147,13 +147,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Center(
                   child: TextButton(
                     onPressed: () => context.push('/register'),
-                    child: Text("Don't have an account? ${l.register}"),
+                    child: Text('${l.dontHaveAccount} ${l.register}'),
                   ),
                 ),
                 Center(
                   child: TextButton(
                     onPressed: () => context.push('/otp', extra: _phoneCtrl.text.trim()),
-                    child: const Text('Forgot password?'),
+                    child: Text(l.forgotPassword),
                   ),
                 ),
               ],

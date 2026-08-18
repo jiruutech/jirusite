@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme.dart';
+import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../shared_widgets/empty_state.dart';
@@ -19,23 +20,24 @@ class ScheduleScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final scheduleAsync = ref.watch(_scheduleProvider(projectId));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Schedule')),
+      appBar: AppBar(title: Text(l.schedule)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddTaskDialog(context, ref),
         icon: const Icon(Icons.add),
-        label: const Text('Add Task'),
+        label: Text(l.addTask),
       ),
       body: scheduleAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorState(message: e.toString()),
         data: (tasks) {
           if (tasks.isEmpty) {
-            return const EmptyState(
+            return EmptyState(
               icon: Icons.calendar_month_outlined,
-              title: 'No tasks scheduled yet',
+              title: l.noTasksScheduled,
             );
           }
           // Group by cost code
@@ -64,17 +66,18 @@ class ScheduleScreen extends ConsumerWidget {
   }
 
   void _showAddTaskDialog(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final nameCtrl = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('New Task'),
+        title: Text(l.newTask),
         content: TextField(
           controller: nameCtrl,
-          decoration: const InputDecoration(labelText: 'Task Name'),
+          decoration: InputDecoration(labelText: l.taskName),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.cancel)),
           ElevatedButton(
             onPressed: () async {
               final dio = ref.read(dioClientProvider);
@@ -84,7 +87,7 @@ class ScheduleScreen extends ConsumerWidget {
               ref.invalidate(_scheduleProvider(projectId));
               if (ctx.mounted) Navigator.pop(ctx);
             },
-            child: const Text('Add'),
+            child: Text(l.add),
           ),
         ],
       ),
@@ -99,6 +102,7 @@ class _TaskCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final status = task['status'] as String? ?? 'not_started';
     final percent = task['percent_complete'] as int? ?? 0;
     final color = switch (status) {
@@ -106,6 +110,13 @@ class _TaskCard extends ConsumerWidget {
       'in_progress' => AppColors.primary,
       'delayed'     => AppColors.error,
       _             => AppColors.textSecondary,
+    };
+
+    final statusLabel = switch (status) {
+      'complete'    => l.complete,
+      'in_progress' => l.inProgress,
+      'delayed'     => l.delayed,
+      _             => l.notStarted,
     };
 
     return Card(
@@ -125,7 +136,7 @@ class _TaskCard extends ConsumerWidget {
                     color: color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text(status.replaceAll('_', ' ').toUpperCase(),
+                  child: Text(statusLabel.toUpperCase(),
                       style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: color)),
                 ),
               ],
@@ -134,7 +145,7 @@ class _TaskCard extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('$percent% complete', style: Theme.of(context).textTheme.bodySmall),
+                Text('$percent${l.percentComplete}', style: Theme.of(context).textTheme.bodySmall),
                 if (task['planned_start'] != null || task['planned_end'] != null)
                   Text(
                     '${task['planned_start'] ?? '?'} → ${task['planned_end'] ?? '?'}',

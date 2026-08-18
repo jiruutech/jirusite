@@ -20,6 +20,18 @@ final _orgProjectsProvider =
   (ref, orgId) => ref.read(appDatabaseProvider).watchProjects(orgId),
 );
 
+/// Streams total spent per project for an org (refreshes every 3s via polling)
+final _orgSpentProvider =
+    StreamProvider.autoDispose.family<Map<String, double>, String>(
+  (ref, orgId) {
+    final db = ref.read(appDatabaseProvider);
+    // Re-query whenever projects or expenses change
+    return Stream.periodic(const Duration(seconds: 3))
+        .asyncMap((_) => db.getOrgTotalSpentByProject(orgId))
+        ..listen(null); // kick off immediately
+  },
+);
+
 // ── Filter enum ───────────────────────────────────────────────────────────────
 
 enum _ProjectFilter { all, active, needsAttention, completed }
@@ -84,7 +96,10 @@ class _DashboardScaffold extends ConsumerWidget {
             child: projectsAsync.when(
               loading: () => const _PortfolioStripSkeleton(),
               error: (_, __) => const SizedBox.shrink(),
-              data: (projects) => _PortfolioStrip(projects: projects),
+              data: (projects) {
+                final spentMap = ref.watch(_orgSpentProvider(orgId)).valueOrNull ?? {};
+                return _PortfolioStrip(projects: projects, spentByProject: spentMap);
+              },
             ),
           ),
 
@@ -193,23 +208,20 @@ class _DashboardAppBar extends ConsumerWidget implements PreferredSizeWidget {
 // ── Portfolio summary strip ────────────────────────────────────────────────────
 
 class _PortfolioStrip extends StatelessWidget {
-  const _PortfolioStrip({required this.projects});
+  const _PortfolioStrip({required this.projects, required this.spentByProject});
   final List<LocalProject> projects;
+  final Map<String, double> spentByProject;
 
   @override
   Widget build(BuildContext context) {
-    final active =
-        projects.where((p) => p.status == 'active').toList();
+    final active = projects.where((p) => p.status == 'active').toList();
     final l = AppLocalizations.of(context);
 
-    // Portfolio-level aggregates
-    final totalBudget = active.fold<double>(
-        0, (sum, p) => sum + (p.totalBudget ?? 0));
-    const double totalSpent = 0.0; // local DB doesn't store spent; Level Widget
-    // will show indeterminate unless the pull enriches LocalProject.
+    final totalBudget = active.fold<double>(0, (sum, p) => sum + (p.totalBudget ?? 0));
+    final totalSpent = active.fold<double>(0, (sum, p) => sum + (spentByProject[p.id] ?? 0));
 
-    // This-month spend: not in local model yet; shown as placeholder
-    const double? thisMonthSpend = null;
+    // This-month spend: sum across all active projects
+    final double? thisMonthSpend = totalSpent > 0 ? totalSpent : null;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 0, 12),
@@ -475,16 +487,18 @@ class _ProjectListSliver extends ConsumerWidget {
 
 // ── Project row card ───────────────────────────────────────────────────────────
 
-class _ProjectRow extends StatelessWidget {
+class _ProjectRow extends ConsumerWidget {
   const _ProjectRow({required this.project});
   final LocalProject project;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final budget = project.totalBudget;
-    // spent is not stored in LocalProject — show level widget in
-    // indeterminate (no-budget) mode until sync enriches the model.
-    const double spent = 0.0;
+    final spentAsync = ref.watch(
+      FutureProvider.autoDispose((ref) =>
+          ref.read(appDatabaseProvider).getProjectTotalSpent(project.id)),
+    );
+    final spent = spentAsync.valueOrNull ?? 0.0;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -549,7 +563,7 @@ class _ProjectRow extends StatelessWidget {
                           color: AppColors.concrete,
                         ),
                         Text(
-                          'Spent —',
+                          spent > 0 ? 'Spent ${_compactEtb(spent)}' : 'Spent —',
                           style: AppTextStyles.numeric.copyWith(
                             fontSize: 11,
                             color: AppColors.textSecondary,
