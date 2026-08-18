@@ -22,6 +22,13 @@ const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
+// ── Trust proxy ────────────────────────────────────────────────────────────
+// Render (and most PaaS platforms) sit behind a reverse proxy that sets
+// X-Forwarded-For. Without this, express-rate-limit throws
+// ERR_ERL_UNEXPECTED_X_FORWARDED_FOR on every request.
+// '1' means trust the first hop (the platform's load balancer).
+app.set('trust proxy', 1);
+
 // ── Security & parsing middleware ──────────────────────────────────────────
 app.use(helmet());
 app.use(
@@ -75,6 +82,9 @@ const authLimiter = rateLimit({
 });
 
 // ── Health check ───────────────────────────────────────────────────────────
+// Both / and /health respond — Render's default health check hits /,
+// and some uptime monitors use /health.
+app.get('/', (_req, res) => res.json({ status: 'ok', service: 'jirusite-api' }));
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 // ── Routes ─────────────────────────────────────────────────────────────────
