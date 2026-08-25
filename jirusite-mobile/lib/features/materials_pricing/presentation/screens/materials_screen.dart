@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_const_constructors
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -108,10 +109,13 @@ class _MaterialsScreenState extends ConsumerState<MaterialsScreen> {
   }
 
   void _showReportPriceDialog(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    // TODO: implement price reporting form
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l.priceReportingComingSoon)),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ReportPriceSheet(
+        materials: ref.read(_materialsProvider(_search)).valueOrNull ?? [],
+      ),
     );
   }
 }
@@ -192,6 +196,235 @@ class _PriceTrendChart extends StatelessWidget {
               belowBarData: BarAreaData(
                 show: true,
                 color: AppColors.primary.withValues(alpha: 0.1),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Report Price Bottom Sheet ──────────────────────────────────────────────
+
+class _ReportPriceSheet extends ConsumerStatefulWidget {
+  const _ReportPriceSheet({required this.materials});
+  final List<Map<String, dynamic>> materials;
+
+  @override
+  ConsumerState<_ReportPriceSheet> createState() => _ReportPriceSheetState();
+}
+
+class _ReportPriceSheetState extends ConsumerState<_ReportPriceSheet> {
+  final _formKey = GlobalKey<FormState>();
+  final _priceCtrl = TextEditingController();
+  final _regionCtrl = TextEditingController(text: 'Addis Ababa');
+
+  Map<String, dynamic>? _selectedMaterial;
+  bool _submitting = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _priceCtrl.dispose();
+    _regionCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (_selectedMaterial == null) {
+      setState(() => _error = AppLocalizations.of(context).selectMaterialFirst);
+      return;
+    }
+
+    setState(() { _submitting = true; _error = null; });
+
+    try {
+      final dio = ref.read(dioClientProvider);
+      await dio.post(ApiEndpoints.materialPrices, data: {
+        'material_id': _selectedMaterial!['id'],
+        'price': double.parse(_priceCtrl.text),
+        'region': _regionCtrl.text.trim(),
+        'unit': _selectedMaterial!['standard_unit'],
+      });
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context).priceSubmitted),
+            backgroundColor: AppColors.levelGreen,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _error = AppLocalizations.of(context).priceSubmitFailed;
+        _submitting = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final unit = _selectedMaterial?['standard_unit'] as String? ?? '—';
+
+    return DraggableScrollableSheet(
+      initialChildSize: 0.75,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      builder: (_, scrollCtrl) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        child: Column(
+          children: [
+            // Handle
+            Container(
+              margin: const EdgeInsets.only(top: 10, bottom: 4),
+              width: 36, height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.concrete,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(l.reportPriceTitle,
+                            style: Theme.of(context).textTheme.titleMedium),
+                        const SizedBox(height: 2),
+                        Text(l.reportPriceSubtitle,
+                            style: Theme.of(context).textTheme.bodySmall),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            // Form
+            Expanded(
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  controller: scrollCtrl,
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    // Material picker
+                    Text(l.selectMaterial,
+                        style: Theme.of(context).textTheme.labelLarge),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<Map<String, dynamic>>(
+                      initialValue: _selectedMaterial,
+                      hint: Text(l.selectMaterial),
+                      isExpanded: true,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      ),
+                      items: widget.materials.map((m) => DropdownMenuItem(
+                        value: m,
+                        child: Text(
+                          '${m['name']} (${m['standard_unit']})',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      )).toList(),
+                      onChanged: (v) => setState(() {
+                        _selectedMaterial = v;
+                        _error = null;
+                      }),
+                      validator: (v) => v == null ? l.selectMaterialFirst : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Price input
+                    Text(l.pricePer(unit),
+                        style: Theme.of(context).textTheme.labelLarge),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _priceCtrl,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: InputDecoration(
+                        hintText: '0.00',
+                        prefixText: 'ETB  ',
+                        border: const OutlineInputBorder(),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        suffixText: _selectedMaterial != null ? '/ $unit' : null,
+                      ),
+                      validator: (v) {
+                        final n = double.tryParse(v ?? '');
+                        return (n == null || n <= 0) ? l.enterValidPrice : null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Region input
+                    Text(l.regionLabel,
+                        style: Theme.of(context).textTheme.labelLarge),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _regionCtrl,
+                      decoration: InputDecoration(
+                        hintText: l.regionHint,
+                        border: const OutlineInputBorder(),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        prefixIcon: const Icon(Icons.location_on_outlined, size: 18),
+                      ),
+                      validator: (v) => (v?.trim().isEmpty ?? true) ? l.required : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    if (_error != null)
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.error.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                        ),
+                        child: Text(_error!,
+                            style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                      ),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: _submitting ? null : _submit,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6)),
+                        ),
+                        child: _submitting
+                            ? const SizedBox(
+                                width: 20, height: 20,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: Colors.white))
+                            : Text(l.submit,
+                                style: const TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
           ],

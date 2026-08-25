@@ -813,4 +813,40 @@ class AppLocalizationsOm extends AppLocalizations {
   String pendingCount(int count) {
     return '$count eeggachaa';
   }
+
+  @override
+  String get reportPriceTitle => 'Gatii Gabaasi';
+
+  @override
+  String get reportPriceSubtitle =>
+      'Kan kaffalte gabaasuu miira gaarummaa isiniif ta\'a';
+
+  @override
+  String get selectMaterial => 'Meeshaa Filadhu';
+
+  @override
+  String pricePer(String unit) {
+    return 'Gatii $unit tokkoof (ETB)';
+  }
+
+  @override
+  String get regionLabel => 'Godinaa / Magaalaa';
+
+  @override
+  String get regionHint => 'Fkf. Finfinnee, Adaamaa';
+
+  @override
+  String get priceSubmitted => 'Gatii gabaafame — galatoomi!';
+
+  @override
+  String get priceSubmitFailed => 'Gatii gabaasuu hin danda\'amne';
+
+  @override
+  String get submit => 'Galchi';
+
+  @override
+  String get selectMaterialFirst => 'Dursa meeshaa filadhu';
+
+  @override
+  String get enterValidPrice => 'Gatii sirrii galchi';
 }

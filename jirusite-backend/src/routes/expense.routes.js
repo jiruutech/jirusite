@@ -5,7 +5,7 @@ const { authenticate, scopeProject } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { writeAudit } = require('../services/audit.service');
-const { upload, getFileUrl } = require('../services/upload.service');
+const { upload, getFileUrl, useS3 } = require('../services/upload.service');
 
 const router = Router();
 router.use(authenticate);
@@ -193,19 +193,23 @@ router.post(
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    // Verify expense ownership
+    // Accept both server UUID and client_generated_id so the mobile app
+    // can upload immediately after local save without knowing the server ID yet.
     const { rows } = await query(
       `SELECT e.id, e.project_id FROM expenses e
        JOIN projects p ON p.id = e.project_id
-       WHERE e.id = $1 AND p.organization_id = $2 AND e.deleted_at IS NULL`,
+       WHERE (e.id = $1 OR e.client_generated_id = $1)
+         AND p.organization_id = $2
+         AND e.deleted_at IS NULL`,
       [req.params.id, req.user.organization_id]
     );
     if (!rows.length) return res.status(404).json({ error: 'Expense not found' });
 
-    const url = getFileUrl(req, req.file.filename);
+    const url = useS3 ? req.file.location : getFileUrl(req, req.file.filename);
+
     await query(
       'UPDATE expenses SET receipt_photo_url = $1, updated_at = now() WHERE id = $2',
-      [url, req.params.id]
+      [url, rows[0].id]
     );
 
     res.json({ receipt_photo_url: url });

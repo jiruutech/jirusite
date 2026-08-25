@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/notifications/fcm_service.dart';
 import '../../../../core/sync/sync_engine.dart';
 import '../../domain/models/auth_state.dart';
 
@@ -27,6 +28,7 @@ class AuthNotifier extends AsyncNotifier<AuthAppState> {
       final user = AuthUser.fromJson(
           jsonDecode(userJson) as Map<String, dynamic>);
       _initSync(user);
+      _initFcm();
       return AuthAppState(user: user);
     } catch (_) {
       return const AuthAppState();
@@ -46,6 +48,7 @@ class AuthNotifier extends AsyncNotifier<AuthAppState> {
       final user = AuthUser.fromJson(
           resp.data['user'] as Map<String, dynamic>);
       _initSync(user);
+      _initFcm();
       state = AsyncData(AuthAppState(user: user));
     } catch (e) {
       state = AsyncData(AuthAppState(error: _parseError(e)));
@@ -67,6 +70,7 @@ class AuthNotifier extends AsyncNotifier<AuthAppState> {
       await _persistTokens(resp.data as Map<String, dynamic>);
       final user = AuthUser.fromJson(
           resp.data['user'] as Map<String, dynamic>);
+      _initFcm();
       state = AsyncData(AuthAppState(user: user));
     } catch (e) {
       state = AsyncData(AuthAppState(error: _parseError(e)));
@@ -120,6 +124,11 @@ class AuthNotifier extends AsyncNotifier<AuthAppState> {
     if (user.organizationId != null) {
       ref.read(syncEngineProvider).initialize(user.organizationId!);
     }
+  }
+
+  void _initFcm() {
+    // Fire and forget — FCM setup is non-blocking
+    ref.read(fcmServiceProvider).initialize().ignore();
   }
 
   Future<void> _persistTokens(Map<String, dynamic> data) async {

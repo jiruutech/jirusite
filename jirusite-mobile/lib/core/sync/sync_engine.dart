@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -64,6 +66,7 @@ class SyncEngine {
       final labResult = await _pushPendingLabor();
       await _pullProjects();          // pulls total_spent from server
       await _pullExpensesAndLabor();  // pulls all server expenses/labor into local DB
+      await _uploadPendingPhotos();   // upload queued receipt photos
 
       await db.updateLastSyncedAt(_organizationId!);
 
@@ -242,6 +245,50 @@ class SyncEngine {
       await db.upsertLaborEntries(entries);
     } catch (e) {
       debugPrint('[SyncEngine] Pull labor for $projectId failed: $e');
+    }
+  }
+
+  /// Upload queued receipt photos to the server.
+  Future<void> _uploadPendingPhotos() async {
+    if (kIsWeb) return;
+    try {
+      final pending = await db.watchPendingPhotos().first;
+      for (final photo in pending) {
+        try {
+          final file = File(photo.localPath);
+          if (!file.existsSync()) {
+            // Local file gone — mark done to clear queue
+            await db.markPhotoUploaded(photo.id);
+            continue;
+          }
+
+          // photo.expenseId is the client_generated_id (UUID we generated locally).
+          // The server expense record has this stored as client_generated_id.
+          // POST /expenses/:clientGeneratedId/receipt — backend looks up by CGI
+          final formData = FormData.fromMap({
+            'receipt': await MultipartFile.fromFile(
+              photo.localPath,
+              filename: '${photo.expenseId}.jpg',
+            ),
+          });
+
+          final resp = await dio.postFormData(
+            ApiEndpoints.expenseReceipt(photo.expenseId),
+            formData,
+          );
+
+          final url = resp.data['receipt_photo_url'] as String?;
+          if (url != null) {
+            await db.markPhotoUploaded(photo.id);
+            debugPrint('[SyncEngine] Photo uploaded: $url');
+          }
+        } catch (e) {
+          debugPrint('[SyncEngine] Photo upload failed for ${photo.id}: $e');
+          await db.markPhotoFailed(photo.id, photo.retryCount);
+        }
+      }
+    } catch (e) {
+      debugPrint('[SyncEngine] _uploadPendingPhotos failed: $e');
     }
   }
 

@@ -288,5 +288,17 @@
   "syncingEllipsis": "Walmadaalaa...",
   "pendingCount": "{count} eeggachaa",
   "@pendingCount": { "placeholders": { "count": { "type": "int" } } },
-  "retry": "Irra deebi'i yaali"
+  "retry": "Irra deebi'i yaali",
+  "reportPriceTitle": "Gatii Gabaasi",
+  "reportPriceSubtitle": "Kan kaffalte gabaasuu miira gaarummaa isiniif ta'a",
+  "selectMaterial": "Meeshaa Filadhu",
+  "pricePer": "Gatii {unit} tokkoof (ETB)",
+  "@pricePer": { "placeholders": { "unit": { "type": "String" } } },
+  "regionLabel": "Godinaa / Magaalaa",
+  "regionHint": "Fkf. Finfinnee, Adaamaa",
+  "priceSubmitted": "Gatii gabaafame — galatoomi!",
+  "priceSubmitFailed": "Gatii gabaasuu hin danda'amne",
+  "submit": "Galchi",
+  "selectMaterialFirst": "Dursa meeshaa filadhu",
+  "enterValidPrice": "Gatii sirrii galchi"
 }

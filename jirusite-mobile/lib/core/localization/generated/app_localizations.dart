@@ -1617,6 +1617,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} pending'**
   String pendingCount(int count);
+
+  /// No description provided for @reportPriceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a Price'**
+  String get reportPriceTitle;
+
+  /// No description provided for @reportPriceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help others by reporting what you paid'**
+  String get reportPriceSubtitle;
+
+  /// No description provided for @selectMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Material'**
+  String get selectMaterial;
+
+  /// No description provided for @pricePer.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per {unit} (ETB)'**
+  String pricePer(String unit);
+
+  /// No description provided for @regionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Region / City'**
+  String get regionLabel;
+
+  /// No description provided for @regionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Addis Ababa, Hawassa'**
+  String get regionHint;
+
+  /// No description provided for @priceSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Price reported — thank you!'**
+  String get priceSubmitted;
+
+  /// No description provided for @priceSubmitFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to submit price'**
+  String get priceSubmitFailed;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @selectMaterialFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a material first'**
+  String get selectMaterialFirst;
+
+  /// No description provided for @enterValidPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid price'**
+  String get enterValidPrice;
 }
 
 class _AppLocalizationsDelegate

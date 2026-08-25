@@ -288,5 +288,17 @@
   "syncingEllipsis": "Syncing...",
   "pendingCount": "{count} pending",
   "@pendingCount": { "placeholders": { "count": { "type": "int" } } },
-  "retry": "Retry"
+  "retry": "Retry",
+  "reportPriceTitle": "Report a Price",
+  "reportPriceSubtitle": "Help others by reporting what you paid",
+  "selectMaterial": "Select Material",
+  "pricePer": "Price per {unit} (ETB)",
+  "@pricePer": { "placeholders": { "unit": { "type": "String" } } },
+  "regionLabel": "Region / City",
+  "regionHint": "e.g. Addis Ababa, Hawassa",
+  "priceSubmitted": "Price reported — thank you!",
+  "priceSubmitFailed": "Failed to submit price",
+  "submit": "Submit",
+  "selectMaterialFirst": "Select a material first",
+  "enterValidPrice": "Enter a valid price"
 }

@@ -288,5 +288,17 @@
   "syncingEllipsis": "በማመሳሰል ላይ...",
   "pendingCount": "{count} በመጠባበቅ",
   "@pendingCount": { "placeholders": { "count": { "type": "int" } } },
-  "retry": "እንደገና ሞክር"
+  "retry": "እንደገና ሞክር",
+  "reportPriceTitle": "ዋጋ ሪፖርት አድርግ",
+  "reportPriceSubtitle": "የከፈሉትን ዋጋ በማሳወቅ ሌሎችን ይርዱ",
+  "selectMaterial": "ቁሳቁስ ምረጥ",
+  "pricePer": "ዋጋ በ{unit} (ብር)",
+  "@pricePer": { "placeholders": { "unit": { "type": "String" } } },
+  "regionLabel": "ክልል / ከተማ",
+  "regionHint": "ለምሳሌ አዲስ አበባ፣ ሀዋሳ",
+  "priceSubmitted": "ዋጋ ቀርቧል — እናመሰግናለን!",
+  "priceSubmitFailed": "ዋጋ ማቅረብ አልተሳካም",
+  "submit": "አስገባ",
+  "selectMaterialFirst": "መጀመሪያ ቁሳቁስ ይምረጡ",
+  "enterValidPrice": "ትክክለኛ ዋጋ ያስገቡ"
 }

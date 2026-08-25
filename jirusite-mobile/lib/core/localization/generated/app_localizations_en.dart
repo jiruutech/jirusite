@@ -812,4 +812,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String pendingCount(int count) {
     return '$count pending';
   }
+
+  @override
+  String get reportPriceTitle => 'Report a Price';
+
+  @override
+  String get reportPriceSubtitle => 'Help others by reporting what you paid';
+
+  @override
+  String get selectMaterial => 'Select Material';
+
+  @override
+  String pricePer(String unit) {
+    return 'Price per $unit (ETB)';
+  }
+
+  @override
+  String get regionLabel => 'Region / City';
+
+  @override
+  String get regionHint => 'e.g. Addis Ababa, Hawassa';
+
+  @override
+  String get priceSubmitted => 'Price reported — thank you!';
+
+  @override
+  String get priceSubmitFailed => 'Failed to submit price';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get selectMaterialFirst => 'Select a material first';
+
+  @override
+  String get enterValidPrice => 'Enter a valid price';
 }

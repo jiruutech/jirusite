@@ -804,4 +804,39 @@ class AppLocalizationsAm extends AppLocalizations {
   String pendingCount(int count) {
     return '$count በመጠባበቅ';
   }
+
+  @override
+  String get reportPriceTitle => 'ዋጋ ሪፖርት አድርግ';
+
+  @override
+  String get reportPriceSubtitle => 'የከፈሉትን ዋጋ በማሳወቅ ሌሎችን ይርዱ';
+
+  @override
+  String get selectMaterial => 'ቁሳቁስ ምረጥ';
+
+  @override
+  String pricePer(String unit) {
+    return 'ዋጋ በ$unit (ብር)';
+  }
+
+  @override
+  String get regionLabel => 'ክልል / ከተማ';
+
+  @override
+  String get regionHint => 'ለምሳሌ አዲስ አበባ፣ ሀዋሳ';
+
+  @override
+  String get priceSubmitted => 'ዋጋ ቀርቧል — እናመሰግናለን!';
+
+  @override
+  String get priceSubmitFailed => 'ዋጋ ማቅረብ አልተሳካም';
+
+  @override
+  String get submit => 'አስገባ';
+
+  @override
+  String get selectMaterialFirst => 'መጀመሪያ ቁሳቁስ ይምረጡ';
+
+  @override
+  String get enterValidPrice => 'ትክክለኛ ዋጋ ያስገቡ';
 }
