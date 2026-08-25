@@ -20,18 +20,6 @@ final _orgProjectsProvider =
   (ref, orgId) => ref.read(appDatabaseProvider).watchProjects(orgId),
 );
 
-/// Streams total spent per project for an org (refreshes every 3s via polling)
-final _orgSpentProvider =
-    StreamProvider.autoDispose.family<Map<String, double>, String>(
-  (ref, orgId) {
-    final db = ref.read(appDatabaseProvider);
-    // Re-query whenever projects or expenses change
-    return Stream.periodic(const Duration(seconds: 3))
-        .asyncMap((_) => db.getOrgTotalSpentByProject(orgId))
-        ..listen(null); // kick off immediately
-  },
-);
-
 // ── Filter enum ───────────────────────────────────────────────────────────────
 
 enum _ProjectFilter { all, active, needsAttention, completed }
@@ -96,10 +84,7 @@ class _DashboardScaffold extends ConsumerWidget {
             child: projectsAsync.when(
               loading: () => const _PortfolioStripSkeleton(),
               error: (_, __) => const SizedBox.shrink(),
-              data: (projects) {
-                final spentMap = ref.watch(_orgSpentProvider(orgId)).valueOrNull ?? {};
-                return _PortfolioStrip(projects: projects, spentByProject: spentMap);
-              },
+              data: (projects) => _PortfolioStrip(projects: projects),
             ),
           ),
 
@@ -208,9 +193,8 @@ class _DashboardAppBar extends ConsumerWidget implements PreferredSizeWidget {
 // ── Portfolio summary strip ────────────────────────────────────────────────────
 
 class _PortfolioStrip extends StatelessWidget {
-  const _PortfolioStrip({required this.projects, required this.spentByProject});
+  const _PortfolioStrip({required this.projects});
   final List<LocalProject> projects;
-  final Map<String, double> spentByProject;
 
   @override
   Widget build(BuildContext context) {
@@ -218,9 +202,7 @@ class _PortfolioStrip extends StatelessWidget {
     final l = AppLocalizations.of(context);
 
     final totalBudget = active.fold<double>(0, (sum, p) => sum + (p.totalBudget ?? 0));
-    final totalSpent = active.fold<double>(0, (sum, p) => sum + (spentByProject[p.id] ?? 0));
-
-    // This-month spend: sum across all active projects
+    final totalSpent = active.fold<double>(0, (sum, p) => sum + (p.totalSpent ?? 0));
     final double? thisMonthSpend = totalSpent > 0 ? totalSpent : null;
 
     return Container(
@@ -487,18 +469,14 @@ class _ProjectListSliver extends ConsumerWidget {
 
 // ── Project row card ───────────────────────────────────────────────────────────
 
-class _ProjectRow extends ConsumerWidget {
+class _ProjectRow extends StatelessWidget {
   const _ProjectRow({required this.project});
   final LocalProject project;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final budget = project.totalBudget;
-    final spentAsync = ref.watch(
-      FutureProvider.autoDispose((ref) =>
-          ref.read(appDatabaseProvider).getProjectTotalSpent(project.id)),
-    );
-    final spent = spentAsync.valueOrNull ?? 0.0;
+    final spent = project.totalSpent ?? 0.0;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,

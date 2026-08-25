@@ -59,9 +59,11 @@ class SyncEngine {
     ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
 
     try {
+      // Push local pending items first, then pull server state
       final expResult = await _pushPendingExpenses();
       final labResult = await _pushPendingLabor();
-      await _pullProjects();
+      await _pullProjects();          // pulls total_spent from server
+      await _pullExpensesAndLabor();  // pulls all server expenses/labor into local DB
 
       await db.updateLastSyncedAt(_organizationId!);
 
@@ -173,6 +175,73 @@ class SyncEngine {
       await db.upsertProjects(list.map(LocalProject.fromJson).toList());
     } catch (e) {
       debugPrint('[SyncEngine] Pull projects failed: $e');
+    }
+  }
+
+  /// Pull all expenses and labor entries for every project from the server
+  /// and upsert them into the local DB so list screens show server data.
+  Future<void> _pullExpensesAndLabor() async {
+    try {
+      final projects = await db.getProjects(_organizationId!);
+      for (final project in projects) {
+        await _pullExpensesForProject(project.id);
+        await _pullLaborForProject(project.id);
+      }
+    } catch (e) {
+      debugPrint('[SyncEngine] Pull expenses/labor failed: $e');
+    }
+  }
+
+  Future<void> _pullExpensesForProject(String projectId) async {
+    try {
+      final resp = await dio.get(ApiEndpoints.projectExpenses(projectId));
+      final list = (resp.data as List).cast<Map<String, dynamic>>();
+      final expenses = list.map((e) => LocalExpense(
+        id: e['client_generated_id'] as String? ?? e['id'] as String,
+        projectId: e['project_id'] as String,
+        costCodeId: e['cost_code_id'] as String?,
+        enteredBy: e['entered_by'] as String,
+        supplierId: e['supplier_id'] as String?,
+        description: e['description'] as String?,
+        amount: (e['amount'] as num).toDouble(),
+        quantity: (e['quantity'] as num?)?.toDouble(),
+        unit: e['unit'] as String?,
+        expenseType: e['expense_type'] as String,
+        receiptPhotoUrl: e['receipt_photo_url'] as String?,
+        transactionDate: e['transaction_date'] as String,
+        syncStatus: 'synced',
+        serverId: e['id'] as String,
+        createdAt: DateTime.tryParse(e['created_at'] as String? ?? '') ?? DateTime.now(),
+        updatedAt: DateTime.tryParse(e['updated_at'] as String? ?? '') ?? DateTime.now(),
+      )).toList();
+      await db.upsertExpenses(expenses);
+    } catch (e) {
+      debugPrint('[SyncEngine] Pull expenses for $projectId failed: $e');
+    }
+  }
+
+  Future<void> _pullLaborForProject(String projectId) async {
+    try {
+      final resp = await dio.get(ApiEndpoints.projectLabor(projectId));
+      final list = (resp.data as List).cast<Map<String, dynamic>>();
+      final entries = list.map((e) => LocalLaborEntry(
+        id: e['client_generated_id'] as String? ?? e['id'] as String,
+        projectId: e['project_id'] as String,
+        costCodeId: e['cost_code_id'] as String?,
+        enteredBy: e['entered_by'] as String,
+        workerOrCrewName: e['worker_or_crew_name'] as String,
+        workDescription: e['work_description'] as String?,
+        numberOfWorkers: e['number_of_workers'] as int? ?? 1,
+        dailyRate: (e['daily_rate'] as num?)?.toDouble(),
+        totalAmount: (e['total_amount'] as num).toDouble(),
+        workDate: e['work_date'] as String,
+        syncStatus: 'synced',
+        serverId: e['id'] as String,
+        createdAt: DateTime.tryParse(e['created_at'] as String? ?? '') ?? DateTime.now(),
+      )).toList();
+      await db.upsertLaborEntries(entries);
+    } catch (e) {
+      debugPrint('[SyncEngine] Pull labor for $projectId failed: $e');
     }
   }
 

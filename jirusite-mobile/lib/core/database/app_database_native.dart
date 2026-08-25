@@ -28,10 +28,18 @@ class NativeAppDatabase extends AppDatabase {
     final path = p.join(dir.path, 'jirusite.sqlite');
     return openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, _) async {
         for (final stmt in _schemaSql) {
           await db.execute(stmt);
+        }
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          // Add total_spent column to existing installations
+          await db.execute(
+            'ALTER TABLE local_projects ADD COLUMN total_spent REAL',
+          );
         }
       },
     );
@@ -334,7 +342,9 @@ class NativeAppDatabase extends AppDatabase {
     id: m['id'] as String, organizationId: m['organization_id'] as String,
     name: m['name'] as String, locationText: m['location_text'] as String?,
     latitude: (m['latitude'] as num?)?.toDouble(), longitude: (m['longitude'] as num?)?.toDouble(),
-    totalBudget: (m['total_budget'] as num?)?.toDouble(), currency: m['currency'] as String? ?? 'ETB',
+    totalBudget: (m['total_budget'] as num?)?.toDouble(),
+    totalSpent: (m['total_spent'] as num?)?.toDouble(),
+    currency: m['currency'] as String? ?? 'ETB',
     startDate: m['start_date'] as String?, targetEndDate: m['target_end_date'] as String?,
     status: m['status'] as String? ?? 'active', createdBy: m['created_by'] as String?,
     createdAt: DateTime.fromMillisecondsSinceEpoch(m['created_at'] as int),
@@ -345,7 +355,8 @@ class NativeAppDatabase extends AppDatabase {
   Map<String, dynamic> _projectToMap(LocalProject p) => {
     'id': p.id, 'organization_id': p.organizationId, 'name': p.name,
     'location_text': p.locationText, 'latitude': p.latitude, 'longitude': p.longitude,
-    'total_budget': p.totalBudget, 'currency': p.currency, 'start_date': p.startDate,
+    'total_budget': p.totalBudget, 'total_spent': p.totalSpent,
+    'currency': p.currency, 'start_date': p.startDate,
     'target_end_date': p.targetEndDate, 'status': p.status, 'created_by': p.createdBy,
     'created_at': p.createdAt.millisecondsSinceEpoch, 'updated_at': p.updatedAt.millisecondsSinceEpoch,
     'last_synced_at': p.lastSyncedAt?.millisecondsSinceEpoch,
@@ -402,7 +413,7 @@ class NativeAppDatabase extends AppDatabase {
 const List<String> _schemaSql = [
   '''CREATE TABLE IF NOT EXISTS local_projects (
     id TEXT PRIMARY KEY NOT NULL, organization_id TEXT NOT NULL, name TEXT NOT NULL,
-    location_text TEXT, latitude REAL, longitude REAL, total_budget REAL,
+    location_text TEXT, latitude REAL, longitude REAL, total_budget REAL, total_spent REAL,
     currency TEXT NOT NULL DEFAULT 'ETB', start_date TEXT, target_end_date TEXT,
     status TEXT NOT NULL DEFAULT 'active', created_by TEXT,
     created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, last_synced_at INTEGER

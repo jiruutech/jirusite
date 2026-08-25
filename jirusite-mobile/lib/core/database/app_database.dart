@@ -336,6 +336,7 @@ class LocalProject {
   final double? latitude;
   final double? longitude;
   final double? totalBudget;
+  final double? totalSpent;  // populated from server sync
   final String currency;
   final String? startDate;
   final String? targetEndDate;
@@ -353,6 +354,7 @@ class LocalProject {
     this.latitude,
     this.longitude,
     this.totalBudget,
+    this.totalSpent,
     this.currency = 'ETB',
     this.startDate,
     this.targetEndDate,
@@ -371,6 +373,7 @@ class LocalProject {
         latitude: parseDouble(json['latitude']),
         longitude: parseDouble(json['longitude']),
         totalBudget: parseDouble(json['total_budget']),
+        totalSpent: parseDouble(json['total_spent']),
         currency: json['currency'] as String? ?? 'ETB',
         startDate: json['start_date'] as String?,
         targetEndDate: json['target_end_date'] as String?,
