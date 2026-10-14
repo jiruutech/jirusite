@@ -8,6 +8,7 @@ import '../../../../core/database/app_database.dart';
 import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/sync/sync_engine.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/json_helpers.dart';
 import '../../../../shared_widgets/cost_code_variance_row.dart';
@@ -893,105 +894,130 @@ class _PlaceholderTab extends StatelessWidget {
 
 // ── Expenses tab ──────────────────────────────────────────────────────────────
 
-class _ExpensesTab extends ConsumerWidget {
+class _ExpensesTab extends ConsumerStatefulWidget {
   const _ExpensesTab({required this.projectId});
   final String projectId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_ExpensesTab> createState() => _ExpensesTabState();
+}
+
+class _ExpensesTabState extends ConsumerState<_ExpensesTab> {
+  @override
+  void initState() {
+    super.initState();
+    // Trigger pull on first view so data is fresh
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(syncEngineProvider).sync().ignore();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final expensesAsync = ref.watch(
       StreamProvider.autoDispose((ref) =>
-          ref.read(appDatabaseProvider).watchExpenses(projectId)),
+          ref.read(appDatabaseProvider).watchExpenses(widget.projectId)),
     );
 
-    return expensesAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => ErrorState(message: e.toString()),
-      data: (expenses) {
-        if (expenses.isEmpty) {
-          return EmptyState(
-            icon: Icons.receipt_long_outlined,
-            title: l.noExpensesYet,
-            actionLabel: l.addExpense,
-            onAction: () => context.push('/projects/$projectId/expenses/new'),
-          );
-        }
-        return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
-          itemCount: expenses.length,
-          itemBuilder: (_, i) {
-            final e = expenses[i];
-            final color = _expenseColor(e.expenseType);
-            return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: const [
-                  BoxShadow(color: Color(0x08000000), blurRadius: 4, offset: Offset(0, 1))
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 5, height: 64,
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        bottomLeft: Radius.circular(12),
+    return RefreshIndicator(
+      onRefresh: () async => ref.read(syncEngineProvider).sync(),
+      child: expensesAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => ErrorState(message: e.toString()),
+        data: (expenses) {
+          if (expenses.isEmpty) {
+            return ListView(
+              children: [
+                SizedBox(
+                  height: 300,
+                  child: EmptyState(
+                    icon: Icons.receipt_long_outlined,
+                    title: l.noExpensesYet,
+                    actionLabel: l.addExpense,
+                    onAction: () => context.push(
+                        '/projects/${widget.projectId}/expenses/new'),
+                  ),
+                ),
+              ],
+            );
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
+            itemCount: expenses.length,
+            itemBuilder: (_, i) {
+              final e = expenses[i];
+              final color = _expenseColor(e.expenseType);
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(color: Color(0x08000000), blurRadius: 4, offset: Offset(0, 1))
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 5, height: 64,
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          bottomLeft: Radius.circular(12),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Container(
-                    width: 34, height: 34,
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+                    const SizedBox(width: 10),
+                    Container(
+                      width: 34, height: 34,
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(_expenseIcon(e.expenseType), color: color, size: 16),
                     ),
-                    child: Icon(_expenseIcon(e.expenseType), color: color, size: 16),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(e.description ?? e.expenseType,
-                            maxLines: 1, overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 2),
-                        Text(e.transactionDate,
-                            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-                      ],
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(e.description ?? e.expenseType,
+                              maxLines: 1, overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 2),
+                          Text(e.transactionDate,
+                              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(formatEtb(e.amount),
-                            style: AppTextStyles.numeric.copyWith(
-                                fontSize: 13, fontWeight: FontWeight.w700, color: color)),
-                        const SizedBox(height: 2),
-                        Text(e.syncStatus == 'pending' ? '⏳' : '✓',
-                            style: TextStyle(fontSize: 10,
-                                color: e.syncStatus == 'pending'
-                                    ? AppColors.syncPending
-                                    : AppColors.syncSynced)),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(formatEtb(e.amount),
+                              style: AppTextStyles.numeric.copyWith(
+                                  fontSize: 13, fontWeight: FontWeight.w700, color: color)),
+                          const SizedBox(height: 2),
+                          Text(e.syncStatus == 'pending' ? '⏳' : '✓',
+                              style: TextStyle(fontSize: 10,
+                                  color: e.syncStatus == 'pending'
+                                      ? AppColors.syncPending
+                                      : AppColors.syncSynced)),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -1012,30 +1038,55 @@ class _ExpensesTab extends ConsumerWidget {
 
 // ── Labour tab ────────────────────────────────────────────────────────────────
 
-class _LaborTab extends ConsumerWidget {
+// ── Labour tab ────────────────────────────────────────────────────────────────
+
+class _LaborTab extends ConsumerStatefulWidget {
   const _LaborTab({required this.projectId});
   final String projectId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_LaborTab> createState() => _LaborTabState();
+}
+
+class _LaborTabState extends ConsumerState<_LaborTab> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(syncEngineProvider).sync().ignore();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final laborAsync = ref.watch(
       StreamProvider.autoDispose((ref) =>
-          ref.read(appDatabaseProvider).watchLabor(projectId)),
+          ref.read(appDatabaseProvider).watchLabor(widget.projectId)),
     );
 
-    return laborAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => ErrorState(message: e.toString()),
-      data: (entries) {
-        if (entries.isEmpty) {
-          return EmptyState(
-            icon: Icons.people_outlined,
-            title: l.noLaborEntriesYet,
-            actionLabel: l.addLaborEntry,
-            onAction: () => context.push('/projects/$projectId/labor/new'),
-          );
-        }
+    return RefreshIndicator(
+      onRefresh: () async => ref.read(syncEngineProvider).sync(),
+      child: laborAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => ErrorState(message: e.toString()),
+        data: (entries) {
+          if (entries.isEmpty) {
+            return ListView(
+              children: [
+                SizedBox(
+                  height: 300,
+                  child: EmptyState(
+                    icon: Icons.people_outlined,
+                    title: l.noLaborEntriesYet,
+                    actionLabel: l.addLaborEntry,
+                    onAction: () => context.push(
+                        '/projects/${widget.projectId}/labor/new'),
+                  ),
+                ),
+              ],
+            );
+          }
         return ListView.builder(
           padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
           itemCount: entries.length,
@@ -1099,6 +1150,7 @@ class _LaborTab extends ConsumerWidget {
           },
         );
       },
+      ),
     );
   }
 }

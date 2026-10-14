@@ -142,12 +142,14 @@ router.get(
   asyncHandler(async (req, res) => {
     const pid = req.params.id;
 
-    const [budgetSummary, costCodeBreakdown, recentExpenses, laborSummary] = await Promise.all([
+    const [budgetSummary, costCodeBreakdown, recentExpenses, laborSummary, teamMembers] = await Promise.all([
       // Overall budget vs actual
       query(
         `SELECT
+           p.name AS project_name,
            p.total_budget,
            p.currency,
+           p.target_end_date,
            COALESCE(SUM(e.amount) FILTER (WHERE e.deleted_at IS NULL), 0) AS total_spent,
            p.total_budget - COALESCE(SUM(e.amount) FILTER (WHERE e.deleted_at IS NULL), 0) AS remaining
          FROM projects p
@@ -186,13 +188,24 @@ router.get(
          WHERE project_id = $1 AND deleted_at IS NULL`,
         [pid]
       ),
+      // Team members
+      query(
+        `SELECT u.id, u.full_name, u.phone_number, pm.role_on_project
+         FROM project_members pm
+         JOIN users u ON u.id = pm.user_id
+         WHERE pm.project_id = $1
+         ORDER BY pm.added_at ASC`,
+        [pid]
+      ),
     ]);
 
     res.json({
+      name: budgetSummary.rows[0]?.project_name,
       budget: budgetSummary.rows[0],
       costCodes: costCodeBreakdown.rows,
       recentExpenses: recentExpenses.rows,
       labor: laborSummary.rows[0],
+      team: teamMembers.rows,
     });
   })
 );
