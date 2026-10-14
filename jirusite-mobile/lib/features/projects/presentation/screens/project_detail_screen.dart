@@ -12,7 +12,6 @@ import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/json_helpers.dart';
 import '../../../../shared_widgets/cost_code_variance_row.dart';
 import '../../../../shared_widgets/empty_state.dart';
-import '../../../../shared_widgets/level_widget.dart';
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
@@ -87,10 +86,8 @@ class _ProjectDetailLoaded extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    // DefaultTabController must live INSIDE NestedScrollView's builder,
-    // not wrapping it — otherwise SliverPersistentHeader gets null geometry.
     return Scaffold(
-      backgroundColor: AppColors.chalk,
+      backgroundColor: const Color(0xFFF0F2F5),
       appBar: _ProjectAppBar(
         projectName: projectName,
         projectId: projectId,
@@ -150,28 +147,30 @@ class _ProjectAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String projectId;
 
   @override
-  Size get preferredSize => const Size.fromHeight(56);
+  Size get preferredSize => const Size.fromHeight(60);
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     return Container(
-      height: 56 + MediaQuery.of(context).padding.top,
+      height: 60 + MediaQuery.of(context).padding.top,
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
       decoration: const BoxDecoration(
-        color: AppColors.chalk,
-        border: Border(
-          bottom: BorderSide(color: AppColors.concrete, width: 0.5),
-        ),
+        color: AppColors.blueprintInk,
+        boxShadow: [
+          BoxShadow(
+              color: Color(0x22000000),
+              blurRadius: 8,
+              offset: Offset(0, 2))
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: Row(
           children: [
-            // Back chevron
             IconButton(
-              icon: const Icon(Icons.chevron_left,
-                  color: AppColors.blueprintInk, size: 26),
+              icon: const Icon(Icons.arrow_back_ios_new,
+                  color: AppColors.chalk, size: 20),
               onPressed: () => context.pop(),
               tooltip: l.back,
             ),
@@ -179,9 +178,9 @@ class _ProjectAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Text(
                 projectName,
                 style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.blueprintInk,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.chalk,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -194,7 +193,7 @@ class _ProjectAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-// ── Hero: full Level Widget ────────────────────────────────────────────────────
+// ── Hero: modern gradient card ────────────────────────────────────────────────
 
 class _ProjectHero extends StatelessWidget {
   const _ProjectHero({required this.data});
@@ -207,19 +206,21 @@ class _ProjectHero extends StatelessWidget {
     final totalBudget = parseDouble(budget['total_budget']);
     final totalSpent = parseDoubleOrZero(budget['total_spent']);
 
+    final ratio =
+        totalBudget != null && totalBudget > 0
+            ? (totalSpent / totalBudget).clamp(0.0, 1.0)
+            : 0.0;
+    final healthColor = ratio < 0.75
+        ? AppColors.levelGreen
+        : ratio <= 0.9
+            ? AppColors.ochreDust
+            : AppColors.rebarRust;
+
     final variance = totalBudget != null && totalBudget > 0
         ? (totalSpent - totalBudget) / totalBudget * 100
         : 0.0;
     final varianceLabel =
         '${variance >= 0 ? '+' : ''}${variance.toStringAsFixed(1)}%';
-
-    final ratio =
-        totalBudget != null && totalBudget > 0 ? totalSpent / totalBudget : 0.0;
-    final varianceColor = ratio < 0.85
-        ? AppColors.levelGreen
-        : ratio <= 1.0
-            ? AppColors.ochreDust
-            : AppColors.rebarRust;
 
     final statusLine = ratio > 1.0
         ? l.trendingOverBudget
@@ -228,125 +229,156 @@ class _ProjectHero extends StatelessWidget {
             : l.onTrack;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
-      decoration: const BoxDecoration(
-        color: AppColors.chalk,
-        border: Border(
-          bottom: BorderSide(color: AppColors.concrete, width: 0.5),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Full-width Level Widget — the one moment of breathing room
-          LevelWidget(
-            budget: totalBudget,
-            spent: totalSpent,
-            showLabel: false,
-            height: 40,
-          ),
-          const SizedBox(height: 12),
-
-          // Large variance % — IBM Plex Mono, colour-matched to zone
-          if (totalBudget != null && totalBudget > 0) ...[
-            Text(
-              varianceLabel,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.w700,
-                color: varianceColor,
-                fontFamily: 'monospace',
-                height: 1.1,
-              ),
-            ),
-            const SizedBox(height: 4),
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.blueprintInk,
+            AppColors.blueprintInk.withValues(alpha: 0.85),
           ],
-
-          // Plain-language status — editorial, not raw data
-          Text(
-            statusLine,
-            style: const TextStyle(
-              fontSize: 15,
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Budget summary row
-          if (totalBudget != null && totalBudget > 0)
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: AppColors.blueprintInk.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Status row
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _HeroStat(
-                  label: l.budget,
-                  value: formatEtb(totalBudget),
-                ),
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  width: 0.5,
-                  height: 28,
-                  color: AppColors.concrete,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: healthColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                        color: healthColor.withValues(alpha: 0.4)),
+                  ),
+                  child: Text(statusLine,
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: healthColor)),
                 ),
-                _HeroStat(
-                  label: l.spent,
-                  value: formatEtb(totalSpent),
-                  valueColor: varianceColor,
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  width: 0.5,
-                  height: 28,
-                  color: AppColors.concrete,
-                ),
-                _HeroStat(
-                  label: l.remaining,
-                  value: formatEtb(
-                      (totalBudget - totalSpent).abs()),
-                  valueColor: totalSpent > totalBudget
-                      ? AppColors.rebarRust
-                      : AppColors.textPrimary,
-                ),
+                const Spacer(),
+                if (totalBudget != null && totalBudget > 0)
+                  Text(varianceLabel,
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: healthColor,
+                          fontFamily: 'monospace')),
               ],
             ),
-        ],
+            const SizedBox(height: 16),
+
+            // Progress bar
+            if (totalBudget != null && totalBudget > 0) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(l.budget,
+                      style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.white54,
+                          fontWeight: FontWeight.w500)),
+                  Text(
+                      '${(ratio * 100).toStringAsFixed(0)}% ${l.spent.toLowerCase()}',
+                      style: const TextStyle(
+                          fontSize: 11, color: Colors.white54)),
+                ],
+              ),
+              const SizedBox(height: 6),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: ratio,
+                  minHeight: 10,
+                  backgroundColor:
+                      Colors.white.withValues(alpha: 0.15),
+                  valueColor: AlwaysStoppedAnimation(healthColor),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+
+            // 3 stat columns
+            if (totalBudget != null && totalBudget > 0)
+              Row(
+                children: [
+                  _DarkStat(
+                    label: l.budget,
+                    value: formatEtbCompact(totalBudget),
+                  ),
+                  _DarkDivider(),
+                  _DarkStat(
+                    label: l.spent,
+                    value: formatEtbCompact(totalSpent),
+                    valueColor: healthColor,
+                  ),
+                  _DarkDivider(),
+                  _DarkStat(
+                    label: totalSpent > totalBudget
+                        ? 'Over'
+                        : l.remaining,
+                    value: formatEtbCompact(
+                        (totalBudget - totalSpent).abs()),
+                    valueColor: totalSpent > totalBudget
+                        ? AppColors.rebarRust
+                        : AppColors.levelGreen,
+                  ),
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _HeroStat extends StatelessWidget {
-  const _HeroStat(
-      {required this.label, required this.value, this.valueColor});
+class _DarkStat extends StatelessWidget {
+  const _DarkStat({required this.label, required this.value, this.valueColor});
   final String label;
   final String value;
   final Color? valueColor;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 11,
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w500,
-          ),
+  Widget build(BuildContext context) => Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(label,
+                style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.white54,
+                    fontWeight: FontWeight.w500)),
+            const SizedBox(height: 3),
+            Text(value,
+                style: AppTextStyles.numeric.copyWith(
+                    fontSize: 14,
+                    color: valueColor ?? Colors.white)),
+          ],
         ),
-        const SizedBox(height: 3),
-        Text(
-          value,
-          style: AppTextStyles.numeric.copyWith(
-            fontSize: 13,
-            color: valueColor ?? AppColors.textPrimary,
-          ),
-        ),
-      ],
-    );
-  }
+      );
+}
+
+class _DarkDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 0.5, height: 32,
+        color: Colors.white.withValues(alpha: 0.2),
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+      );
 }
 
 // ── Tab bar delegate ───────────────────────────────────────────────────────────
@@ -365,10 +397,13 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
     final l = AppLocalizations.of(context);
     return DecoratedBox(
       decoration: const BoxDecoration(
-        color: AppColors.chalk,
-        border: Border(
-          bottom: BorderSide(color: AppColors.concrete, width: 0.5),
-        ),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+              color: Color(0x0A000000),
+              blurRadius: 4,
+              offset: Offset(0, 2))
+        ],
       ),
       child: TabBar(
         isScrollable: true,
@@ -380,7 +415,7 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
         unselectedLabelStyle:
             const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         indicatorColor: AppColors.safetyOrange,
-        indicatorWeight: 2,
+        indicatorWeight: 2.5,
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
         padding: EdgeInsets.zero,
@@ -540,22 +575,17 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: AppColors.concrete, width: 0.5),
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
       child: Row(
         children: [
           Text(
-            label,
+            label.toUpperCase(),
             style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
               color: AppColors.textSecondary,
-              letterSpacing: 0.4,
+              letterSpacing: 0.8,
             ),
           ),
           if (trailing != null) ...[
@@ -590,65 +620,67 @@ class _ActivityRow extends StatelessWidget {
     final relTime = createdAt != null ? _relativeTime(context, createdAt) : '';
 
     return Container(
-      height: 52,
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: AppColors.concrete, width: 0.5),
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          // Type icon
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              color: _typeColor(type).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Icon(_typeIcon(type),
-                color: _typeColor(type), size: 14),
-          ),
-          const SizedBox(width: 10),
-
-          // Description
-          Expanded(
-            child: Text(
-              description,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textPrimary,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const SizedBox(width: 8),
-
-          // Amount + time
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                formatEtb(amount),
-                style: AppTextStyles.numeric.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                relTime,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+              color: Color(0x08000000),
+              blurRadius: 4,
+              offset: Offset(0, 1))
         ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: _typeColor(type).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(_typeIcon(type),
+                  color: _typeColor(type), size: 16),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                description,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  formatEtb(amount),
+                  style: AppTextStyles.numeric.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  relTime,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -713,11 +745,14 @@ class _QuickStatsFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-      decoration: const BoxDecoration(
-        border: Border(
-          top: BorderSide(color: AppColors.concrete, width: 0.5),
-        ),
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(color: Color(0x08000000), blurRadius: 4)
+        ],
       ),
       child: Row(
         children: [
@@ -725,12 +760,14 @@ class _QuickStatsFooter extends StatelessWidget {
             _FooterStat(
               label: l.daysLeft,
               value: '$daysRemaining',
+              icon: Icons.hourglass_bottom_outlined,
             ),
           if (schedPct != null) ...[
             if (daysRemaining != null) const _FooterDivider(),
             _FooterStat(
               label: l.schedulePercentage,
               value: '${schedPct!.toStringAsFixed(0)}%',
+              icon: Icons.timeline_outlined,
             ),
           ],
           if (pendingSync > 0) ...[
@@ -740,6 +777,7 @@ class _QuickStatsFooter extends StatelessWidget {
               label: l.pendingSyncCount,
               value: '$pendingSync',
               valueColor: AppColors.ochreDust,
+              icon: Icons.cloud_upload_outlined,
             ),
           ],
         ],
@@ -750,31 +788,40 @@ class _QuickStatsFooter extends StatelessWidget {
 
 class _FooterStat extends StatelessWidget {
   const _FooterStat(
-      {required this.label, required this.value, this.valueColor});
+      {required this.label, required this.value, this.valueColor, required this.icon});
   final String label;
   final String value;
   final Color? valueColor;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          value,
-          style: AppTextStyles.numeric.copyWith(
-            fontSize: 13,
-            color: valueColor ?? AppColors.textPrimary,
+    return Expanded(
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: valueColor ?? AppColors.textSecondary),
+          const SizedBox(width: 6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: AppTextStyles.numeric.copyWith(
+                  fontSize: 14,
+                  color: valueColor ?? AppColors.textPrimary,
+                ),
+              ),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
           ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 10,
-            color: AppColors.textSecondary,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -1166,56 +1213,24 @@ class _ProjectDetailSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: AppColors.chalk,
+      backgroundColor: const Color(0xFFF0F2F5),
       appBar: _ProjectAppBar(
           projectName: l.loadingEllipsis, projectId: projectId),
       body: Column(
         children: [
-          // Hero skeleton
+          // Hero skeleton — dark card
           Container(
-            height: 180,
-            margin: const EdgeInsets.all(0),
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
-            decoration: const BoxDecoration(
-              color: AppColors.chalk,
-              border: Border(
-                bottom: BorderSide(color: AppColors.concrete, width: 0.5),
-              ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColors.concrete.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  height: 28,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    color: AppColors.concrete.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  height: 14,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    color: AppColors.concrete.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-              ],
+            height: 160,
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.blueprintInk.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(16),
             ),
           ),
           // Tab bar skeleton
           Container(
             height: 44,
-            color: AppColors.chalk,
+            color: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: List.generate(
@@ -1225,7 +1240,7 @@ class _ProjectDetailSkeleton extends StatelessWidget {
                   width: 64,
                   height: 12,
                   decoration: BoxDecoration(
-                    color: AppColors.concrete.withValues(alpha: i == 0 ? 0.4 : 0.15),
+                    color: AppColors.concrete.withValues(alpha: i == 0 ? 0.5 : 0.2),
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -1235,46 +1250,62 @@ class _ProjectDetailSkeleton extends StatelessWidget {
           // Row skeletons
           Expanded(
             child: ListView.builder(
-              itemCount: 5,
+              padding: const EdgeInsets.all(16),
+              itemCount: 4,
               itemBuilder: (_, i) => Container(
-                height: 56,
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                        color: AppColors.concrete, width: 0.5),
-                  ),
+                height: 70,
+                margin: const EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Color(0x08000000),
+                        blurRadius: 4,
+                        offset: Offset(0, 1))
+                  ],
                 ),
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16, vertical: 14),
                 child: Row(
                   children: [
                     Container(
-                      width: 100,
-                      height: 12,
+                      width: 32, height: 32,
                       decoration: BoxDecoration(
-                        color: AppColors.concrete
-                            .withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(3),
+                        color: AppColors.concrete.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Container(
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: AppColors.concrete
-                              .withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 11,
+                            width: 140,
+                            decoration: BoxDecoration(
+                              color: AppColors.concrete.withValues(alpha: 0.35),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            height: 8,
+                            width: 90,
+                            decoration: BoxDecoration(
+                              color: AppColors.concrete.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 12),
                     Container(
-                      width: 80,
-                      height: 12,
+                      width: 60, height: 11,
                       decoration: BoxDecoration(
-                        color: AppColors.concrete
-                            .withValues(alpha: 0.2),
+                        color: AppColors.concrete.withValues(alpha: 0.25),
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),
