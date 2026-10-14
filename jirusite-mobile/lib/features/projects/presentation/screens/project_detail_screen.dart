@@ -516,17 +516,41 @@ class _OverviewTab extends StatelessWidget {
         if (recent.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: GestureDetector(
-                onTap: () =>
-                    context.push('/projects/$projectId/expenses'),
-                child: Text(
-                  l.seeAllActivity,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.safetyOrange,
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () =>
+                      context.push('/projects/$projectId/expenses'),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: AppColors.safetyOrange
+                              .withValues(alpha: 0.4)),
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.safetyOrange
+                          .withValues(alpha: 0.05),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          l.seeAllActivity,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.safetyOrange,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.arrow_forward,
+                            size: 14,
+                            color: AppColors.safetyOrange),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -898,32 +922,71 @@ class _ExpensesTab extends ConsumerWidget {
           itemCount: expenses.length,
           itemBuilder: (_, i) {
             final e = expenses[i];
-            return Card(
+            final color = _expenseColor(e.expenseType);
+            return Container(
               margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: _expenseColor(e.expenseType).withValues(alpha: 0.1),
-                  child: Icon(_expenseIcon(e.expenseType),
-                      color: _expenseColor(e.expenseType), size: 18),
-                ),
-                title: Text(e.description ?? e.expenseType,
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                subtitle: Text(e.transactionDate,
-                    style: Theme.of(context).textTheme.bodySmall),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(formatEtb(e.amount),
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
-                    Text(e.syncStatus == 'pending' ? '⏳' : '✓',
-                        style: TextStyle(fontSize: 10,
-                            color: e.syncStatus == 'pending'
-                                ? AppColors.syncPending
-                                : AppColors.syncSynced)),
-                  ],
-                ),
-                onTap: () => context.push('/projects/$projectId/expenses/new'),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(color: Color(0x08000000), blurRadius: 4, offset: Offset(0, 1))
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 5, height: 64,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    width: 34, height: 34,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(_expenseIcon(e.expenseType), color: color, size: 16),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(e.description ?? e.expenseType,
+                            maxLines: 1, overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 2),
+                        Text(e.transactionDate,
+                            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(formatEtb(e.amount),
+                            style: AppTextStyles.numeric.copyWith(
+                                fontSize: 13, fontWeight: FontWeight.w700, color: color)),
+                        const SizedBox(height: 2),
+                        Text(e.syncStatus == 'pending' ? '⏳' : '✓',
+                            style: TextStyle(fontSize: 10,
+                                color: e.syncStatus == 'pending'
+                                    ? AppColors.syncPending
+                                    : AppColors.syncSynced)),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             );
           },
@@ -978,28 +1041,57 @@ class _LaborTab extends ConsumerWidget {
           itemCount: entries.length,
           itemBuilder: (_, i) {
             final e = entries[i];
-            return Card(
+            return Container(
               margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: const CircleAvatar(
-                  backgroundColor: Color(0x1A9C27B0),
-                  child: Icon(Icons.people_outlined, color: Colors.purple, size: 20),
-                ),
-                title: Text(e.workerOrCrewName,
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                subtitle: Text('${e.numberOfWorkers} ${l.workersCount} · ${e.workDate}',
-                    style: Theme.of(context).textTheme.bodySmall),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(color: Color(0x08000000), blurRadius: 4, offset: Offset(0, 1))
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
                   children: [
-                    Text(formatEtb(e.totalAmount),
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
-                    Text(e.syncStatus == 'pending' ? '⏳' : '✓',
-                        style: TextStyle(fontSize: 10,
-                            color: e.syncStatus == 'pending'
-                                ? AppColors.syncPending
-                                : AppColors.syncSynced)),
+                    Container(
+                      width: 40, height: 40,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF9C27B0).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.people_outlined,
+                          color: Color(0xFF9C27B0), size: 20),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(e.workerOrCrewName,
+                              maxLines: 1, overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 2),
+                          Text('${e.numberOfWorkers} ${l.workersCount} · ${e.workDate}',
+                              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(formatEtb(e.totalAmount),
+                            style: AppTextStyles.numeric.copyWith(
+                                fontSize: 13, fontWeight: FontWeight.w700,
+                                color: const Color(0xFF9C27B0))),
+                        const SizedBox(height: 2),
+                        Text(e.syncStatus == 'pending' ? '⏳' : '✓',
+                            style: TextStyle(fontSize: 10,
+                                color: e.syncStatus == 'pending'
+                                    ? AppColors.syncPending
+                                    : AppColors.syncSynced)),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -1047,19 +1139,77 @@ class _TeamTab extends ConsumerWidget {
                 final role = member['role_on_project'] as String? ??
                     member['role'] as String? ??
                     'viewer';
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor:
-                        AppColors.primary.withValues(alpha: 0.12),
-                    child: Text(
-                        name.isNotEmpty ? name[0].toUpperCase() : '?',
-                        style: const TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold)),
+                final initials = name.isNotEmpty
+                    ? name.trim().split(' ').take(2).map((w) => w[0].toUpperCase()).join()
+                    : '?';
+                final roleColor = switch (role) {
+                  'owner' || 'admin' => AppColors.safetyOrange,
+                  'project_manager' => AppColors.blueprintInk,
+                  'site_engineer' => AppColors.levelGreen,
+                  _ => AppColors.textSecondary,
+                };
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: const [
+                      BoxShadow(color: Color(0x08000000), blurRadius: 6, offset: Offset(0, 2))
+                    ],
                   ),
-                  title: Text(name),
-                  subtitle: Text(role,
-                      style: Theme.of(context).textTheme.bodySmall),
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44, height: 44,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [AppColors.blueprintInk, AppColors.blueprintInk.withValues(alpha: 0.7)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: Text(initials,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15)),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(name,
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.textPrimary)),
+                              const SizedBox(height: 3),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: roleColor.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(role.replaceAll('_', ' '),
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: roleColor)),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right,
+                            color: AppColors.textSecondary, size: 18),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),

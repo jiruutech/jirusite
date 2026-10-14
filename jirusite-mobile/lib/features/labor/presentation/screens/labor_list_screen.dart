@@ -24,11 +24,14 @@ class LaborListScreen extends ConsumerWidget {
     final l = AppLocalizations.of(context);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF0F2F5),
       appBar: AppBar(title: Text(l.laborEntriesTitle)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/projects/$projectId/labor/new'),
         icon: const Icon(Icons.add),
         label: Text(l.addLabor),
+        backgroundColor: AppColors.levelGreen,
+        foregroundColor: Colors.white,
       ),
       body: laborAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -43,11 +46,34 @@ class LaborListScreen extends ConsumerWidget {
                   context.push('/projects/$projectId/labor/new'),
             );
           }
-          return ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: entries.length,
-            itemBuilder: (_, i) =>
-                _LaborTile(entry: entries[i], projectId: projectId),
+
+          final totalAmount =
+              entries.fold<double>(0, (s, e) => s + e.totalAmount);
+          final totalWorkers = entries.fold<int>(
+              0, (s, e) => s + e.numberOfWorkers);
+
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: _LaborSummaryCard(
+                  total: totalAmount,
+                  entries: entries.length,
+                  workers: totalWorkers,
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+                sliver: SliverList.separated(
+                  itemCount: entries.length,
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: 8),
+                  itemBuilder: (_, i) => _LaborCard(
+                    entry: entries[i],
+                    projectId: projectId,
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),
@@ -55,14 +81,98 @@ class LaborListScreen extends ConsumerWidget {
   }
 }
 
-class _LaborTile extends ConsumerWidget {
-  const _LaborTile({required this.entry, required this.projectId});
+// ── Summary card ──────────────────────────────────────────────────────────────
+
+class _LaborSummaryCard extends StatelessWidget {
+  const _LaborSummaryCard({
+    required this.total,
+    required this.entries,
+    required this.workers,
+  });
+  final double total;
+  final int entries;
+  final int workers;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF6A1B9A), Color(0xFF9C27B0)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: const Color(0xFF9C27B0).withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4))
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l.totalAmount,
+                    style: const TextStyle(
+                        fontSize: 12, color: Colors.white60)),
+                const SizedBox(height: 4),
+                Text(formatEtb(total),
+                    style: AppTextStyles.numeric
+                        .copyWith(fontSize: 22, color: Colors.white)),
+              ],
+            ),
+          ),
+          Column(
+            children: [
+              _DarkPill(label: '$entries entries'),
+              const SizedBox(height: 4),
+              _DarkPill(label: '$workers ${l.workersCount}'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DarkPill extends StatelessWidget {
+  const _DarkPill({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding:
+            const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(label,
+            style: const TextStyle(
+                fontSize: 11,
+                color: Colors.white,
+                fontWeight: FontWeight.w600)),
+      );
+}
+
+// ── Labor card ────────────────────────────────────────────────────────────────
+
+class _LaborCard extends ConsumerWidget {
+  const _LaborCard({required this.entry, required this.projectId});
   final LocalLaborEntry entry;
   final String projectId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
+    final isPending = entry.syncStatus == 'pending';
 
     return Dismissible(
       key: ValueKey(entry.id),
@@ -70,46 +180,129 @@ class _LaborTile extends ConsumerWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
           color: AppColors.rebarRust,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(14),
         ),
-        child:
-            const Icon(Icons.delete_outline, color: Colors.white, size: 24),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.delete_outline, color: Colors.white, size: 22),
+            SizedBox(height: 2),
+            Text('Delete',
+                style: TextStyle(color: Colors.white, fontSize: 10)),
+          ],
+        ),
       ),
       confirmDismiss: (_) => _confirmDelete(context, l),
       onDismissed: (_) => _delete(context, ref, l),
       child: GestureDetector(
         onLongPress: () => _showActions(context, ref, l),
-        child: Card(
-          margin: const EdgeInsets.only(bottom: 8),
-          child: ListTile(
-            leading: const CircleAvatar(
-              backgroundColor: Color(0x1A9C27B0),
-              child: Icon(Icons.people_outlined,
-                  color: Colors.purple, size: 20),
-            ),
-            title: Text(entry.workerOrCrewName,
-                maxLines: 1, overflow: TextOverflow.ellipsis),
-            subtitle: Text(
-                '${entry.numberOfWorkers} ${l.workersCount} · ${entry.workDate}',
-                style: Theme.of(context).textTheme.bodySmall),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: const [
+              BoxShadow(
+                  color: Color(0x0A000000),
+                  blurRadius: 6,
+                  offset: Offset(0, 2))
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(formatEtb(entry.totalAmount),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w700, fontSize: 13)),
-                Text(
-                  entry.syncStatus == 'pending' ? '⏳' : '✓',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: entry.syncStatus == 'pending'
-                        ? AppColors.syncPending
-                        : AppColors.syncSynced,
+                // Avatar
+                Container(
+                  width: 44, height: 44,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF9C27B0)
+                        .withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  child: const Icon(Icons.people_outlined,
+                      color: Color(0xFF9C27B0), size: 22),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.workerOrCrewName,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Row(children: [
+                        const Icon(Icons.group_outlined,
+                            size: 12, color: AppColors.textSecondary),
+                        const SizedBox(width: 3),
+                        Text(
+                            '${entry.numberOfWorkers} ${l.workersCount}',
+                            style: const TextStyle(
+                                fontSize: 11,
+                                color: AppColors.textSecondary)),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.calendar_today_outlined,
+                            size: 12, color: AppColors.textSecondary),
+                        const SizedBox(width: 3),
+                        Text(entry.workDate,
+                            style: const TextStyle(
+                                fontSize: 11,
+                                color: AppColors.textSecondary)),
+                      ]),
+                      if (entry.workDescription != null) ...[
+                        const SizedBox(height: 3),
+                        Text(entry.workDescription!,
+                            style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      formatEtb(entry.totalAmount),
+                      style: AppTextStyles.numeric.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF9C27B0)),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: (isPending
+                                ? AppColors.ochreDust
+                                : AppColors.levelGreen)
+                            .withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        isPending ? '⏳' : '✓',
+                        style: TextStyle(
+                            fontSize: 10,
+                            color: isPending
+                                ? AppColors.ochreDust
+                                : AppColors.levelGreen,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -132,8 +325,8 @@ class _LaborTile extends ConsumerWidget {
                   child: Text(l.cancel)),
               TextButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                style:
-                    TextButton.styleFrom(foregroundColor: AppColors.error),
+                style: TextButton.styleFrom(
+                    foregroundColor: AppColors.error),
                 child: Text(l.delete),
               ),
             ],
@@ -163,12 +356,27 @@ class _LaborTile extends ConsumerWidget {
       BuildContext context, WidgetRef ref, AppLocalizations l) {
     showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (_) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Container(
+              width: 36, height: 4, margin: const EdgeInsets.only(top: 10),
+              decoration: BoxDecoration(color: AppColors.concrete,
+                  borderRadius: BorderRadius.circular(2)),
+            ),
+            const SizedBox(height: 8),
             ListTile(
-              leading: const Icon(Icons.edit_outlined),
+              leading: Container(
+                width: 36, height: 36,
+                decoration: BoxDecoration(
+                    color: AppColors.blueprintInk.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(8)),
+                child: const Icon(Icons.edit_outlined,
+                    color: AppColors.blueprintInk, size: 18),
+              ),
               title: Text(l.editLabor),
               onTap: () {
                 Navigator.pop(context);
@@ -176,10 +384,16 @@ class _LaborTile extends ConsumerWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.delete_outline,
-                  color: AppColors.error),
+              leading: Container(
+                width: 36, height: 36,
+                decoration: BoxDecoration(
+                    color: AppColors.rebarRust.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(8)),
+                child: const Icon(Icons.delete_outline,
+                    color: AppColors.rebarRust, size: 18),
+              ),
               title: Text(l.deleteLabor,
-                  style: const TextStyle(color: AppColors.error)),
+                  style: const TextStyle(color: AppColors.rebarRust)),
               onTap: () async {
                 Navigator.pop(context);
                 final confirmed = await _confirmDelete(context, l);
@@ -188,6 +402,7 @@ class _LaborTile extends ConsumerWidget {
                 }
               },
             ),
+            const SizedBox(height: 8),
           ],
         ),
       ),
@@ -198,32 +413,48 @@ class _LaborTile extends ConsumerWidget {
       BuildContext context, WidgetRef ref, AppLocalizations l) {
     final nameCtrl =
         TextEditingController(text: entry.workerOrCrewName);
-    final amountCtrl =
-        TextEditingController(text: entry.totalAmount.toStringAsFixed(2));
+    final amountCtrl = TextEditingController(
+        text: entry.totalAmount.toStringAsFixed(2));
     final descCtrl =
         TextEditingController(text: entry.workDescription ?? '');
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom),
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l.editLabor,
-                    style: Theme.of(ctx).textTheme.titleMedium),
-                const SizedBox(height: 16),
+                Container(
+                  width: 36, height: 4,
+                  decoration: BoxDecoration(color: AppColors.concrete,
+                      borderRadius: BorderRadius.circular(2)),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Text(l.editLabor,
+                        style: Theme.of(ctx).textTheme.titleMedium),
+                    const Spacer(),
+                    IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(ctx)),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 TextField(
                   controller: nameCtrl,
                   decoration: InputDecoration(
                     labelText: l.workerCrewNameRequired,
                     border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.person_outlined),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -235,6 +466,8 @@ class _LaborTile extends ConsumerWidget {
                     labelText: l.totalAmountEtb,
                     prefixText: 'ETB  ',
                     border: const OutlineInputBorder(),
+                    prefixIcon:
+                        const Icon(Icons.monetization_on_outlined),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -243,21 +476,30 @@ class _LaborTile extends ConsumerWidget {
                   decoration: InputDecoration(
                     labelText: l.workDescriptionLabel,
                     border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.notes_outlined),
                   ),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
+                  height: 50,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.levelGreen,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
                     onPressed: () async {
                       final updated = LocalLaborEntry(
                         id: entry.id,
                         projectId: entry.projectId,
                         costCodeId: entry.costCodeId,
                         enteredBy: entry.enteredBy,
-                        workerOrCrewName: nameCtrl.text.trim().isNotEmpty
-                            ? nameCtrl.text.trim()
-                            : entry.workerOrCrewName,
+                        workerOrCrewName:
+                            nameCtrl.text.trim().isNotEmpty
+                                ? nameCtrl.text.trim()
+                                : entry.workerOrCrewName,
                         workDescription:
                             descCtrl.text.trim().isNotEmpty
                                 ? descCtrl.text.trim()
@@ -284,7 +526,9 @@ class _LaborTile extends ConsumerWidget {
                         ));
                       }
                     },
-                    child: Text(l.save),
+                    child: Text(l.save,
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600)),
                   ),
                 ),
               ],
