@@ -847,4 +847,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enterValidPrice => 'Enter a valid price';
+
+  @override
+  String get deleteExpense => 'Delete Expense';
+
+  @override
+  String get deleteLabor => 'Delete Labor Entry';
+
+  @override
+  String get deleteConfirm => 'This cannot be undone.';
+
+  @override
+  String get expenseDeleted => 'Expense deleted';
+
+  @override
+  String get laborDeleted => 'Labor entry deleted';
+
+  @override
+  String get conflictTitle => 'Sync Conflict';
+
+  @override
+  String get conflictBody =>
+      'This entry was modified on another device. Which version would you like to keep?';
+
+  @override
+  String get keepMine => 'Keep Mine';
+
+  @override
+  String get useServer => 'Use Server Version';
+
+  @override
+  String get myVersion => 'My Version';
+
+  @override
+  String get serverVersion => 'Server Version';
+
+  @override
+  String get conflictResolved => 'Conflict resolved';
+
+  @override
+  String get noCostCodes => 'No cost codes set up';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get locationLabel => 'Location (optional)';
+
+  @override
+  String get startDateLabel => 'Start Date (optional)';
+
+  @override
+  String get endDateLabel => 'End Date (optional)';
+
+  @override
+  String get inviteMemberTitle => 'Add Team Member';
+
+  @override
+  String get memberPhone => 'Phone Number';
+
+  @override
+  String get memberRole => 'Role';
+
+  @override
+  String get memberAdded => 'Member added';
+
+  @override
+  String get memberAddFailed => 'Failed to add member';
+
+  @override
+  String get editExpense => 'Edit Expense';
+
+  @override
+  String get expenseUpdated => 'Expense updated';
+
+  @override
+  String get editLabor => 'Edit Labor Entry';
+
+  @override
+  String get laborUpdated => 'Labor entry updated';
 }

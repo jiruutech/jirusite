@@ -1683,6 +1683,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a valid price'**
   String get enterValidPrice;
+
+  /// No description provided for @deleteExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Expense'**
+  String get deleteExpense;
+
+  /// No description provided for @deleteLabor.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Labor Entry'**
+  String get deleteLabor;
+
+  /// No description provided for @deleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This cannot be undone.'**
+  String get deleteConfirm;
+
+  /// No description provided for @expenseDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense deleted'**
+  String get expenseDeleted;
+
+  /// No description provided for @laborDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Labor entry deleted'**
+  String get laborDeleted;
+
+  /// No description provided for @conflictTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Conflict'**
+  String get conflictTitle;
+
+  /// No description provided for @conflictBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This entry was modified on another device. Which version would you like to keep?'**
+  String get conflictBody;
+
+  /// No description provided for @keepMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Mine'**
+  String get keepMine;
+
+  /// No description provided for @useServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Server Version'**
+  String get useServer;
+
+  /// No description provided for @myVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'My Version'**
+  String get myVersion;
+
+  /// No description provided for @serverVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Version'**
+  String get serverVersion;
+
+  /// No description provided for @conflictResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict resolved'**
+  String get conflictResolved;
+
+  /// No description provided for @noCostCodes.
+  ///
+  /// In en, this message translates to:
+  /// **'No cost codes set up'**
+  String get noCostCodes;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// No description provided for @locationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location (optional)'**
+  String get locationLabel;
+
+  /// No description provided for @startDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date (optional)'**
+  String get startDateLabel;
+
+  /// No description provided for @endDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'End Date (optional)'**
+  String get endDateLabel;
+
+  /// No description provided for @inviteMemberTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Team Member'**
+  String get inviteMemberTitle;
+
+  /// No description provided for @memberPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get memberPhone;
+
+  /// No description provided for @memberRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get memberRole;
+
+  /// No description provided for @memberAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Member added'**
+  String get memberAdded;
+
+  /// No description provided for @memberAddFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add member'**
+  String get memberAddFailed;
+
+  /// No description provided for @editExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Expense'**
+  String get editExpense;
+
+  /// No description provided for @expenseUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense updated'**
+  String get expenseUpdated;
+
+  /// No description provided for @editLabor.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Labor Entry'**
+  String get editLabor;
+
+  /// No description provided for @laborUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Labor entry updated'**
+  String get laborUpdated;
 }
 
 class _AppLocalizationsDelegate

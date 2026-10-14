@@ -966,40 +966,192 @@ class _LaborTab extends ConsumerWidget {
 
 // ── Team tab ──────────────────────────────────────────────────────────────────
 
-class _TeamTab extends StatelessWidget {
+class _TeamTab extends ConsumerWidget {
   const _TeamTab({required this.projectId, required this.data});
   final String projectId;
   final Map<String, dynamic> data;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final team = (data['team'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
-    if (team.isEmpty) {
-      return EmptyState(
-        icon: Icons.group_outlined,
-        title: l.teamMembers,
-        subtitle: l.inviteMember,
-      );
-    }
-    return ListView.builder(
-      padding: const EdgeInsets.all(12),
-      itemCount: team.length,
-      itemBuilder: (_, i) {
-        final member = team[i];
-        final name = member['full_name'] as String? ?? '—';
-        final role = member['role'] as String? ?? 'viewer';
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: AppColors.primary.withValues(alpha: 0.12),
-            child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?',
-                style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showInviteSheet(context, ref, l),
+        icon: const Icon(Icons.person_add_outlined),
+        label: Text(l.inviteMember),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+      ),
+      body: team.isEmpty
+          ? EmptyState(
+              icon: Icons.group_outlined,
+              title: l.teamMembers,
+              subtitle: l.inviteMember,
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
+              itemCount: team.length,
+              itemBuilder: (_, i) {
+                final member = team[i];
+                final name = member['full_name'] as String? ?? '—';
+                final role = member['role_on_project'] as String? ??
+                    member['role'] as String? ??
+                    'viewer';
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor:
+                        AppColors.primary.withValues(alpha: 0.12),
+                    child: Text(
+                        name.isNotEmpty ? name[0].toUpperCase() : '?',
+                        style: const TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  title: Text(name),
+                  subtitle: Text(role,
+                      style: Theme.of(context).textTheme.bodySmall),
+                );
+              },
+            ),
+    );
+  }
+
+  void _showInviteSheet(
+      BuildContext context, WidgetRef ref, AppLocalizations l) {
+    final phoneCtrl = TextEditingController();
+    String selectedRole = 'site_engineer';
+    const roles = [
+      'owner',
+      'admin',
+      'project_manager',
+      'site_engineer',
+      'viewer',
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                          child: Text(l.inviteMemberTitle,
+                              style:
+                                  Theme.of(ctx).textTheme.titleMedium)),
+                      IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(ctx)),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: phoneCtrl,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      labelText: l.memberPhone,
+                      hintText: '+251 9XX XXX XXX',
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.phone_outlined),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    initialValue: selectedRole,
+                    decoration: InputDecoration(
+                      labelText: l.memberRole,
+                      border: const OutlineInputBorder(),
+                    ),
+                    items: roles
+                        .map((r) => DropdownMenuItem(
+                            value: r, child: Text(r)))
+                        .toList(),
+                    onChanged: (v) =>
+                        setModalState(() => selectedRole = v ?? selectedRole),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6)),
+                      ),
+                      onPressed: () async {
+                        final phone = phoneCtrl.text.trim();
+                        if (phone.isEmpty) return;
+                        try {
+                          final dio = ref.read(dioClientProvider);
+                          // First look up the user by phone
+                          final userResp = await dio.get(
+                              ApiEndpoints.orgMembers,
+                              params: {'phone': phone});
+                          final users =
+                              (userResp.data as List?)
+                                  ?.cast<Map<String, dynamic>>() ??
+                                  [];
+                          if (users.isEmpty) {
+                            if (ctx.mounted) {
+                              ScaffoldMessenger.of(ctx).showSnackBar(
+                                SnackBar(
+                                    content: Text(l.memberAddFailed),
+                                    backgroundColor: AppColors.error),
+                              );
+                            }
+                            return;
+                          }
+                          await dio.post(
+                            ApiEndpoints.projectTeam(projectId),
+                            data: {
+                              'user_id': users[0]['id'],
+                              'role_on_project': selectedRole,
+                            },
+                          );
+                          if (ctx.mounted) {
+                            Navigator.pop(ctx);
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              SnackBar(
+                                  content: Text(l.memberAdded),
+                                  backgroundColor: AppColors.levelGreen),
+                            );
+                          }
+                        } catch (e) {
+                          if (ctx.mounted) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              SnackBar(
+                                  content: Text(l.memberAddFailed),
+                                  backgroundColor: AppColors.error),
+                            );
+                          }
+                        }
+                      },
+                      child: Text(l.inviteMember,
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          title: Text(name),
-          subtitle: Text(role, style: Theme.of(context).textTheme.bodySmall),
-        );
-      },
+        ),
+      ),
     );
   }
 }

@@ -849,4 +849,83 @@ class AppLocalizationsOm extends AppLocalizations {
 
   @override
   String get enterValidPrice => 'Gatii sirrii galchi';
+
+  @override
+  String get deleteExpense => 'Baasii Haqi';
+
+  @override
+  String get deleteLabor => 'Galma Hojjettoo Haqi';
+
+  @override
+  String get deleteConfirm => 'Kun deebi\'ee hin danda\'amu.';
+
+  @override
+  String get expenseDeleted => 'Baasiin haqame';
+
+  @override
+  String get laborDeleted => 'Galmi hojjettoo haqame';
+
+  @override
+  String get conflictTitle => 'Walmadaallii Waldorgommii';
+
+  @override
+  String get conflictBody =>
+      'Galmi kun meeshaa biraa irratti jijjiirame. Kan eegamuu barbaadde filuu?';
+
+  @override
+  String get keepMine => 'Koo Eegi';
+
+  @override
+  String get useServer => 'Kan Sarvaraa Fayyadami';
+
+  @override
+  String get myVersion => 'Versiyon Koo';
+
+  @override
+  String get serverVersion => 'Versiyon Sarvaraa';
+
+  @override
+  String get conflictResolved => 'Waldorgommiin furame';
+
+  @override
+  String get noCostCodes => 'Koodiin baasii hin qindaa\'amne';
+
+  @override
+  String get optional => 'Dirqama miti';
+
+  @override
+  String get locationLabel => 'Iddoo (dirqama miti)';
+
+  @override
+  String get startDateLabel => 'Guyyaa Jalqabaa (dirqama miti)';
+
+  @override
+  String get endDateLabel => 'Guyyaa Xumuraa (dirqama miti)';
+
+  @override
+  String get inviteMemberTitle => 'Miseensa Garee Dabaluu';
+
+  @override
+  String get memberPhone => 'Lakkoofsa Bilbilaa';
+
+  @override
+  String get memberRole => 'Gahee';
+
+  @override
+  String get memberAdded => 'Miseensi dabalame';
+
+  @override
+  String get memberAddFailed => 'Miseensa dabaluu hin danda\'amne';
+
+  @override
+  String get editExpense => 'Baasii Gulaali';
+
+  @override
+  String get expenseUpdated => 'Baasiin fooyya\'e';
+
+  @override
+  String get editLabor => 'Galma Hojjettoo Gulaali';
+
+  @override
+  String get laborUpdated => 'Galmi hojjettoo fooyya\'e';
 }

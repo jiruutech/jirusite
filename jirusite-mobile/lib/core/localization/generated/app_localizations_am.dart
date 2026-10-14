@@ -839,4 +839,82 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get enterValidPrice => 'ትክክለኛ ዋጋ ያስገቡ';
+
+  @override
+  String get deleteExpense => 'ወጪ አጥፋ';
+
+  @override
+  String get deleteLabor => 'የሰው ኃይል ግቤት አጥፋ';
+
+  @override
+  String get deleteConfirm => 'ይህ ሊቀለበስ አይችልም።';
+
+  @override
+  String get expenseDeleted => 'ወጪ ተሰርዟል';
+
+  @override
+  String get laborDeleted => 'የሰው ኃይል ግቤት ተሰርዟል';
+
+  @override
+  String get conflictTitle => 'የሲንክ ግጭት';
+
+  @override
+  String get conflictBody => 'ይህ ግቤት በሌላ መሳሪያ ላይ ተቀይሯል። የትኛውን ስሪት ማቆየት ይፈልጋሉ?';
+
+  @override
+  String get keepMine => 'የኔን አቆይ';
+
+  @override
+  String get useServer => 'የሰርቨር ስሪት ተጠቀም';
+
+  @override
+  String get myVersion => 'የኔ ስሪት';
+
+  @override
+  String get serverVersion => 'የሰርቨር ስሪት';
+
+  @override
+  String get conflictResolved => 'ግጭቱ ተፈቷል';
+
+  @override
+  String get noCostCodes => 'ምንም የወጪ ኮዶች አልተዋቀሩም';
+
+  @override
+  String get optional => 'አማራጭ';
+
+  @override
+  String get locationLabel => 'ቦታ (አማራጭ)';
+
+  @override
+  String get startDateLabel => 'የጀማሪ ቀን (አማራጭ)';
+
+  @override
+  String get endDateLabel => 'የማጠናቀቅ ቀን (አማራጭ)';
+
+  @override
+  String get inviteMemberTitle => 'የቡድን አባል ጨምር';
+
+  @override
+  String get memberPhone => 'ስልክ ቁጥር';
+
+  @override
+  String get memberRole => 'ሚና';
+
+  @override
+  String get memberAdded => 'አባሉ ተጨምሯል';
+
+  @override
+  String get memberAddFailed => 'አባሉን ማከል አልተሳካም';
+
+  @override
+  String get editExpense => 'ወጪ አርም';
+
+  @override
+  String get expenseUpdated => 'ወጪ ተዘምኗል';
+
+  @override
+  String get editLabor => 'የሰው ኃይል ግቤት አርም';
+
+  @override
+  String get laborUpdated => 'የሰው ኃይል ግቤት ተዘምኗል';
 }

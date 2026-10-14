@@ -7,7 +7,9 @@ import 'package:uuid/uuid.dart';
 import '../../../../app/theme.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/localization/generated/app_localizations.dart';
+import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/connectivity_service.dart';
+import '../../../../core/network/dio_client.dart';
 import '../../../../core/sync/sync_engine.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
 import '../../../../shared_widgets/app_button.dart';
@@ -15,6 +17,14 @@ import '../../../../shared_widgets/app_text_field.dart';
 import '../../../../shared_widgets/receipt_photo_capture.dart';
 
 const _uuid = Uuid();
+
+/// Fetches cost codes for a project from the server
+final _costCodesProvider = FutureProvider.autoDispose
+    .family<List<Map<String, dynamic>>, String>((ref, projectId) async {
+  final dio = ref.read(dioClientProvider);
+  final resp = await dio.get(ApiEndpoints.projectCostCodes(projectId));
+  return (resp.data as List).cast<Map<String, dynamic>>();
+});
 
 class ExpenseEntryScreen extends ConsumerStatefulWidget {
   const ExpenseEntryScreen({super.key, required this.projectId});
@@ -33,6 +43,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
 
   String _expenseType = 'material';
   String? _selectedUnit;
+  String? _selectedCostCodeId;
   String? _receiptLocalPath;
   DateTime _date = DateTime.now();
   bool _saving = false;
@@ -96,6 +107,7 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
             : null,
         quantity: double.tryParse(_quantityCtrl.text),
         unit: _selectedUnit,
+        costCodeId: _selectedCostCodeId,
         receiptPhotoLocalPath: _receiptLocalPath,
         syncStatus: 'pending',
       ));
@@ -181,6 +193,14 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
                           checkmarkColor: AppColors.blueprintInk,
                         ))
                     .toList(),
+              ),
+              const SizedBox(height: 20),
+
+              // ── Cost code picker ───────────────────────────────────
+              _CostCodePicker(
+                projectId: widget.projectId,
+                selected: _selectedCostCodeId,
+                onChanged: (id) => setState(() => _selectedCostCodeId = id),
               ),
               const SizedBox(height: 20),
 
@@ -412,6 +432,71 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+// ── Cost Code Picker ──────────────────────────────────────────────────────
+
+class _CostCodePicker extends ConsumerWidget {
+  const _CostCodePicker({
+    required this.projectId,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final String projectId;
+  final String? selected;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final codesAsync = ref.watch(_costCodesProvider(projectId));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('${l.costCode} (${l.optional})',
+            style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: 6),
+        codesAsync.when(
+          loading: () => const LinearProgressIndicator(),
+          error: (_, __) => const SizedBox.shrink(), // silently skip
+          data: (codes) {
+            if (codes.isEmpty) {
+              return Text(l.noCostCodes,
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.textSecondary));
+            }
+            return DropdownButtonFormField<String>(
+              initialValue: selected,
+              hint: Text(l.select),
+              isExpanded: true,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              ),
+              items: [
+                DropdownMenuItem<String>(
+                  value: null,
+                  child: Text(l.optional,
+                      style: const TextStyle(color: AppColors.textSecondary)),
+                ),
+                ...codes.map((c) => DropdownMenuItem<String>(
+                      value: c['id'] as String,
+                      child: Text(
+                        '${c['code']} — ${c['name']}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    )),
+              ],
+              onChanged: onChanged,
+            );
+          },
+        ),
+      ],
     );
   }
 }

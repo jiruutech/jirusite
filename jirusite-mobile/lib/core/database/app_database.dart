@@ -38,6 +38,8 @@ abstract class AppDatabase {
   Stream<List<LocalExpense>> watchExpenses(String projectId);
   Future<List<LocalExpense>> getPendingExpenses();
   Future<void> insertExpense(LocalExpense e);
+  Future<void> updateExpense(LocalExpense e);
+  Future<void> deleteExpense(String id);
   Future<void> markExpenseSynced(String localId, String serverId);
   Future<void> markExpenseConflict(String localId, String serverJson);
   Future<void> upsertExpenses(List<LocalExpense> expenses);
@@ -46,6 +48,8 @@ abstract class AppDatabase {
   Stream<List<LocalLaborEntry>> watchLabor(String projectId);
   Future<List<LocalLaborEntry>> getPendingLabor();
   Future<void> insertLabor(LocalLaborEntry l);
+  Future<void> updateLabor(LocalLaborEntry l);
+  Future<void> deleteLabor(String id);
   Future<void> markLaborSynced(String localId, String serverId);
   Future<void> upsertLaborEntries(List<LocalLaborEntry> entries);
 
@@ -125,6 +129,12 @@ class WebAppDatabase extends AppDatabase {
   Future<void> insertExpense(LocalExpense e) async => _expenses[e.id] = e;
 
   @override
+  Future<void> updateExpense(LocalExpense e) async => _expenses[e.id] = e;
+
+  @override
+  Future<void> deleteExpense(String id) async => _expenses.remove(id);
+
+  @override
   Future<void> markExpenseSynced(String localId, String serverId) async {
     final e = _expenses[localId];
     if (e != null) {
@@ -182,6 +192,12 @@ class WebAppDatabase extends AppDatabase {
 
   @override
   Future<void> insertLabor(LocalLaborEntry l) async => _labor[l.id] = l;
+
+  @override
+  Future<void> updateLabor(LocalLaborEntry l) async => _labor[l.id] = l;
+
+  @override
+  Future<void> deleteLabor(String id) async => _labor.remove(id);
 
   @override
   Future<void> markLaborSynced(String localId, String serverId) async {

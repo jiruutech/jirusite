@@ -116,6 +116,19 @@ class NativeAppDatabase extends AppDatabase {
   }
 
   @override
+  Future<void> updateExpense(LocalExpense e) async {
+    final db = await _database;
+    await db.update('local_expenses', _expenseToMap(e),
+        where: 'id = ?', whereArgs: [e.id]);
+  }
+
+  @override
+  Future<void> deleteExpense(String id) async {
+    final db = await _database;
+    await db.delete('local_expenses', where: 'id = ?', whereArgs: [id]);
+  }
+
+  @override
   Future<void> markExpenseSynced(String localId, String serverId) async {
     final db = await _database;
     await db.update(
@@ -170,6 +183,19 @@ class NativeAppDatabase extends AppDatabase {
     final db = await _database;
     await db.insert('local_labor_entries', _laborToMap(l),
         conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  @override
+  Future<void> updateLabor(LocalLaborEntry l) async {
+    final db = await _database;
+    await db.update('local_labor_entries', _laborToMap(l),
+        where: 'id = ?', whereArgs: [l.id]);
+  }
+
+  @override
+  Future<void> deleteLabor(String id) async {
+    final db = await _database;
+    await db.delete('local_labor_entries', where: 'id = ?', whereArgs: [id]);
   }
 
   @override

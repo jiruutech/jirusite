@@ -33,10 +33,12 @@ class ApiEndpoints {
   static String projectExpenses(String id) => '/expenses/project/$id';
   static const expenseSyncBatch = '/expenses/sync-batch';
   static String expenseReceipt(String id) => '/expenses/$id/receipt';
+  static String deleteExpenseEndpoint(String id) => '/expenses/$id';
 
   // ── Labor ─────────────────────────────────────────────────────────────────
   static String projectLabor(String id) => '/labor/project/$id';
   static const laborSyncBatch = '/labor/sync-batch';
+  static String deleteLaborEndpoint(String id) => '/labor/$id';
 
   // ── Materials ─────────────────────────────────────────────────────────────
   static const materials = '/materials';
