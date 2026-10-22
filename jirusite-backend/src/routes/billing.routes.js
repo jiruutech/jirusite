@@ -134,9 +134,19 @@ router.post(
     );
 
     if (chapaResp.data.status !== 'success') {
+      console.error('[Chapa initiate] failed:', JSON.stringify(chapaResp.data));
       return res.status(502).json({
         error: 'Chapa initialization failed',
-        details: chapaResp.data.message,
+        details: chapaResp.data.message || chapaResp.data.data || JSON.stringify(chapaResp.data),
+      });
+    }
+
+    const checkoutUrl = chapaResp.data?.data?.checkout_url;
+    if (!checkoutUrl) {
+      console.error('[Chapa initiate] no checkout_url in response:', JSON.stringify(chapaResp.data));
+      return res.status(502).json({
+        error: 'Chapa did not return a checkout URL',
+        details: JSON.stringify(chapaResp.data),
       });
     }
 

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -493,7 +494,10 @@ class _UpgradeSheetState extends ConsumerState<_UpgradeSheet> {
       final txRef = resp.data['tx_ref'] as String?;
 
       if (checkoutUrl == null) {
-        setState(() { _error = 'Could not get checkout URL'; _loading = false; });
+        setState(() {
+          _error = 'Could not get checkout URL. Server response: ${resp.data}';
+          _loading = false;
+        });
         return;
       }
 
@@ -524,8 +528,20 @@ class _UpgradeSheetState extends ConsumerState<_UpgradeSheet> {
         }
       }
     } catch (e) {
+      String msg;
+      if (e is DioException) {
+        final data = e.response?.data;
+        if (data is Map) {
+          msg = (data['error'] ?? data['message'] ?? data['details'] ?? '').toString();
+          if (msg.isEmpty) msg = 'Server error ${e.response?.statusCode}';
+        } else {
+          msg = 'Server error ${e.response?.statusCode}: ${e.response?.data}';
+        }
+      } else {
+        msg = e.toString().replaceAll('Exception: ', '');
+      }
       setState(() {
-        _error = e.toString().replaceAll('Exception: ', '');
+        _error = msg;
         _loading = false;
       });
     }
