@@ -87,10 +87,16 @@ router.post(
     const txRef = `jirusite-${paymentId}-${Date.now()}`;
 
     // Store txRef on payment record for later verification
-    await query(
-      'UPDATE subscription_payments SET chapa_tx_ref = $1, chapa_tier = $2 WHERE id = $3',
-      [txRef, tier, paymentId]
-    );
+    // If the migration hasn't run yet, gracefully continue without chapa columns
+    try {
+      await query(
+        'UPDATE subscription_payments SET chapa_tx_ref = $1, chapa_tier = $2 WHERE id = $3',
+        [txRef, tier, paymentId]
+      );
+    } catch (colErr) {
+      // Columns don't exist yet — migration pending. Log and continue.
+      console.warn('[Billing] chapa columns missing — run migrate:up:', colErr.message);
+    }
 
     const chapaPayload = {
       amount: String(price.monthly),
