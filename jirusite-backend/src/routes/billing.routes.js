@@ -121,17 +121,31 @@ router.post(
       },
     };
 
-    const chapaResp = await axios.post(
-      `${CHAPA_BASE_URL}/transaction/initialize`,
-      chapaPayload,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.CHAPA_SECRET_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 15000,
-      }
-    );
+    console.log('[Chapa initiate] payload:', JSON.stringify({ ...chapaPayload, tx_ref: chapaPayload.tx_ref }));
+
+    let chapaResp;
+    try {
+      chapaResp = await axios.post(
+        `${CHAPA_BASE_URL}/transaction/initialize`,
+        chapaPayload,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.CHAPA_SECRET_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          timeout: 15000,
+        }
+      );
+    } catch (axiosErr) {
+      const status = axiosErr.response?.status;
+      const data = axiosErr.response?.data;
+      console.error('[Chapa initiate] Chapa API error:', status, JSON.stringify(data));
+      return res.status(502).json({
+        error: 'Chapa API error',
+        chapa_status: status,
+        details: data?.message || data?.error || JSON.stringify(data),
+      });
+    }
 
     if (chapaResp.data.status !== 'success') {
       console.error('[Chapa initiate] failed:', JSON.stringify(chapaResp.data));

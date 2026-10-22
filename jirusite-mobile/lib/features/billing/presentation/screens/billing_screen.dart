@@ -480,10 +480,21 @@ class _UpgradeSheetState extends ConsumerState<_UpgradeSheet> {
     try {
       final user = ref.read(authStateProvider).valueOrNull?.user;
       final dio = ref.read(dioClientProvider);
+
+      // Format phone for Chapa: must be 09xxxxxxxx or 07xxxxxxxx (10 digits)
+      String? chapaPhone;
+      if (user?.phoneNumber != null) {
+        String phone = user!.phoneNumber.replaceAll(RegExp(r'[\s\-\+]'), '');
+        // Convert +2519... or 2519... to 09...
+        if (phone.startsWith('251')) phone = '0${phone.substring(3)}';
+        if (phone.length == 10 && (phone.startsWith('09') || phone.startsWith('07'))) {
+          chapaPhone = phone;
+        }
+      }
+
       final resp = await dio.post(ApiEndpoints.chapaInitiate, data: {
         'tier': widget.tier,
-        if (user?.phoneNumber != null)
-          'phone_number': user!.phoneNumber.replaceAll('+', '').replaceAll(' ', ''),
+        if (chapaPhone != null) 'phone_number': chapaPhone,
         'first_name': user?.fullName.split(' ').first ?? 'User',
         'last_name': user?.fullName.split(' ').skip(1).join(' ').isNotEmpty == true
             ? user!.fullName.split(' ').skip(1).join(' ')
