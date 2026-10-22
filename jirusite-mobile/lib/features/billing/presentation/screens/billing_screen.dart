@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+// InAppWebView only available on Android/iOS
+import 'chapa_webview_screen.dart' if (dart.library.html) 'chapa_webview_screen_stub.dart';
 
 import '../../../../app/theme.dart';
 import '../../../../core/localization/generated/app_localizations.dart';
@@ -548,7 +550,7 @@ class _UpgradeSheetState extends ConsumerState<_UpgradeSheet> {
         result = await Navigator.push<bool>(
           context,
           MaterialPageRoute(
-            builder: (_) => _ChapaWebViewScreen(
+            builder: (_) => ChapaWebViewScreen(
               checkoutUrl: checkoutUrl,
               txRef: txRef,
             ),
@@ -721,91 +723,6 @@ class _UpgradeSheetState extends ConsumerState<_UpgradeSheet> {
   }
 }
 
-// ── Chapa WebView screen ──────────────────────────────────────────────────────
-
-class _ChapaWebViewScreen extends StatefulWidget {
-  const _ChapaWebViewScreen({
-    required this.checkoutUrl,
-    this.txRef,
-  });
-  final String checkoutUrl;
-  final String? txRef;
-
-  @override
-  State<_ChapaWebViewScreen> createState() => _ChapaWebViewScreenState();
-}
-
-class _ChapaWebViewScreenState extends State<_ChapaWebViewScreen> {
-  InAppWebViewController? _webCtrl;
-  bool _loading = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Chapa Checkout'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context, false),
-        ),
-        actions: [
-          if (_loading)
-            const Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: Center(
-                child: SizedBox(
-                    width: 18, height: 18,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white)),
-              ),
-            ),
-        ],
-      ),
-      body: InAppWebView(
-        initialUrlRequest: URLRequest(
-          url: WebUri(widget.checkoutUrl),
-        ),
-        initialSettings: InAppWebViewSettings(
-          useShouldOverrideUrlLoading: true,
-          javaScriptEnabled: true,
-          userAgent: 'JIRUSite/1.0 Flutter',
-        ),
-        onWebViewCreated: (ctrl) {
-          _webCtrl = ctrl;
-          // Register handler for payment completion signal from the return page
-          ctrl.addJavaScriptHandler(
-            handlerName: 'paymentComplete',
-            callback: (_) {
-              Navigator.pop(context, true);
-            },
-          );
-        },
-        onLoadStop: (ctrl, url) {
-          setState(() => _loading = false);
-          final urlStr = url?.toString() ?? '';
-          // Detect return URL pattern — payment complete
-          if (urlStr.contains('/billing/chapa/return')) {
-            Navigator.pop(context, true);
-          }
-        },
-        onLoadStart: (_, __) => setState(() => _loading = true),
-        shouldOverrideUrlLoading: (ctrl, action) async {
-          final url = action.request.url?.toString() ?? '';
-          // If Chapa redirects to our return URL, close WebView as success
-          if (url.contains('/billing/chapa/return')) {
-            Navigator.pop(context, true);
-            return NavigationActionPolicy.CANCEL;
-          }
-          return NavigationActionPolicy.ALLOW;
-        },
-        onReceivedError: (_, __, err) {
-          setState(() => _loading = false);
-        },
-      ),
-    );
-  }
-}
 
 // ── Payment history card ──────────────────────────────────────────────────────
 
