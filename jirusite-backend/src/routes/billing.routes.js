@@ -83,8 +83,11 @@ router.post(
     );
     const paymentId = rows[0].id;
 
-    // Unique tx_ref — Chapa requires this to be unique per transaction
-    const txRef = `jirusite-${paymentId}-${Date.now()}`;
+    // Unique tx_ref — Chapa requires ≤ 50 chars, unique per transaction
+    // Format: jiru-{short8}-{epoch8} = 5+1+8+1+8 = 23 chars
+    const shortId = paymentId.replace(/-/g, '').substring(0, 8);
+    const epoch = Date.now().toString(36).slice(-8); // base36 epoch, 8 chars
+    const txRef = `jiru-${shortId}-${epoch}`;
 
     // Store txRef on payment record for later verification
     // If the migration hasn't run yet, gracefully continue without chapa columns
@@ -110,9 +113,9 @@ router.post(
       callback_url: `${process.env.APP_BASE_URL || 'https://jirusite.onrender.com'}/api/billing/chapa/callback?tx_ref=${txRef}`,
       return_url: `${process.env.APP_BASE_URL || 'https://jirusite.onrender.com'}/api/billing/chapa/return?tx_ref=${txRef}`,
       customization: {
-        title: `JIRUSite ${tier[0].toUpperCase()}${tier.slice(1)} Plan`,
-        description: `Monthly subscription — ETB ${price.monthly}/month`,
-        logo: process.env.APP_LOGO_URL || undefined,
+        // title: max 16 chars; description: letters, numbers, hyphens, underscores, spaces, dots only
+        title: `${tier[0].toUpperCase()}${tier.slice(1)} Plan`.substring(0, 16),
+        description: `JIRUSite ${tier} plan ETB ${price.monthly} per month`.replace(/[^a-zA-Z0-9\-_ .]/g, '').substring(0, 50),
       },
       meta: {
         organization_id: req.user.organization_id,
