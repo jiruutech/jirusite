@@ -28,6 +28,18 @@ final _localSpentProvider = FutureProvider.autoDispose
     .family<double, String>((ref, projectId) =>
         ref.read(appDatabaseProvider).getProjectTotalSpent(projectId));
 
+/// Stable stream providers for tabs — using family keeps them alive
+/// across tab switches and doesn't recreate on every rebuild.
+final _projectExpensesStreamProvider = StreamProvider.autoDispose
+    .family<List<LocalExpense>, String>((ref, projectId) {
+  return ref.read(appDatabaseProvider).watchExpenses(projectId);
+});
+
+final _projectLaborStreamProvider = StreamProvider.autoDispose
+    .family<List<LocalLaborEntry>, String>((ref, projectId) {
+  return ref.read(appDatabaseProvider).watchLabor(projectId);
+});
+
 // ── Screen ────────────────────────────────────────────────────────────────────
 
 class ProjectDetailScreen extends ConsumerWidget {
@@ -915,10 +927,8 @@ class _ExpensesTabState extends ConsumerState<_ExpensesTab> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final expensesAsync = ref.watch(
-      StreamProvider.autoDispose((ref) =>
-          ref.read(appDatabaseProvider).watchExpenses(widget.projectId)),
-    );
+    final expensesAsync =
+        ref.watch(_projectExpensesStreamProvider(widget.projectId));
 
     return RefreshIndicator(
       onRefresh: () async => ref.read(syncEngineProvider).sync(),
@@ -1060,10 +1070,8 @@ class _LaborTabState extends ConsumerState<_LaborTab> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final laborAsync = ref.watch(
-      StreamProvider.autoDispose((ref) =>
-          ref.read(appDatabaseProvider).watchLabor(widget.projectId)),
-    );
+    final laborAsync =
+        ref.watch(_projectLaborStreamProvider(widget.projectId));
 
     return RefreshIndicator(
       onRefresh: () async => ref.read(syncEngineProvider).sync(),
@@ -1200,7 +1208,9 @@ class _TeamTab extends ConsumerWidget {
                   'site_engineer' => AppColors.levelGreen,
                   _ => AppColors.textSecondary,
                 };
-                return Container(
+                return GestureDetector(
+                  onTap: () => _showMemberDetail(context, member),
+                  child: Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -1257,14 +1267,107 @@ class _TeamTab extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        const Icon(Icons.chevron_right,
-                            color: AppColors.textSecondary, size: 18),
+                        Icon(Icons.chevron_right,
+                            color: AppColors.textSecondary.withValues(alpha: 0.4),
+                            size: 18),
                       ],
                     ),
                   ),
+                ),
                 );
               },
             ),
+    );
+  }
+
+  void _showMemberDetail(BuildContext context, Map<String, dynamic> member) {
+    final name = member['full_name'] as String? ?? '—';
+    final role = (member['role_on_project'] as String? ?? member['role'] as String? ?? 'viewer')
+        .replaceAll('_', ' ');
+    final phone = member['phone_number'] as String?;
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36, height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                    color: AppColors.concrete,
+                    borderRadius: BorderRadius.circular(2)),
+              ),
+              // Avatar
+              Container(
+                width: 64, height: 64,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [AppColors.blueprintInk, Color(0xFF2A4A5A)],
+                  ),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Center(
+                  child: Text(
+                    name.isNotEmpty
+                        ? name.trim().split(' ').take(2).map((w) => w[0].toUpperCase()).join()
+                        : '?',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 22),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(name,
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.blueprintInk)),
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                decoration: BoxDecoration(
+                  color: AppColors.safetyOrange.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(role,
+                    style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.safetyOrange)),
+              ),
+              if (phone != null) ...[
+                const SizedBox(height: 20),
+                const Divider(height: 1),
+                const SizedBox(height: 16),
+                Row(children: [
+                  Container(
+                    width: 38, height: 38,
+                    decoration: BoxDecoration(
+                      color: AppColors.levelGreen.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.phone_outlined,
+                        color: AppColors.levelGreen, size: 18),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(phone,
+                      style: const TextStyle(
+                          fontSize: 15, color: AppColors.textPrimary)),
+                ]),
+              ],
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
