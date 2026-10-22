@@ -1,11 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// InAppWebView only available on Android/iOS
-import 'chapa_webview_screen.dart' if (dart.library.html) 'chapa_webview_screen_stub.dart';
 
 import '../../../../app/theme.dart';
 import '../../../../core/localization/generated/app_localizations.dart';
@@ -519,41 +515,65 @@ class _UpgradeSheetState extends ConsumerState<_UpgradeSheet> {
       if (!mounted) return;
       Navigator.pop(context); // close the upgrade sheet
 
+      // Open Chapa checkout in the system browser (works on both web and mobile)
+      final uri = Uri.parse(checkoutUrl);
+      final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+      if (!launched && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Could not open browser. Copy the URL manually.'),
+              backgroundColor: AppColors.error),
+        );
+        return;
+      }
+
+      // Show a dialog asking user to confirm after paying
       bool? result;
-      if (kIsWeb) {
-        // Web: open in new tab, then poll for subscription update
-        await launchUrl(Uri.parse(checkoutUrl),
-            mode: LaunchMode.externalApplication);
-        // Show a dialog telling user to come back after paying
-        if (mounted) {
-          result = await showDialog<bool>(
-            context: context,
-            barrierDismissible: false,
-            builder: (ctx) => AlertDialog(
-              title: const Text('Complete Payment'),
-              content: const Text(
-                'Chapa checkout has opened in your browser.\n\nAfter completing the payment, tap "Done" to activate your subscription.',
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(ctx, false),
-                    child: const Text('Cancel')),
-                ElevatedButton(
-                    onPressed: () => Navigator.pop(ctx, true),
-                    child: const Text('Done — I paid')),
+      if (mounted) {
+        result = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16)),
+            title: const Row(children: [
+              Icon(Icons.payment_outlined,
+                  color: AppColors.safetyOrange),
+              SizedBox(width: 8),
+              Text('Complete Payment'),
+            ]),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Chapa checkout has opened in your browser.',
+                  style: TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'After completing the payment, come back here and tap "Done" to activate your subscription.',
+                  style: TextStyle(
+                      fontSize: 13, color: AppColors.textSecondary),
+                ),
               ],
             ),
-          );
-        }
-      } else {
-        // Mobile: in-app WebView
-        result = await Navigator.push<bool>(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ChapaWebViewScreen(
-              checkoutUrl: checkoutUrl,
-              txRef: txRef,
-            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Cancel')),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.levelGreen,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Done — I paid'),
+              ),
+            ],
           ),
         );
       }
