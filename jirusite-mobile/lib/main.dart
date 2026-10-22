@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'app/app.dart';
 import 'app/splash_screen.dart';
@@ -11,6 +12,11 @@ import 'core/notifications/fcm_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize InAppWebView on supported platforms (Android/iOS only)
+  if (!kIsWeb) {
+    await InAppWebViewController.setWebContentsDebuggingEnabled(false);
+  }
 
   // Firebase — gracefully disabled if not configured
   if (!kIsWeb) {

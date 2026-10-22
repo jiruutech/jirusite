@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/theme.dart';
 import '../../../../core/localization/generated/app_localizations.dart';
@@ -513,18 +515,46 @@ class _UpgradeSheetState extends ConsumerState<_UpgradeSheet> {
       }
 
       if (!mounted) return;
-      Navigator.pop(context);
+      Navigator.pop(context); // close the upgrade sheet
 
-      // Open Chapa checkout in WebView
-      final result = await Navigator.push<bool>(
-        context,
-        MaterialPageRoute(
-          builder: (_) => _ChapaWebViewScreen(
-            checkoutUrl: checkoutUrl,
-            txRef: txRef,
+      bool? result;
+      if (kIsWeb) {
+        // Web: open in new tab, then poll for subscription update
+        await launchUrl(Uri.parse(checkoutUrl),
+            mode: LaunchMode.externalApplication);
+        // Show a dialog telling user to come back after paying
+        if (mounted) {
+          result = await showDialog<bool>(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Complete Payment'),
+              content: const Text(
+                'Chapa checkout has opened in your browser.\n\nAfter completing the payment, tap "Done" to activate your subscription.',
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: const Text('Cancel')),
+                ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx, true),
+                    child: const Text('Done — I paid')),
+              ],
+            ),
+          );
+        }
+      } else {
+        // Mobile: in-app WebView
+        result = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(
+            builder: (_) => _ChapaWebViewScreen(
+              checkoutUrl: checkoutUrl,
+              txRef: txRef,
+            ),
           ),
-        ),
-      );
+        );
+      }
 
       if (result == true) {
         widget.onSuccess();
