@@ -300,7 +300,7 @@
   "priceSubmitFailed": "Failed to submit price",
   "submit": "Submit",
   "selectMaterialFirst": "Select a material first",
-  "enterValidPrice": "Enter a valid price",
+  "enterValidPrice": "Enter a valid price"
   "deleteExpense": "Delete Expense",
   "deleteLabor": "Delete Labor Entry",
   "deleteConfirm": "This cannot be undone.",

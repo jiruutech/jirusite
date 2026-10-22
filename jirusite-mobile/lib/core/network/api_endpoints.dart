@@ -71,5 +71,7 @@ class ApiEndpoints {
 
   // ── Billing ───────────────────────────────────────────────────────────────
   static const subscription = '/billing/subscription';
-  static const telebirrInitiate = '/billing/telebirr/initiate';
+  static const chapaInitiate = '/billing/chapa/initiate';
+  static const chapaVerify = '/billing/chapa/verify';
+  static const telebirrInitiate = '/billing/telebirr/initiate'; // legacy
 }
