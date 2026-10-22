@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const { body } = require('express-validator');
-const crypto = require('crypto');
 const axios = require('axios');
 const { query } = require('../db/pool');
 const { authenticate, authorize } = require('../middleware/auth');
@@ -162,24 +161,32 @@ router.get(
 
 // ── POST /api/billing/chapa/webhook ──────────────────────────────────────
 // Chapa webhook (enabled in Chapa dashboard).
-// Payload contains { event, data: { tx_ref, status, ... } }
+// In the Chapa dashboard, under Webhooks, set a "Secret hash" value and
+// store that same value in CHAPA_WEBHOOK_SECRET env var.
+// Chapa sends it as the header: Chapa-Webhook-Secret
 router.post(
   '/chapa/webhook',
   asyncHandler(async (req, res) => {
-    // Optionally verify Chapa's webhook signature header
-    const chapaHash = req.headers['x-chapa-signature'];
-    if (chapaHash && process.env.CHAPA_WEBHOOK_SECRET) {
-      const expected = crypto
-        .createHmac('sha256', process.env.CHAPA_WEBHOOK_SECRET)
-        .update(JSON.stringify(req.body))
-        .digest('hex');
-      if (!crypto.timingSafeEqual(Buffer.from(chapaHash), Buffer.from(expected))) {
-        return res.status(401).json({ error: 'Invalid webhook signature' });
+    // Verify Chapa's secret hash header
+    const secretHash = process.env.CHAPA_WEBHOOK_SECRET;
+    if (secretHash) {
+      const incomingHash = req.headers['chapa-webhook-secret'];
+      if (!incomingHash || incomingHash !== secretHash) {
+        console.warn('[Chapa webhook] Invalid or missing secret hash');
+        return res.status(401).json({ error: 'Invalid webhook secret' });
       }
     }
 
+    // Chapa webhook payload: { event, data: { tx_ref, status, ... } }
     const txRef = req.body?.data?.tx_ref || req.body?.tx_ref;
-    if (txRef) await _verifyAndActivate(txRef).catch(console.error);
+    const status = req.body?.data?.status || req.body?.status;
+
+    if (txRef) {
+      // Run verify in background — don't hold up the 200 response
+      _verifyAndActivate(txRef, status).catch((err) =>
+        console.error('[Chapa webhook] verify failed:', err.message)
+      );
+    }
 
     res.json({ received: true });
   })
@@ -265,7 +272,7 @@ router.post('/telebirr/webhook', asyncHandler(async (_req, res) => {
 
 // ── Shared helper ─────────────────────────────────────────────────────────
 
-async function _verifyAndActivate(txRef) {
+async function _verifyAndActivate(txRef, knownStatus = null) {
   if (!process.env.CHAPA_SECRET_KEY) return { verified: false };
 
   // Fetch payment record
@@ -278,7 +285,8 @@ async function _verifyAndActivate(txRef) {
   const pmt = pmts[0];
   if (pmt.status === 'success') return { verified: true, already_active: true };
 
-  // Verify with Chapa
+  // If webhook already told us the status, trust it — but still verify with Chapa
+  // to confirm authenticity before activating
   const verifyResp = await axios.get(
     `${CHAPA_BASE_URL}/transaction/verify/${txRef}`,
     {
@@ -295,7 +303,7 @@ async function _verifyAndActivate(txRef) {
     [success ? 'success' : 'failed', verifyResp.data?.data?.reference || null, pmt.id]
   );
 
-  if (success) {
+  if (success && pmt.chapa_tier) {
     // Upgrade subscription tier
     await query(
       `UPDATE organizations
@@ -303,6 +311,7 @@ async function _verifyAndActivate(txRef) {
        WHERE id = $2`,
       [pmt.chapa_tier, pmt.organization_id]
     );
+    console.log(`[Chapa] Subscription upgraded to ${pmt.chapa_tier} for org ${pmt.organization_id}`);
   }
 
   return { verified: true, success, tier: pmt.chapa_tier };
